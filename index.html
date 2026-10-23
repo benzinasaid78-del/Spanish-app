@@ -283,6 +283,65 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 .ri b{font-family:Lora,Georgia,"Times New Roman",serif;font-size:1.08rem;font-weight:600;color:var(--ink)}
 }
 </style>
+<style id="gx">#gameApp,#gameApp *{box-sizing:border-box}
+#gameApp{max-width:520px;margin:0 auto;padding:4px 12px 28px;-webkit-tap-highlight-color:transparent}
+#gameApp .gs{font-size:1.2rem;font-weight:700;color:var(--ink);text-align:center;margin:8px 0 14px}
+#gameApp .gc{border-radius:16px;box-shadow:0 3px 12px rgba(0,0,0,.15);animation:gup .35s ease both}
+#gameApp label{font-weight:600;margin:12px 0 5px}
+#gameApp select,#gameApp input:not([type=checkbox]),#gameApp textarea{display:block;width:100%;min-height:48px;margin:0;padding:10px 14px;border-radius:12px;border:2px solid var(--line);background-color:var(--paper);color:var(--ink);font:inherit;-webkit-appearance:none;appearance:none}
+#gameApp select{padding-left:44px;background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:18px 52%,24px 52%;background-size:6px 6px;background-repeat:no-repeat}
+#gameApp select:focus,#gameApp input:focus,#gameApp textarea:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px rgba(31,138,122,.25)}
+#gameApp input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--teal);margin:0}
+#gameApp label:has(>input[type=checkbox]){display:flex;align-items:center;gap:10px}
+#gameApp .gb{min-height:52px;border-radius:14px;box-shadow:0 4px 0 rgba(0,0,0,.28);transition:transform .08s,box-shadow .08s}
+#gameApp .gb:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+#gameApp .gb.alt{box-shadow:none}
+#gameApp .gcode{animation:gpop .5s both}
+#gameApp .gcodebox{text-align:center}
+#gameApp .gchips .chip{animation:gpop .35s both;background:var(--chip);border-color:var(--pink);font-weight:600}
+#gameApp .qh{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px}
+#gameApp .qpill{background:var(--paper);border:2px solid var(--line);border-radius:20px;padding:2px 14px;font-weight:700}
+#gameApp .gtm{width:54px;height:54px;border-radius:50%;border:3px solid var(--teal);font-size:1.5rem;display:grid;place-items:center;background:var(--paper);transition:border-color .2s}
+#gameApp .gtm.low{border-color:#e21b3c;color:#e21b3c;animation:gpulse .6s infinite}
+#gameApp .gtb{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:0 0 12px;direction:ltr}
+#gameApp .gtb i{display:block;height:100%;background:var(--teal);border-radius:5px;transition:width .2s linear}
+#gameApp .gtb.low i{background:#e21b3c}
+#gameApp .gqc{min-height:110px;display:grid;place-items:center}
+#gameApp .go{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:14px;box-shadow:0 5px 0 rgba(0,0,0,.28);transition:transform .08s,opacity .2s;position:relative}
+#gameApp .go:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+#gameApp .go .sh{font-size:1.1rem;opacity:.85}
+#gameApp .go .ot{font-size:1.05rem;word-break:break-word}
+#gameApp .go.right{animation:gpop .5s both;outline:4px solid #fff;box-shadow:0 0 0 4px var(--teal)}
+#gameApp .go.dim{opacity:.35}
+#gameApp .go:disabled{cursor:default}
+#gameApp .ansn{text-align:center;margin-top:12px;font-weight:700;color:var(--sub)}
+#gameApp .res{border-radius:18px;padding:26px 14px;text-align:center;color:#fff;margin-bottom:12px;animation:gpop .45s both}
+#gameApp .res.okr{background:#26890c}#gameApp .res.nor{background:#e21b3c}#gameApp .res.idl{background:#6b7280}
+#gameApp .res .gbig{font-size:4rem;line-height:1}
+#gameApp .res .rt{font-size:1.4rem;font-weight:800}
+#gameApp .res .rg{display:inline-block;margin-top:8px;background:rgba(255,255,255,.25);border-radius:20px;padding:2px 16px;font-weight:800}
+#gameApp .gr{align-items:center;animation:gup .35s both}
+#gameApp .gr .rk{min-width:34px;text-align:center;font-size:1.2rem}
+#gameApp .gr .rn{flex:1;font-weight:600}
+#gameApp .podium{display:flex;justify-content:center;align-items:flex-end;gap:8px;direction:ltr;margin:8px 0 16px;min-height:240px}
+#gameApp .pcol{flex:1;max-width:150px;text-align:center;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+#gameApp .pn{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gameApp .ps{color:var(--sub);font-weight:700;margin-bottom:4px}
+#gameApp .pb{border-radius:12px 12px 0 0;display:flex;flex-direction:column;align-items:center;padding-top:6px;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,.9,.3,1.2) both}
+#gameApp .pb span{font-size:2rem}
+#gameApp .pb b{font-size:1.6rem;color:#fff}
+#gameApp .pb.p0{background:linear-gradient(#ffd34d,#d9a200)}
+#gameApp .pb.p1{background:linear-gradient(#d5dbe3,#9aa5b4)}
+#gameApp .pb.p2{background:linear-gradient(#e6a56b,#b0713a)}
+.conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.conf i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;animation:cf linear forwards}
+@keyframes gup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes gpop{0%{opacity:0;transform:scale(.7)}70%{transform:scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes gpulse{50%{transform:scale(1.12)}}
+@keyframes cf{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){#gameApp *,.conf i{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body class="app">
 <main class="page cover" id=top><div class=title><h1>الإسبانية من الصفر إلى الاحتراف</h1><span>(Español de España – de A0 a C2)</span></div>
@@ -1199,11 +1258,41 @@ function finish(i){if(fin[i]||!isHost)return;fin[i]=1;clearTimeout(hostTimer);cl
     Object.keys(a).forEach(function(u){var r=a[u];if(r&&r.a>=0&&r.a<4){cnt[r.a]++;if(r.a===q.a){var f=Math.min(1,Math.max(0,(+r.t||0)/(room.dur*1000)));var cur=sc[u]||{n:(pl[u]||{}).n||'؟',s:0};cur.s+=Math.round(1000*(1-f/2));sc[u]=cur;}}});
     return dbUpd('rooms/'+code,{ph:'rev',rev:{i:i,ans:q.a,c:cnt},sc:sc});}).catch(function(){});}
 function close(){var c=code;if(isHost){dbDel('secrets/'+c).catch(function(){});dbDel('rooms/'+c).catch(function(){});}home();}
-function ans(i){if(!room||room.ph!=='q')return;var t=Math.round(Math.min(room.dur*1000,Math.max(0,Date.now()-qStart)));
+function ans(i){if(!room||room.ph!=='q')return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}var t=Math.round(Math.min(room.dur*1000,Math.max(0,Date.now()-qStart)));
   dbSet('rooms/'+code+'/ans/'+room.i+'/'+uid,{a:i,t:t}).catch(function(){});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
   if(a==='home')home();else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='qdel')qdel(+b.dataset.v);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
+var SH2=['▲','◆','●','■'],prevMe=0;
+function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}
+function qHead(){return '<div class="qh"><span class="qpill">'+(room.i+1)+' / '+room.n+'</span><div class="gtm" id="gtm">'+Math.ceil(pctLeft()/100*room.dur)+'</div></div><div class="gtb"><i id="gtbi" style="width:'+pctLeft()+'%"></i></div>';}
+function optBtn(o,i,mode,a){var c='go c'+i+(a>=0&&a!==i?' dim':''),h='<span class="sh">'+SH2[i]+'</span><span class="ot" dir="auto">'+esc(o)+'</span>';
+  return mode?'<button class="'+c+'" data-a="ans" data-v="'+i+'"'+(mode===2?' disabled':'')+'>'+h+'</button>':'<div class="'+c+'">'+h+'</div>';}
+function confetti(){var c='',cl=['#e21b3c','#1368ce','#ffa602','#26890c','#d6336c','#1f8a7a'];for(var i=0;i<36;i++)c+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;background:'+cl[i%6]+';animation-delay:'+(Math.random()*1.5).toFixed(2)+'s;animation-duration:'+(2.5+Math.random()*2).toFixed(2)+'s"></i>';return '<div class="conf">'+c+'</div>';}
+function podium(sc){var t=top(sc);if(!t.length)return '<p class="gn">لا توجد نتائج</p>';var M=['🥇','🥈','🥉'],H=[150,112,84],D=[1.1,.7,.3],h='';
+  [1,0,2].forEach(function(i){var r=t[i];if(!r)return;h+='<div class="pcol"><div class="pn" dir="auto">'+esc(r.n)+'</div><div class="ps">'+r.s+'</div><div class="pb p'+i+'" style="height:'+H[i]+'px;animation-delay:'+D[i]+'s"><span>'+M[i]+'</span><b>'+(i+1)+'</b></div></div>';});
+  return '<div class="podium">'+h+'</div>';}
+function rows(sc,from){from=from||0;var t=top(sc).slice(from);if(!t.length)return from?'':'<p class="gn">لا توجد نتائج بعد</p>';
+  return t.map(function(r,i){var k=from+i;return '<div class="gr" style="animation-delay:'+(i*.08).toFixed(2)+'s"><span class="rk">'+(['🥇','🥈','🥉'][k]||(k+1))+'</span><span class="rn" dir="auto">'+esc(r.n)+'</span><b>'+r.s+'</b></div>';}).join('');}
+function hostScreen(){var p=plist(),q=qs&&qs[room.i];
+  if(room.ph==='lobby'){app('<p class="gs">ادخلوا الرمز للانضمام إلى اللعبة</p><div class="gc gcodebox"><small class="gn">رمز الغرفة</small><div class="gcode">'+code+'</div></div><div class="gc"><b>اللاعبون ('+p.length+')</b><div class="gchips">'+(p.length?p.map(function(n){return '<span class="chip">'+esc(n)+'</span>';}).join(''):'<span class="gn">بانتظار اللاعبين…</span>')+'</div></div><button class="gb" data-a="next">▶ ابدأ اللعبة</button><button class="gb alt" data-a="close">إغلاق الغرفة</button>');return;}
+  if(room.ph==='q'){var an=Object.keys(ansOf(room.i)).length,my0=ansOf(room.i)[uid],ma=my0?my0.a:-1;
+    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'<p class="gn">✓ تم تسجيل إجابتك</p>':'')+'<div class="ansn">أجاب '+an+' من '+p.length+'</div>');return;}
+  if(room.ph==='rev'){var c=(room.rev&&room.rev.c)||[0,0,0,0],mx=Math.max.apply(null,c.concat([1]));
+    app('<p class="gs">النتيجة</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SH2[i]+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>المتصدرون</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'🏁 النتيجة النهائية':'السؤال التالي ←')+'</button>');return;}
+  if(room.ph==='end'){var more=rows(room.sc,3);
+    app(confetti()+'<p class="gs">🏆 انتهت اللعبة</p>'+podium(room.sc)+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb" data-a="close">إغلاق الغرفة</button>');}}
+function playerScreen(){var p=plist();
+  if(room.ph==='lobby'){app('<p class="gs">أنت داخل الغرفة '+esc(code)+'</p><div class="gc" style="text-align:center"><div class="gbig">⏳</div><p class="gn">بانتظار المضيف ليبدأ اللعبة<br>عدد اللاعبين: '+p.length+'</p></div><button class="gb alt" data-a="home">خروج</button>');return;}
+  var my=ansOf(room.i)[uid],a=my?my.a:-1;
+  if(room.ph==='q'){var late=qStart&&Date.now()>=qStart+room.dur*1000,dis=a>=0||late;prevMe=(room.sc&&room.sc[uid])?room.sc[uid].s:0;
+    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(room.q.t)+'</div></div><div class="gopts">'+room.q.o.map(function(o,i){return optBtn(o,i,dis?2:1,a);}).join('')+'</div>'+(a>=0?'<p class="gn">✓ تم تسجيل إجابتك، انتظر البقية</p>':''));return;}
+  var sc=room.sc||{},me=sc[uid]?sc[uid].s:0,rank=1+Object.keys(sc).filter(function(k){return sc[k].s>me;}).length;
+  if(room.ph==='rev'){var ok=my&&room.rev&&my.a===room.rev.ans;
+    app('<div class="res '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'إجابة صحيحة!':(a<0?'انتهى الوقت':'إجابة خاطئة'))+'</div>'+(ok?'<div class="rg">+'+Math.max(0,me-prevMe)+'</div>':'')+'</div><div class="gc"><p class="gn">نقاطك: <b>'+me+'</b> · ترتيبك: <b>'+rank+'</b></p>'+rows(sc)+'</div>');return;}
+  if(room.ph==='end'){var more=rows(sc,3);
+    app((rank<=3?confetti():'')+'<p class="gs">🏆 انتهت اللعبة</p>'+podium(sc)+'<div class="res '+(rank<=3?'okr':'idl')+'"><div class="gbig">'+(['🥇','🥈','🥉'][rank-1]||'🎯')+'</div><div class="rt">المركز '+rank+'</div><div class="rg">'+me+' نقطة</div></div>'+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb alt" data-a="home">خروج</button>');}}
+setInterval(function(){var b=R&&R.querySelector('#gtbi');if(!b||!room||!qStart||room.ph!=='q')return;var f=pctLeft();b.style.width=f+'%';var lo=f<34;b.parentNode.classList.toggle('low',lo);var t=R.querySelector('#gtm');if(t)t.classList.toggle('low',lo);},200);
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else home();};
 })();</script>
 </body></html>

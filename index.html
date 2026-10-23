@@ -365,6 +365,23 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 .gdlg .n{background:transparent;color:var(--teal)}
 @keyframes gfade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.gdlg,.gdlg .dc{animation:none!important}}
+#gameApp .brd{position:relative;margin-top:8px}
+#gameApp .brow{position:absolute;left:0;right:0;height:52px;display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:12px;background:var(--paper);border:2px solid var(--line);transition:top .9s cubic-bezier(.3,1.25,.4,1),opacity .4s,box-shadow .4s,background .4s}
+#gameApp .brow.me{border-color:var(--teal)}
+#gameApp .brow.ov{background:var(--tealbg);box-shadow:0 0 0 3px #ffd34d,0 0 18px rgba(255,211,77,.7);z-index:2}
+#gameApp .brow .bk{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--chip);border:2px solid var(--pink)}
+#gameApp .brow .bn{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gameApp .brow .bu{display:none;color:#26890c;font-weight:800}
+#gameApp .brow.ov .bu{display:inline;animation:gpulse .6s 3}
+#gameApp .brow .bd{font-size:.8rem;font-weight:800;color:#fff;background:#26890c;border-radius:10px;padding:0 8px}
+#gameApp .brow .bs{min-width:52px;text-align:left;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr}
+#gameApp .cab{display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;border-radius:14px;padding:12px;margin-bottom:10px;animation:gpop .4s both;font-size:1.15rem}
+#gameApp .cab.c0,#gameApp .dk.c0{background:#e21b3c}#gameApp .cab.c1,#gameApp .dk.c1{background:#1368ce}
+#gameApp .cab.c2,#gameApp .dk.c2{background:#b97f00}#gameApp .cab.c3,#gameApp .dk.c3{background:#26890c}
+#gameApp .dist{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;direction:ltr}
+#gameApp .dk{color:#fff;border-radius:10px;text-align:center;padding:4px 0;font-weight:700;opacity:.45}
+#gameApp .dk.ok{opacity:1;outline:3px solid var(--teal)}
+#gameApp .res.sm{padding:14px}#gameApp .res.sm .gbig{font-size:2.4rem}#gameApp .res.sm .rt{font-size:1.2rem}
 </style>
 </head>
 <body class="app">
@@ -1358,6 +1375,27 @@ function kick(u){var P=(room&&room.players)||{},n=(P[u]||{}).n||'',c=code,i=room
     .catch(function(e){delete kickedSet[c+u];gDlg('تعذر تنفيذ الطرد\n'+((e&&(e.code||e.message))||''),null,'⚠️');});},1);}
 function leaveRoom(){var c=code,u=uid,ph=room&&room.ph;function go(){dbDel('rooms/'+c+'/players/'+u).catch(function(){});home();}
   if(ph==='q'||ph==='rev')gConfirm('هل تريد مغادرة اللعبة؟',go,1);else go();}
+var snap={},snapKey='',animKey='',RH=58;
+function snapTake(){var k=code+':'+room.i;if(snapKey!==k){snapKey=k;snap=JSON.parse(JSON.stringify(room.sc||{}));}}
+function snapOf(){return snapKey===code+':'+room.i?snap:(room.sc||{});}
+function entries(sc){var P=(room&&room.players)||{},m={};Object.keys(P).forEach(function(u){m[u]={u:u,n:P[u].n,s:0};});Object.keys(sc||{}).forEach(function(u){m[u]={u:u,n:sc[u].n||(m[u]&&m[u].n)||'؟',s:sc[u].s};});return Object.keys(m).map(function(u){return m[u];});}
+function ranked(l){return l.slice().sort(function(a,b){return b.s-a.s||(a.u<b.u?-1:1);});}
+function boardHtml(){var key=code+':'+room.i,an=(animKey!==key&&snapKey===key);if(an)animKey=key;
+  var sc=room.sc||{},os=snapOf(),cur=entries(sc),nw=ranked(cur),old=ranked(cur.map(function(x){return {u:x.u,n:x.n,s:(os[x.u]||{}).s||0};})),oi={};old.forEach(function(x,i){oi[x.u]=i;});
+  var show=nw.slice(0,5);
+  var h=show.map(function(x,i){var from=oi[x.u],o=(os[x.u]||{}).s||0,pts=x.s-o,up=an&&from>i;
+    return '<div class="brow'+(x.u===uid?' me':'')+'" data-to="'+(i*RH)+'" data-rank="'+(i+1)+'" data-s="'+x.s+'" data-os="'+o+'" data-up="'+(up?1:0)+'" style="top:'+((an?Math.min(from,5):i)*RH)+'px;'+(an&&from>=5?'opacity:0':'')+'"><span class="bk">'+(an?from+1:i+1)+'</span><span class="bn" dir="auto">'+esc(x.n)+'</span><span class="bu">▲</span>'+(an&&pts>0?'<span class="bd">+'+pts+'</span>':'')+'<span class="bs">'+(an?o:x.s)+'</span></div>';}).join('');
+  return '<div class="brd" id="brd" data-an="'+(an?1:0)+'" style="height:'+(Math.max(show.length,1)*RH)+'px">'+h+'</div>';}
+function runBoard(){var bd=R&&R.querySelector('#brd');if(!bd||bd.dataset.an!=='1'||bd.dataset.run)return;bd.dataset.run='1';var rows=[].slice.call(bd.children);
+  var t0=performance.now();(function step(t){var f=Math.min(1,(t-t0)/900);rows.forEach(function(r){var o=+r.dataset.os,s=+r.dataset.s;r.querySelector('.bs').textContent=Math.round(o+(s-o)*f);});if(f<1&&R&&R.contains(bd))requestAnimationFrame(step);})(t0);
+  setTimeout(function(){if(!R||!R.contains(bd))return;rows.forEach(function(r){r.style.top=r.dataset.to+'px';r.style.opacity=1;r.querySelector('.bk').textContent=r.dataset.rank;if(r.dataset.up==='1')r.classList.add('ov');});},1100);}
+function revHost(){var q=qs[room.i],c=(room.rev&&room.rev.c)||[0,0,0,0];
+  app('<div class="cab c'+q.a+'"><span>'+SH2[q.a]+' ✓</span><b dir="auto">'+esc(q.o[q.a])+'</b></div><div class="dist">'+[0,1,2,3].map(function(i){return '<span class="dk c'+i+(i===q.a?' ok':'')+'">'+SH2[i]+' '+(c[i]||0)+'</span>';}).join('')+'</div><div class="gc"><b>🏆 الترتيب</b>'+boardHtml()+'</div><button class="gb" data-a="next" style="margin-top:14px">'+(room.i+1>=room.n?'🏁 النتيجة النهائية':'السؤال التالي ←')+'</button>');runBoard();}
+function revPlayer(){var sc=room.sc||{},my=ansOf(room.i)[uid],a=my?my.a:-1,ok=my&&room.rev&&my.a===room.rev.ans,me=sc[uid]?sc[uid].s:0,gain=Math.max(0,me-((snapOf()[uid]||{}).s||0)),rk=ranked(entries(sc)).map(function(x){return x.u;}).indexOf(uid)+1;
+  app('<div class="res sm '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'إجابة صحيحة!':(a<0?'انتهى الوقت':'إجابة خاطئة'))+'</div><div class="rg">'+(ok?'+'+gain+' · ':'')+'المركز '+rk+'</div></div><div class="gc"><b>🏆 الترتيب</b>'+boardHtml()+'</div>');runBoard();}
+var _hs3=hostScreen,_ps3=playerScreen;
+hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){revHost();extraHost();return;}_hs3();};
+playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){revPlayer();extraPlayer();return;}_ps3();};
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else home();};
 })();</script>
 </body></html>

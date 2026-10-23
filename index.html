@@ -1086,13 +1086,24 @@ function home(){view='home';leave();app(head('أنشئ غرفة وشارك رم�
 function setup(){view='setup';var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'">'+TOPICS[k]+' ('+pool(k).length+')</option>';}).join('');
   app(head('إعداد الغرفة')+'<div class="gc"><label>الصنف</label><select id="tp">'+t+'</select><label>عدد الأسئلة</label><input id="nq" type="number" min="1" value="10" inputmode="numeric"><p class="gn" id="hint"></p><label style="font-size:1rem;color:var(--ink)"><input type="checkbox" id="hp" checked style="width:auto;margin-left:8px">أشارك في اللعب أنا أيضاً</label><label>اسمك كلاعب</label><input id="hn" maxlength="16" dir="auto" placeholder="المضيف" value="'+esc(lastName())+'"><label>الوقت لكل سؤال</label><select id="du"><option value="10">10 ثوانٍ</option><option value="15" selected>15 ثانية</option><option value="20">20 ثانية</option></select></div><button class="gb" data-a="create">إنشاء الغرفة</button><button class="gb alt" data-a="home">رجوع</button>');hint();loadBank().then(refreshSetup);}
 function refreshSetup(){if(view!=='setup'||!R)return;var t=R.querySelector('#tp');if(!t)return;[].forEach.call(t.options,function(o){o.textContent=TOPICS[o.value]+' ('+pool(o.value).length+')';});hint();}
-function hint(){var e=R.querySelector('#hint'),t=R.querySelector('#tp'),n=R.querySelector('#nq');if(!e||!t)return;var p=pool(t.value).length;e.textContent=p?'المتاح في هذا الصنف: '+p+' سؤالاً (تُختار منها عشوائياً)':'لا توجد أسئلة في هذا الصنف بعد';if(n)n.max=p;}
+function hint(){var e=R.querySelector('#hint'),t=R.querySelector('#tp'),n=R.querySelector('#nq');if(!e||!t)return;var p=pool(t.value).length;e.textContent=p?'المتاح في هذا الصنف: '+p+' سؤالاً (تُختار منها عشوائياً)':'لا توجد أسئلة في هذا الصنف بعد';if(!p&&bankErr)e.textContent+=' ['+bankErr+']';if(n)n.max=p;}
 var MYK='esb:myqs',qmTp='gram';
 function myQ(){var o={};try{o=JSON.parse(localStorage.getItem(MYK)||'{}')||{};}catch(e){o={};}Object.keys(TOPICS).forEach(function(k){if(!Array.isArray(o[k]))o[k]=[];});return o;}
 function saveQ(o){try{localStorage.setItem(MYK,JSON.stringify(o));}catch(e){alert('تعذّر الحفظ في المتصفح');}}
 var dbBank=null,bankP=null;
+var bankErr=null;
 function loadBank(){if(dbBank)return Promise.resolve();if(bankP)return bankP;
-  bankP=signIn().then(function(){return dbGet('bank');}).then(function(b){var o={};b=b||{};Object.keys(TOPICS).forEach(function(k){o[k]=Object.keys(b[k]||{}).map(function(id){var r=b[k][id];return r&&r.t&&r.c&&r.w?[r.t,r.c].concat(r.w):null;}).filter(Boolean);});dbBank=o;}).catch(function(){}).then(function(){bankP=null;});
+  bankErr=null;
+  bankP=signIn().then(function(){return dbGet('bank');}).then(function(b){var o={};b=b||{};
+    Object.keys(TOPICS).forEach(function(k){
+      var node=b[k]||{};
+      o[k]=Object.keys(node).map(function(id){var r=node[id];if(!r||!r.t||!r.c||!r.w)return null;
+        var w=Array.isArray(r.w)?r.w:Object.keys(r.w).map(function(x){return r.w[x];});
+        w=w.filter(function(x){return x!=null&&x!=='';});
+        return w.length?[r.t,r.c].concat(w):null;}).filter(Boolean);
+    });
+    dbBank=o;
+  }).catch(function(e){bankErr=(e&&(e.code||e.message))||'unknown';}).then(function(){bankP=null;});
   return bankP;}
 function pool(tp){var seen={},out=[];[BANK[tp],(dbBank&&dbBank[tp])||[],myQ()[tp]].forEach(function(L){L.forEach(function(r){var k=String(r[0]).toLowerCase();if(!seen[k]){seen[k]=1;out.push(r);}});});return out;}
 function qm(){view='qm';var o=myQ(),L=o[qmTp];
@@ -1150,7 +1161,7 @@ function tryCreate(k,du,tp){if(k>6)return Promise.reject(lastErr||{code:'unknown
   return dbSet('rooms/'+c,{host:uid,ph:'lobby',i:-1,n:qs.length,dur:du,topic:tp}).then(function(){code=c;isHost=true;fin={};if(hostName)dbSet('rooms/'+c+'/players/'+uid,{n:hostName}).catch(function(){});dbSet('secrets/'+c,{qs:qs}).catch(function(){});view='host';watch();},function(e){lastErr=e;if(e&&e.code!=='PERMISSION_DENIED')return Promise.reject(e);return tryCreate(k+1,du,tp);});}
 function create(){var tp=gv('tp'),du=+gv('du'),nr=parseInt(gv('nq'),10)||10;var hp=R.querySelector('#hp');hostName=(hp&&!hp.checked)?'':((gv('hn')||'').trim().slice(0,16)||'المضيف');try{localStorage.setItem('esb:gname',hostName);}catch(e){}
   app(head('جارٍ إنشاء الغرفة…')+'<p class="gn" id="gst" dir="rtl"></p>');
-  ensure().then(function(){st('جارٍ تحميل الأسئلة…');return loadBank();}).then(function(){var P=pool(tp),nq=Math.max(1,Math.min(P.length,nr));if(!P.length){app(head('لا توجد أسئلة في هذا الصنف بعد.')+'<button class="gb" data-a="setup">رجوع</button>');return;}
+  ensure().then(function(){st('جارٍ تحميل الأسئلة…');return loadBank();}).then(function(){var P=pool(tp),nq=Math.max(1,Math.min(P.length,nr));if(!P.length){app(head('لا توجد أسئلة في هذا الصنف بعد.')+(bankErr?'<p class="gn" dir="ltr" style="font-size:.7rem">'+esc(bankErr)+'</p>':'')+'<button class="gb" data-a="setup">رجوع</button>');return;}
     qs=shuffle(P).slice(0,nq).map(function(r){var o=shuffle(r.slice(1));return {t:r[0],o:o,a:o.indexOf(r[1])};});return tryCreate(0,du,tp);}).catch(fail);}
 function join(){var c=gv('cd').trim(),n=gv('nm').trim();if(!/^\d{4}$/.test(c)||!n){alert('أدخل رمزاً من 4 أرقام واسماً مستعاراً');return;}
   app(head('جارٍ الدخول…')+'<p class="gn" id="gst" dir="rtl"></p>');

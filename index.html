@@ -341,6 +341,16 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 @keyframes gpulse{50%{transform:scale(1.12)}}
 @keyframes cf{to{transform:translateY(110vh) rotate(720deg)}}
 @media (prefers-reduced-motion:reduce){#gameApp *,.conf i{animation:none!important;transition:none!important}}
+#gameApp .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 4px}
+#gameApp .pick.seg{grid-template-columns:repeat(3,1fr)}
+#gameApp .pick button{font:inherit;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;min-width:0;transition:transform .08s,border-color .15s,background .15s}
+#gameApp .pick button:active{transform:scale(.96)}
+#gameApp .pick button.on{border-color:var(--teal);background:var(--tealbg);box-shadow:0 0 0 2px var(--teal) inset}
+#gameApp .pick .pe{font-size:1.6rem;line-height:1.2}
+#gameApp .pick .pa{font-weight:700}
+#gameApp .pick .ps2{font-size:.8rem;color:var(--sub);direction:ltr}
+#gameApp .pick .pc{margin-top:3px;font-size:.78rem;font-weight:700;color:var(--teal);background:var(--tealbg);border-radius:10px;padding:0 10px}
+#gameApp .pick button.on .pc{background:var(--paper)}
 </style>
 </head>
 <body class="app">
@@ -1261,7 +1271,7 @@ function close(){var c=code;if(isHost){dbDel('secrets/'+c).catch(function(){});d
 function ans(i){if(!room||room.ph!=='q')return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}var t=Math.round(Math.min(room.dur*1000,Math.max(0,Date.now()-qStart)));
   dbSet('rooms/'+code+'/ans/'+room.i+'/'+uid,{a:i,t:t}).catch(function(){});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
-  if(a==='home')home();else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='qdel')qdel(+b.dataset.v);}
+  if(a==='home')home();else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='pk')pick(b);else if(a==='qdel')qdel(+b.dataset.v);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
 function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}
@@ -1293,6 +1303,21 @@ function playerScreen(){var p=plist();
   if(room.ph==='end'){var more=rows(sc,3);
     app((rank<=3?confetti():'')+'<p class="gs">🏆 انتهت اللعبة</p>'+podium(sc)+'<div class="res '+(rank<=3?'okr':'idl')+'"><div class="gbig">'+(['🥇','🥈','🥉'][rank-1]||'🎯')+'</div><div class="rt">المركز '+rank+'</div><div class="rg">'+me+' نقطة</div></div>'+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb alt" data-a="home">خروج</button>');}}
 setInterval(function(){var b=R&&R.querySelector('#gtbi');if(!b||!room||!qStart||room.ph!=='q')return;var f=pctLeft();b.style.width=f+'%';var lo=f<34;b.parentNode.classList.toggle('low',lo);var t=R.querySelector('#gtm');if(t)t.classList.toggle('low',lo);},200);
+var TI={gram:['📘','قواعد','Gramática'],verb:['🏃','أفعال','Verbos'],voc:['🔤','مفردات','Vocabulario'],exp:['💬','عبارات','Expresiones']};
+function mkPick(id,items,seg){var s=R&&R.querySelector('#'+id);if(!s)return;var o=R.querySelector('#pk_'+id);if(o)o.remove();s.style.display='none';
+  var d=document.createElement('div');d.id='pk_'+id;d.className='pick'+(seg?' seg':'');
+  d.innerHTML=items.map(function(it){return '<button type="button" data-a="pk" data-f="'+id+'" data-v="'+it.v+'" class="'+(String(s.value)===String(it.v)?'on':'')+'">'+it.h+'</button>';}).join('');
+  s.parentNode.insertBefore(d,s.nextSibling);}
+function topicItems(cnt){return Object.keys(TI).map(function(k){var t=TI[k];return {v:k,h:'<span class="pe">'+t[0]+'</span><span class="pa">'+t[1]+'</span><span class="ps2">'+t[2]+'</span><span class="pc">'+cnt(k)+'</span>'};});}
+function enhSetup(){if(view!=='setup')return;mkPick('tp',topicItems(function(k){return pool(k).length;}));
+  mkPick('du',[10,15,20].map(function(n){return {v:n,h:'<span class="pa">'+n+'</span><span class="ps2">ثانية</span>'};}),1);}
+function enhQm(){if(view!=='qm')return;var o=myQ();mkPick('qt',topicItems(function(k){return o[k].length;}));}
+function pick(b){var f=b.dataset.f,v=b.dataset.v;if(f==='qt'){qmTp=v;qm();return;}
+  var s=R.querySelector('#'+f);if(!s)return;s.value=v;[].forEach.call(b.parentNode.children,function(x){x.classList.toggle('on',x===b);});if(f==='tp')hint();}
+var _setup=setup,_refresh=refreshSetup,_qm=qm;
+setup=function(){_setup();enhSetup();};
+refreshSetup=function(){_refresh();enhSetup();};
+qm=function(){_qm();enhQm();};
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else home();};
 })();</script>
 </body></html>

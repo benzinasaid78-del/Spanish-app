@@ -354,6 +354,17 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 #gameApp .gb.sm{min-height:40px;font-size:.9rem;margin-top:14px;opacity:.85}
 #gameApp .kx{color:#e21b3c;font-weight:700;font-size:.95rem}
 #gameApp .mgr summary{cursor:pointer;font-weight:700;margin-bottom:6px}
+.gdlg{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(5,8,20,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:gfade .2s both}
+.gdlg .dc{width:100%;max-width:360px;background:var(--paper);color:var(--ink);border:2px solid var(--line);border-top:5px solid var(--pink);border-radius:18px;padding:20px 18px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:gpop .3s both;font-family:inherit}
+.gdlg .di{font-size:2.2rem;line-height:1.2}
+.gdlg .dm{font-size:1.1rem;font-weight:700;margin:6px 0 18px;line-height:1.7;white-space:pre-line}
+.gdlg .db{display:flex;gap:10px}
+.gdlg button{flex:1;min-height:46px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;border:2px solid var(--teal)}
+.gdlg .y{background:var(--teal);color:#fff}
+.gdlg .y.red{background:#e21b3c;border-color:#e21b3c}
+.gdlg .n{background:transparent;color:var(--teal)}
+@keyframes gfade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.gdlg,.gdlg .dc{animation:none!important}}
 </style>
 </head>
 <body class="app">
@@ -1211,7 +1222,7 @@ function qdbulk(){if(dbSaving)return;var ta=R.querySelector('#qb'),tp=qmTp,lines
       qm();});
   }).catch(function(e){dbSaving=false;var c=(e&&(e.code||e.message))||'unknown';
     alert(c==='PERMISSION_DENIED'?'رُفض الحفظ: قواعد Firebase لا تسمح بالكتابة في bank':'فشل الحفظ: '+c);});}
-function qdel(i){if(!confirm('حذف هذا السؤال؟'))return;var o=myQ();o[qmTp].splice(i,1);saveQ(o);qm();}
+function qdel(i){gConfirm('حذف هذا السؤال؟',function(){var o=myQ();o[qmTp].splice(i,1);saveQ(o);qm();},1);}
 function onchange(e){var id=e.target&&e.target.id;if(id==='qt'){qmTp=e.target.value;qm();}else if(id==='tp'){hint();}}
 function joinv(){view='joinv';app(head('الدخول إلى غرفة')+'<div class="gc"><label>رمز الغرفة (4 أرقام)</label><input id="cd" inputmode="numeric" maxlength="4" dir="ltr"><label>اسمك المستعار</label><input id="nm" maxlength="16"></div><button class="gb" data-a="join">دخول</button><button class="gb alt" data-a="home">رجوع</button>');}
 function top(sc){return Object.keys(sc||{}).map(function(k){return sc[k];}).sort(function(a,b){return b.s-a.s;}).slice(0,5);}
@@ -1260,7 +1271,7 @@ function join(){var c=gv('cd').trim(),n=gv('nm').trim();if(!/^\d{4}$/.test(c)||!
   app(head('جارٍ الدخول…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){return dbGet('rooms/'+c);}).then(function(r){
     if(r===null||r===undefined){alert('الرمز غير صحيح');joinv();return;}
-    if(r.kicked&&r.kicked[uid]){alert('تم طردك من هذه الغرفة');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';watch();});}).catch(fail);}
+    if(r.kicked&&r.kicked[uid]){gDlg('تم طردك من قبل المالك',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';watch();});}).catch(fail);}
 function next(){if(!isHost||!room||room.ph==='q')return;var i=room.i+1;
   if(i>=room.n){dbUpd('rooms/'+code,{ph:'end'}).catch(fail);return;}
   var q=qs[i];clearTimeout(early);early=null;fin[i]=0;qStart=Date.now();
@@ -1274,7 +1285,7 @@ function close(){var c=code;if(isHost){dbDel('secrets/'+c).catch(function(){});d
 function ans(i){if(!room||room.ph!=='q')return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}var t=Math.round(Math.min(room.dur*1000,Math.max(0,Date.now()-qStart)));
   dbSet('rooms/'+code+'/ans/'+room.i+'/'+uid,{a:i,t:t}).catch(function(){});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
-  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){if(confirm('إنهاء اللعبة للجميع؟'))close();}else if(a==='qdel')qdel(+b.dataset.v);}
+  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='qdel')qdel(+b.dataset.v);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
 function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}
@@ -1321,10 +1332,6 @@ var _setup=setup,_refresh=refreshSetup,_qm=qm;
 setup=function(){_setup();enhSetup();};
 refreshSetup=function(){_refresh();enhSetup();};
 qm=function(){_qm();enhQm();};
-function kick(u){var P=(room&&room.players)||{},n=(P[u]||{}).n||'',c=code,i=room.i;if(!confirm('طرد اللاعب «'+n+'» من الغرفة؟'))return;
-  Promise.all([dbSet('rooms/'+c+'/kicked/'+u,1),dbDel('rooms/'+c+'/players/'+u),dbDel('rooms/'+c+'/sc/'+u),(i>=0?dbDel('rooms/'+c+'/ans/'+i+'/'+u):Promise.resolve())]).catch(function(){alert('تعذر تنفيذ الطرد، حاول مرة أخرى');});}
-function leaveRoom(){var c=code,u=uid,ph=room&&room.ph;if(ph==='q'||ph==='rev'){if(!confirm('هل تريد مغادرة اللعبة؟'))return;}
-  dbDel('rooms/'+c+'/players/'+u).catch(function(){});home();}
 function extraHost(){if(!room||!R)return;var ph=room.ph,P=room.players||{},ks=Object.keys(P).filter(function(k){return k!==uid;});
   if(ph==='lobby'){var c=R.querySelector('.gchips');if(c&&Object.keys(P).length)c.innerHTML=Object.keys(P).map(function(k){return '<span class="chip">'+esc(P[k].n)+(k!==uid?' <button class="gx kx" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">✕</button>':'')+'</span>';}).join('');return;}
   if(ph==='rev'&&ks.length){var b=R.querySelector('.gb');var h='<details class="gc mgr"><summary>👥 إدارة اللاعبين ('+ks.length+')</summary>'+ks.map(function(k){return '<div class="gr"><span class="rn" dir="auto">'+esc(P[k].n)+'</span><button class="gx kx" data-a="kick" data-v="'+esc(k)+'">طرد ✕</button></div>';}).join('')+'</details>';if(b)b.insertAdjacentHTML('beforebegin',h);}
@@ -1333,7 +1340,21 @@ function extraPlayer(){if(room&&R&&(room.ph==='q'||room.ph==='rev'))R.insertAdja
 var _hs=hostScreen,_ps=playerScreen,_draw=draw;
 hostScreen=function(){_hs();extraHost();};
 playerScreen=function(){_ps();extraPlayer();};
-draw=function(){if(!isHost&&view==='play'&&room&&gotFirst&&!(room.players&&room.players[uid])){alert('تمت إزالتك من الغرفة');home();return;}_draw();};
+draw=function(){if(!isHost&&view==='play'&&room&&gotFirst&&!(room.players&&room.players[uid])){var kk=room.kicked&&room.kicked[uid];gDlg(kk?'تم طردك من قبل المالك':'تمت إزالتك من الغرفة',null,kk?'🚫':'ℹ️');home();return;}_draw();};
+function gDlg(msg,yes,ico,danger){var old=document.getElementById('gdlg');if(old)old.remove();
+  var d=document.createElement('div');d.id='gdlg';d.className='gdlg';
+  d.innerHTML='<div class="dc" dir="rtl" role="dialog" aria-modal="true"><div class="di"></div><div class="dm"></div><div class="db"></div></div>';
+  d.querySelector('.di').textContent=ico||'💬';d.querySelector('.dm').textContent=msg;
+  var db=d.querySelector('.db');function end(f){d.remove();if(f)f();}
+  if(yes){var n=document.createElement('button');n.className='n';n.textContent='إلغاء';n.onclick=function(){end();};db.appendChild(n);}
+  var y=document.createElement('button');y.className='y'+(danger?' red':'');y.textContent=yes?'تأكيد':'حسنًا';y.onclick=function(){end(yes);};db.appendChild(y);
+  document.body.appendChild(d);y.focus();}
+function gConfirm(m,yes,danger){gDlg(m,yes,danger?'⚠️':'❓',danger);}
+function alert(m){gDlg(String(m),null,'💬');}
+function kick(u){var P=(room&&room.players)||{},n=(P[u]||{}).n||'',c=code,i=room.i;
+  gConfirm('طرد اللاعب «'+n+'» من الغرفة؟',function(){dbSet('rooms/'+c+'/kicked/'+u,1).then(function(){return Promise.all([dbDel('rooms/'+c+'/players/'+u),dbDel('rooms/'+c+'/sc/'+u),(i>=0?dbDel('rooms/'+c+'/ans/'+i+'/'+u):Promise.resolve())]);}).catch(function(){gDlg('تعذر تنفيذ الطرد، حاول مرة أخرى',null,'⚠️');});},1);}
+function leaveRoom(){var c=code,u=uid,ph=room&&room.ph;function go(){dbDel('rooms/'+c+'/players/'+u).catch(function(){});home();}
+  if(ph==='q'||ph==='rev')gConfirm('هل تريد مغادرة اللعبة؟',go,1);else go();}
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else home();};
 })();</script>
 </body></html>

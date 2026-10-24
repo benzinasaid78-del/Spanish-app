@@ -1268,12 +1268,25 @@ function updCnt(){var e=R&&R.querySelector('#ucnt');if(e)e.textContent='المح
 function unclHtml(){var tp=qmTp,L=unl(tp),h='<div class="gc"><b>تصنيف أسئلة قاعدة البيانات</b><p class="gn">اختر القائمة، حدّد الأسئلة، ثم اضغط المستوى الجديد.</p><div class="uvw">'+[''].concat(LEVELS).map(function(v){return '<button type="button" class="'+(v===uView?'on':'')+'" data-a="uview" data-v="'+v+'">'+(v||'بلا مستوى')+' ('+lst(tp,v).length+')</button>';}).join('')+'</div>';
   if(!L.length)return h+'<p class="gn">لا توجد أسئلة في هذه القائمة.</p></div>';
   var sh=L.slice(0,uShow);
-  h+='<div class="ubar"><button type="button" data-a="uall">تحديد المعروض</button><button type="button" data-a="unone">إلغاء التحديد</button><span id="ucnt" class="gn">المحدد: '+selCount(L)+'</span></div>';
+  h+='<div class="ubar"><button type="button" data-a="uall">تحديد المعروض</button><button type="button" data-a="unone">إلغاء التحديد</button><button type="button" data-a="udel" style="border-color:#d64545;color:#d64545">🗑 حذف المحدد</button><span id="ucnt" class="gn">المحدد: '+selCount(L)+'</span></div>';
   h+=sh.map(function(r,i){return '<label class="ucl"><input type="checkbox" data-a="usel" data-i="'+i+'"'+(uSel[qkey(r)]?' checked':'')+'><span dir="auto">'+esc(r[0])+'</span></label>';}).join('');
   if(L.length>sh.length)h+='<button type="button" class="gb alt sm" data-a="umore">عرض المزيد ('+(L.length-sh.length)+')</button>';
   return h+'<p class="gn">صنّف المحدد كـ:</p><div class="ulv">'+LEVELS.map(function(l){return '<button type="button" data-a="lvset" data-v="'+l+'">'+l+'</button>';}).join('')+'</div></div>';}
 function uTick(on){var L=unl(qmTp).slice(0,uShow);L.forEach(function(r){if(on)uSel[qkey(r)]=1;else delete uSel[qkey(r)];});[].forEach.call(R.querySelectorAll('input[data-a=usel]'),function(c){c.checked=on;});updCnt();}
 function uOne(b){var r=unl(qmTp)[+b.dataset.i];if(!r)return;if(b.checked)uSel[qkey(r)]=1;else delete uSel[qkey(r)];updCnt();}
+function uDel(){if(!isAdm||dbSaving)return;var tp=qmTp,L=unl(tp).filter(function(r){return uSel[qkey(r)];});
+  if(!L.length){alert('حدّد الأسئلة أولاً');return;}
+  gConfirm('حذف '+L.length+' سؤالاً نهائياً من قاعدة البيانات؟',function(){
+    var upd={},done=[];
+    L.forEach(function(r){var key=qkey(r),id=IDS[tp+'|'+key];if(!id)return;upd[id]=null;done.push(key);});
+    if(!done.length){alert('لم أجد مفاتيح هذه الأسئلة');return;}
+    dbSaving=true;
+    dbUpd('bank/'+tp,upd).then(function(){
+      var ds={};done.forEach(function(k){ds[k]=1;delete IDS[tp+'|'+k];delete uSel[k];});
+      if(dbBank&&dbBank[tp])dbBank[tp]=dbBank[tp].filter(function(r){return !ds[qkey(r)];});
+      dbSaving=false;qm();
+    }).catch(function(e){dbSaving=false;alert('فشل الحذف: '+((e&&(e.code||e.message))||'unknown'));});
+  },1);}
 function lvApply(l){if(!isAdm||dbSaving||LEVELS.indexOf(l)<0)return;var tp=qmTp,L=unl(tp).filter(function(r){return uSel[qkey(r)];});
   if(!L.length){alert('حدّد الأسئلة أولاً');return;}
   gConfirm('تصنيف '+L.length+' سؤالاً كمستوى '+l+'؟',function(){
@@ -1293,7 +1306,7 @@ function qm(){view='qm';var o=myQ(),L=o[qmTp];
   var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'"'+(k===qmTp?' selected':'')+'>'+TOPICS[k]+' ('+o[k].length+')</option>';}).join('');
   app(head('أسئلتي الخاصة')+'<div class="gc"><label>الصنف</label><select id="qt">'+t+'</select><p class="gn">أسئلتك المضافة في هذا الصنف: '+L.length+'</p></div>'
    +'<div class="gc"><label>مستوى الأسئلة التي ستضيفها</label><select id="ql"><option value="">—</option>'+LEVELS.map(function(l){return '<option value="'+l+'"'+(l===qmLv?' selected':'')+'>'+l+'</option>';}).join('')+'</select>'+(qmLv?'':'<p class="kx" id="kxl">اختر المستوى قبل إضافة أي سؤال</p>')+'</div>'+'<div class="gc"><b>إضافة سؤال</b>'+tfNote()+'<label>السؤال</label><input id="qq" maxlength="150" dir="auto"><label>الإجابة الصحيحة</label><input id="qa" maxlength="60" dir="auto"><label>إجابة خاطئة 1</label><input id="q1" maxlength="60" dir="auto"><label>إجابة خاطئة 2 (اختياري)</label><input id="q2" maxlength="60" dir="auto"><label>إجابة خاطئة 3 (اختياري)</label><input id="q3" maxlength="60" dir="auto"><button class="gb" style="margin-top:10px" data-a="qadd">➕ إضافة السؤال</button></div>'
-   +'<div class="gc"><b>إضافة دفعة أسئلة</b>'+tfHelp()+'<textarea id="qb" rows="5" dir="auto"></textarea><button class="gb" style="margin-top:10px" data-a="qdbulk">حفظ في قاعدة البيانات</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
+   +'<div class="gc"><b>إضافة دفعة أسئلة</b>'+tfHelp()+'<textarea id="qb" rows="5" dir="auto"></textarea><label class="ucl" style="font-size:.95rem"><input type="checkbox" id="qov" style="width:auto;flex:none"> تحديث الأسئلة الموجودة بدل تجاهلها (لتصحيح الأخطاء)</label><button class="gb" style="margin-top:10px" data-a="qdbulk">حفظ في قاعدة البيانات</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
    +unclHtml()+'<div class="gc"><b>أسئلتك في هذا الصنف</b>'+(L.length?L.map(function(q,i){return '<div class="gr"><span dir="auto">'+esc(q[0])+(lvOf(q)?' <small class="gn">· '+lvOf(q)+'</small>':'')+'</span><button class="gx" data-a="qdel" data-v="'+i+'">🗑</button></div>';}).join(''):'<p class="gn">لا أسئلة بعد</p>')+'</div><button class="gb alt" data-a="home">Volver</button>');}
 function qadd(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}
   if(qmTp==='tf'){var q0=gv('qq').trim(),c0=tfNorm(gv('qa'));if(!q0||!c0){alert('اكتب العبارة، وفي «الإجابة الصحيحة» اكتب Verdadero أو Falso');return;}var o0=myQ();o0.tf.push([q0,c0,c0==='Verdadero'?'Falso':'Verdadero']);lvSave(q0,qmLv);saveQ(o0);qmLv='';qm();return;}var q=gv('qq').trim(),a=gv('qa').trim(),w=[gv('q1'),gv('q2'),gv('q3')].map(function(x){return x.trim();}).filter(Boolean);
@@ -1303,7 +1316,7 @@ function qbulk(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً'
   if(p.length<3||!p[0]||!p[1]||!p[2]){bad++;return;}o[qmTp].push(p.slice(0,5));lvSave(p[0],qmLv);ok++;});
   saveQ(o);alert('أُضيف '+ok+' سؤالاً'+(bad?' وتجاهلت '+bad+' سطراً غير مكتمل':''));qmLv='';qm();}
 var dbSaving=false;
-function qdbulk(){if(dbSaving)return;if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}var ta=R.querySelector('#qb'),tp=qmTp,lines=(ta?ta.value:'').split('\n'),items={},seen={},ok=0,bad=0,dup=0;
+function qdbulk(){if(dbSaving)return;if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}var ta=R.querySelector('#qb'),tp=qmTp,lines=(ta?ta.value:'').split('\n'),items={},seen={},ok=0,bad=0,dup=0,upc=0,upd=!!(R.querySelector('#qov')&&R.querySelector('#qov').checked);
   if(!lines.join('').trim()){alert('اكتب الأسئلة أولاً: سطر لكل سؤال');return;}
   dbSaving=true;
   loadBank().then(function(){
@@ -1311,15 +1324,15 @@ function qdbulk(){if(dbSaving)return;if(!qmLv){alert('اختر مستوى الأ
     lines.forEach(function(l){l=l.trim();if(!l)return;l=tfLine(l);
       var p=l.split('|').map(function(x){return x.trim();}).filter(function(x,i){return x||i<2;});p=tfFix(p);
       if(p.length<3||!p[0]||!p[1]||!p[2]){bad++;return;}
-      var k=p[0].toLowerCase();if(ex[k]||seen[k]){dup++;return;}seen[k]=1;
+      var k=p[0].toLowerCase();if(seen[k]){dup++;return;}if(ex[k]){var oid=IDS[tp+'|'+k];if(!upd||!oid){dup++;return;}seen[k]=1;var nid=qmLv.toLowerCase()+'-'+oid.replace(/^(a1|a2|b1|b2|c1|c2)-/i,'');items[nid]={t:p[0],c:p[1],w:p.slice(2,5)};if(nid!==oid)items[oid]=null;ok++;upc++;return;}seen[k]=1;
       var id=qmLv.toLowerCase()+'-q'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)+ok;
       items[id]={t:p[0],c:p[1],w:p.slice(2,5)};ok++;});
     if(!ok){dbSaving=false;alert('لا توجد أسئلة صالحة للحفظ'+(dup?' (المكررة: '+dup+')':'')+(bad?' (الخاطئة الصيغة: '+bad+')':''));return;}
     return dbUpd('bank/'+tp,items).then(function(){
       if(!dbBank)dbBank={gram:[],verb:[],voc:[],exp:[]};
-      Object.keys(items).forEach(function(id){var r=items[id];dbBank[tp].push([r.t,r.c].concat(r.w));LVL[String(r.t).toLowerCase()]=qmLv;IDS[tp+'|'+String(r.t).toLowerCase()]=id;});
+      Object.keys(items).forEach(function(id){var r=items[id];if(!r)return;var kk=String(r.t).toLowerCase(),row=[r.t,r.c].concat(r.w),ix=-1;dbBank[tp].forEach(function(x,j){if(String(x[0]).toLowerCase()===kk)ix=j;});if(ix>=0)dbBank[tp][ix]=row;else dbBank[tp].push(row);LVL[kk]=qmLv;IDS[tp+'|'+kk]=id;});
       dbSaving=false;if(ta)ta.value='';
-      alert('تم حفظ '+ok+' سؤال في قاعدة البيانات ('+TOPICS[tp]+' · '+qmLv+')\nالمجموع الآن في هذا الصنف: '+dbBank[tp].length+(dup?'\nتم تجاهل '+dup+' مكرر':'')+(bad?'\nتم تجاهل '+bad+' سطر بصيغة خاطئة':''));
+      alert((upc?'تحديث: '+upc+' · جديد: '+(ok-upc)+'\n':'')+'تم حفظ '+ok+' سؤال في قاعدة البيانات ('+TOPICS[tp]+' · '+qmLv+')\nالمجموع الآن في هذا الصنف: '+dbBank[tp].length+(dup?'\nتم تجاهل '+dup+' مكرر':'')+(bad?'\nتم تجاهل '+bad+' سطر بصيغة خاطئة':''));
       qmLv='';qm();});
   }).catch(function(e){dbSaving=false;var c=(e&&(e.code||e.message))||'unknown';
     alert(c==='PERMISSION_DENIED'?'رُفض الحفظ: هذا الحساب ليس مشرفاً.\nمعرّفك (أضفه تحت admins في Firebase):\n'+uid:'فشل الحفظ: '+c);});}
@@ -1405,7 +1418,7 @@ function ans(i){if(!room||room.ph!=='q'||!uid)return;if(myA(room.i)!==undefined)
   dbSet('answers/'+code+'/'+q+'/'+uid,{a:i,ts:{'.sv':'timestamp'}}).then(function(){return dbSet('rooms/'+code+'/done/'+q+'/'+uid,true);})
    .catch(function(e){setA(q,undefined);draw();gDlg('No se pudo enviar tu respuesta: '+((e&&(e.code||e.message))||'unknown'),null,'⚠️');});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
-  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='lvset')lvApply(b.dataset.v);else if(a==='usel')uOne(b);else if(a==='uall')uTick(true);else if(a==='unone')uTick(false);else if(a==='umore'){uShow+=30;qm();}else if(a==='uview'){uView=b.dataset.v;uShow=30;uSel={};qm();}else if(a==='cpcode')cpCode(b);else if(a==='closeq'){gConfirm('¿Cerrar la sala y sacar a todos?',close,1);}else if(a==='shlink')shLink();else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('¿Terminar la partida para todos?',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();else if(a==='av')avSet(b);}
+  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='lvset')lvApply(b.dataset.v);else if(a==='udel')uDel();else if(a==='usel')uOne(b);else if(a==='uall')uTick(true);else if(a==='unone')uTick(false);else if(a==='umore'){uShow+=30;qm();}else if(a==='uview'){uView=b.dataset.v;uShow=30;uSel={};qm();}else if(a==='cpcode')cpCode(b);else if(a==='closeq'){gConfirm('¿Cerrar la sala y sacar a todos?',close,1);}else if(a==='shlink')shLink();else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('¿Terminar la partida para todos?',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();else if(a==='av')avSet(b);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
 function isTF(a){if(!a||a.length!==2)return false;var x=String(a[0]).trim().toLowerCase(),y=String(a[1]).trim().toLowerCase();return (x==='verdadero'&&y==='falso')||(x==='falso'&&y==='verdadero');}

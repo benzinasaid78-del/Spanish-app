@@ -1189,6 +1189,12 @@ function fail(e){leave();var c=(e&&(e.code||e.message))||'unknown';
   var net='تعذّر الاتصال. تحقق من الإنترنت ثم أعد المحاولة.',bad='تعذّر تجهيز الغرفة الآن. حاول مرة أخرى بعد قليل.',m={'timeout-db':net,'Failed to fetch':net,'OPERATION_NOT_ALLOWED':bad,'ADMIN_ONLY_OPERATION':bad,'PERMISSION_DENIED':bad,'auth_revoked':'انتهت الجلسة، أعد المحاولة.'};
   app(head(m[c]||net)+'<p class="gn" dir="ltr" style="font-size:.65rem;opacity:.5">'+esc(c)+'</p><button class="gb" data-a="home">رجوع</button>');}
 function leave(){try{if(es)es.close();}catch(e){}es=null;MA={};room=null;code='';qs=null;isHost=false;clearTimeout(hostTimer);clearTimeout(early);early=null;fin={};qStart=0;lastQ=-1;gotFirst=false;hostName='';}
+var offKnown=false;
+(function(){try{var o=localStorage.getItem('esb:off');if(o!==null&&o!==''&&!isNaN(+o)){off=+o;offKnown=true;}}catch(e){}})();
+function saveOff(){try{localStorage.setItem('esb:off',String(off));}catch(e){}}
+function syncQ(live){if(!room||!room.qts){if(!isHost)qStart=Date.now();return;}
+  if(live){var e=room.qts-Date.now();if(!offKnown||e>off){off=e;offKnown=true;saveOff();}}
+  qStart=room.qts-off;}
 var SK='esb:sess',resuming=false;
 function saveSess(){try{localStorage.setItem(SK,JSON.stringify({c:code,h:isHost?1:0,n:isHost?hostName:myName,t:Date.now()}));}catch(e){}}
 function clearSess(){try{localStorage.removeItem(SK);localStorage.removeItem(MAK);}catch(e){}}
@@ -1203,7 +1209,7 @@ function resume(s){if(resuming)return;resuming=true;leave();
         if(!sec||!sec.qs){clearSess();home();gDlg('تعذّرت استعادة الغرفة لأن أسئلتها غير متاحة',null,'⚠️');return;}
         qs=Array.isArray(sec.qs)?sec.qs:Object.keys(sec.qs).map(function(k){return sec.qs[k];});
         code=s.c;isHost=true;hostName=s.n||'';fin={};view='host';
-        if(r.ph==='q'){var i=r.i;qStart=Date.now();hostTimer=setTimeout(function(){finish(i);},(r.dur||15)*1000+900);}
+        if(r.ph==='q'){var i=r.i,d0=(r.dur||15)*1000;qStart=r.qts?r.qts-off:Date.now();hostTimer=setTimeout(function(){finish(i);},Math.max(300,qStart+d0+900-Date.now()));}
         saveSess();watch();});
     }
     if(!r.players||!r.players[uid]){clearSess();home();gDlg('لم تعد ضمن هذه الغرفة',null,'🚫');return;}
@@ -1303,14 +1309,14 @@ function setAt(root,path,val,merge){var ks=path.split('/').filter(Boolean),i,cur
 function onEv(ev){var d;try{d=JSON.parse(ev.data);}catch(e){return;}if(!d)return;
   room=setAt(room,d.path||'/',d.data,ev.type==='patch');
   if(!room){if(view!=='home'&&gotFirst){clearSess();alert('أُغلقت الغرفة');home();}return;}
-  gotFirst=true;
-  if(!isHost&&room.ph==='q'&&room.i!==lastQ){lastQ=room.i;qStart=Date.now();}
+  var live=gotFirst;gotFirst=true;
+  if(room.ph==='q'&&room.i!==lastQ){lastQ=room.i;syncQ(live);}
   if(isHost&&room.ph==='q'){var ps=Object.keys(room.players||{}).length,an=Object.keys(ansOf(room.i)).length;if(ps&&an>=ps&&!early&&!fin[room.i]){early=setTimeout(function(){finish(room.i);},250);}}
   draw();}
 function watch(){st('جارٍ فتح الغرفة…');U('rooms/'+code).then(function(u){es=new EventSource(u);es.addEventListener('put',onEv);es.addEventListener('patch',onEv);es.addEventListener('auth_revoked',function(){var s=getSess();if(s){resume(s);}else fail({code:'auth_revoked'});});}).catch(fail);}
 var lastErr=null;
 function tryCreate(k,du,tp){if(k>6)return Promise.reject(lastErr||{code:'unknown'});var c=String(1000+Math.floor(Math.random()*9000));st('جارٍ تجهيز الغرفة…');
-  return dbSet('rooms/'+c,{host:uid,ph:'lobby',i:-1,n:qs.length,dur:du,topic:tp}).then(function(){code=c;isHost=true;fin={};if(hostName)dbSet('rooms/'+c+'/players/'+uid,{n:hostName}).catch(function(){});dbSet('secrets/'+c,{qs:qs}).catch(function(){});view='host';saveSess();watch();},function(e){lastErr=e;if(e&&e.code!=='PERMISSION_DENIED')return Promise.reject(e);return tryCreate(k+1,du,tp);});}
+  return dbSet('rooms/'+c,{host:uid,ph:'lobby',i:-1,n:qs.length,dur:du,topic:tp}).then(function(){code=c;isHost=true;fin={};if(hostName)dbSet('rooms/'+c+'/players/'+uid,{n:hostName}).catch(function(){});dbSet('secrets/'+c,{qs:qs}).catch(function(){});view='host';offKnown=false;saveSess();watch();},function(e){lastErr=e;if(e&&e.code!=='PERMISSION_DENIED')return Promise.reject(e);return tryCreate(k+1,du,tp);});}
 function create(){var tp=gv('tp'),du=+gv('du'),nr=parseInt(gv('nq'),10)||10;var hp=R.querySelector('#hp');hostName=(hp&&!hp.checked)?'':((gv('hn')||'').trim().slice(0,16)||'المضيف');try{localStorage.setItem('esb:gname',hostName);}catch(e){}
   app(head('جارٍ إنشاء الغرفة…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){st('جارٍ تحميل الأسئلة…');return loadBank();}).then(function(){var P=pool(tp),nq=Math.max(1,Math.min(P.length,nr));if(!P.length){app(head('لا توجد أسئلة في هذا الصنف بعد.')+(bankErr?'<p class="gn" dir="ltr" style="font-size:.7rem">'+esc(bankErr)+'</p>':'')+'<button class="gb" data-a="setup">رجوع</button>');return;}
@@ -1319,7 +1325,7 @@ function join(){var c=gv('cd').trim(),n=gv('nm').trim();if(!/^\d{4}$/.test(c)||!
   app(head('جارٍ الدخول…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){return dbGet('rooms/'+c);}).then(function(r){
     if(r===null||r===undefined){alert('الرمز غير صحيح');joinv();return;}
-    if(r.kicked&&r.kicked[uid]){gDlg('تم طردك من قبل المالك',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';saveSess();watch();});}).catch(fail);}
+    if(r.kicked&&r.kicked[uid]){gDlg('تم طردك من قبل المالك',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';offKnown=false;saveSess();watch();});}).catch(fail);}
 function next(){if(!isHost||!room||room.ph==='q')return;var i=room.i+1;
   if(i>=room.n){dbUpd('rooms/'+code,{ph:'end'}).catch(fail);return;}
   var q=qs[i];clearTimeout(early);early=null;fin[i]=0;qStart=Date.now();

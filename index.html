@@ -228,6 +228,7 @@ body.app #bar a{border:1.5px solid var(--line);background:#101a36;border-radius:
 .quiz .solbox{background:#12372c;color:#9be7c0}
 .hmenu{background:none;border:0;cursor:pointer;padding:8px 0;display:flex;flex-direction:column;gap:7px;-webkit-tap-highlight-color:transparent}
 .hmenu i{display:block;height:3px;border-radius:2px;background:#fff;width:34px}.hmenu i:nth-child(3){width:20px}
+.hmenu{align-items:center;justify-content:center;color:#fff;width:44px;height:44px;padding:6px}.hmenu svg{width:32px;height:32px;display:block;transition:transform .35s}.hmenu:active svg{transform:rotate(60deg)}
 body[data-fs="1"] main.page,body[data-fs="1"] #view:not(.hm){zoom:1.1}
 body[data-fs="2"] main.page,body[data-fs="2"] #view:not(.hm){zoom:1.22}
 body[data-fs="3"] main.page,body[data-fs="3"] #view:not(.hm){zoom:1.36}
@@ -439,6 +440,13 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 #gameApp .lbmeta span{padding:8px 15px}
 #gameApp .lbstart2{margin:0 0 8px}
 #sndb svg{display:block;margin:auto;pointer-events:none}
+</style>
+<style>#stg h3{-webkit-user-select:none;user-select:none}
+#stg .dv{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+#stg .dv h4{margin:0 0 6px;font-size:1rem}
+#stg .dv .dm{margin:0 0 8px;font-size:.8rem;opacity:.65;word-break:break-all}
+#stg .dv button{display:block;width:100%;margin:6px 0;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:center}
+#stg .dv button.dgr{color:#e0475b;border-color:rgba(224,71,91,.45)}
 </style>
 </head>
 <body class="app">
@@ -789,7 +797,7 @@ function home(){
  +'<div class="cd pg"><div class="tr"><i style="width:'+pc+'%"></i></div><div class="tx">تقدّمك<b>'+pc+'%</b></div></div>'
  +last+srsHome()+gameCard()+'<div class="gr">'+t+'</div>';}
 function meGroups(d){var t='';['0','A','B','C','V','R'].forEach(function(k){var g=G[k],n=0,c=0;g.lv.forEach(function(l){n+=l.les.length;l.les.forEach(function(x){if(d.indexOf(x.id)>=0)c++;});});var p=n?Math.round(c/n*100):0;t+='<div class="cd gp"><span class=gt>'+g.i+' '+g.n+'</span><div class=tr><i style="width:'+p+'%"></i></div><span class=gn>'+c+'/'+n+'</span></div>';});var sc=srsStats();t+='<div class="cd">🃏 البطاقات: أتقنت '+sc.learned+' · قيد المراجعة '+sc.seen+' من '+sc.total+'</div>';return t;}
-function me(){var d=doneSet();return '<div class="me"><h2>👤 حسابي</h2><div class="cd">أنهيت '+d.length+' من '+order.length+' صفحة</div>'+meGroups(d)+'<button onclick="try{localStorage.removeItem(\'es_done\');localStorage.removeItem(\'es_last\');}catch(e){}location.hash=\'#/\';location.reload()">إعادة ضبط التقدّم</button><button onclick="esbBackup()">💾 نسخة احتياطية</button><button onclick="esbRestore()">📂 استعادة نسخة</button></div>';}
+function me(){var d=doneSet();return '<div class="me"><h2>👤 حسابي</h2><div class="cd">أنهيت '+d.length+' من '+order.length+' صفحة</div>'+meGroups(d)+'<button onclick="try{localStorage.removeItem(\'es_done\');localStorage.removeItem(\'es_last\');}catch(e){}location.hash=\'#/\';location.reload()">إعادة ضبط التقدّم</button></div>';}
 function group(k){var g=G[k],t='',all='';
  g.lv.forEach(function(l){t+='<a class="tile lv" href=#/l/'+l.key+'><b>'+l.code+'</b><small>'+esc(l.name)+' · '+l.les.filter(function(x){return doneSet().indexOf(x.id)>=0;}).length+'/'+l.les.length+' صفحة</small></a>';
   all+='<h4>'+l.code+' – '+esc(l.name)+'</h4>'+l.les.map(function(x){return '<a href=#'+x.id+'>'+esc(x.b+' '+x.t)+'</a>';}).join('');});
@@ -902,7 +910,7 @@ function homeNew(){
  var cal='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18"/><rect x="7" y="14" width="3" height="3" fill="currentColor"/></svg>';
  var book='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6.5C10.3 5.2 7.8 4.6 3 4.8v13c4.6-.2 7.2.4 9 1.7 1.8-1.3 4.4-1.9 9-1.7v-13c-4.8-.2-7.3.4-9 1.7zM11 8.3v9.1c-1.7-.7-3.7-1-6-1.1V6.8c2.3.1 4.3.5 6 1.5zm2 0c1.7-1 3.7-1.4 6-1.5v9.5c-2.3.1-4.3.4-6 1.1z"/></svg>';
  var tim='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 2.5h5M19 5l1.5 1.5"/></svg>';
- return '<header class="hhero"><div class="htop"><div class="hbrand"><div class="hlogo">ñ</div><div class="hnm"><span class="hname">Benzañol</span><span class="hsub">الإسبانية من الصفر إلى الاحتراف</span></div></div><button type="button" class="hmenu" id="hmenu" aria-label="الإعدادات"><i></i><i></i><i></i></button></div><p class="hwel">مرحبًا بك! تعلّم الإسبانية خطوة بخطوة وبطريقة سهلة وممتعة</p></header>'
+ return '<header class="hhero"><div class="htop"><div class="hbrand"><div class="hlogo">ñ</div><div class="hnm"><span class="hname">Benzañol</span><span class="hsub">الإسبانية من الصفر إلى الاحتراف</span></div></div><button type="button" class="hmenu" id="hmenu" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div><p class="hwel">مرحبًا بك! تعلّم الإسبانية خطوة بخطوة وبطريقة سهلة وممتعة</p></header>'
  +'<div class="hwrap">'
  +'<a class="hcard hprog" href="#/me">'+CH+'<div class="hlvl">'+ln[0]+'<br>'+ln[1]+'</div><div class="hmid"><b>تقدّمك في التعلم</b><div class="hrow"><span class="hpct">'+pc+'%</span><div class="hbar"><span style="width:'+Math.max(pc,4)+'%"></span></div></div></div><div class="htarget">'+tgt+'</div></a>'
  +'<a class="hcard hbig hgo" href="#'+idL+'"><div class="hico"><svg width="36" height="36" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div><div class="htx"><h2>تابع من حيث توقفت</h2><p>'+(has?'استكمل دراستك من آخر درس قمت به':'ابدأ رحلتك من الدرس الأول')+'</p><span class="hchip">'+cal+'الدرس '+ixL+' من '+nL+'</span></div>'+CH+'</a>'
@@ -1020,14 +1028,23 @@ ESL.onPages(function(ms){ms.forEach(function(root){
  function set(v){try{localStorage.setItem(K,String(v))}catch(e){}b.setAttribute('data-fs',v)}
  b.setAttribute('data-fs',get());
  var sh=document.createElement('div');sh.id='stg';
- sh.innerHTML='<div class="sh" role="dialog" aria-label="الإعدادات"><div class="gp"></div><h3>الإعدادات</h3><p>حجم الخط في الدروس والشاشات</p><div class="fz"><button data-v="0">صغير</button><button data-v="1">متوسط</button><button data-v="2">كبير</button><button data-v="3">أكبر</button></div><div class="pv">Hola, me llamo Karim. Vivo en Madrid.<br>مرحباً، اسمي كريم. أسكن في مدريد.</div><button class="cl" type="button">تم</button></div>';
+ sh.innerHTML='<div class="sh" role="dialog" aria-label="الإعدادات"><div class="gp"></div><h3>الإعدادات</h3><p>حجم الخط في الدروس والشاشات</p><div class="fz"><button data-v="0">صغير</button><button data-v="1">متوسط</button><button data-v="2">كبير</button><button data-v="3">أكبر</button></div><div class="pv">Hola, me llamo Karim. Vivo en Madrid.<br>مرحباً، اسمي كريم. أسكن في مدريد.</div><div id="stdev"></div><button class="cl" type="button">تم</button></div>';
  b.appendChild(sh);
  function mark(){var v=get();[].forEach.call(sh.querySelectorAll('.fz button'),function(x){x.classList.toggle('on',+x.dataset.v===v)});}
  sh.addEventListener('click',function(e){
   if(e.target===sh||e.target.classList.contains('cl')){sh.classList.remove('on');return;}
   var t=e.target.closest('.fz button');if(t){set(+t.dataset.v);mark();}
  });
- document.addEventListener('click',function(e){if(e.target.closest('#hmenu')){mark();sh.classList.add('on');}});
+ function devRender(){var box=sh.querySelector('#stdev');box.className='';box.innerHTML='';var g=window.gDev;if(!g||!g.logged())return;
+ g.isAdmin().then(function(ok){if(!ok||!sh.classList.contains('on'))return;box.className='dv';
+  box.innerHTML='<h4>المطوّر</h4><p class="dm" dir="ltr"></p><button type="button" data-d="qm">إدارة الأسئلة (Mis preguntas)</button><button type="button" data-d="bk">نسخة احتياطية للتقدم</button><button type="button" data-d="rs">استعادة نسخة</button><button type="button" data-d="id">عرض المعرّف</button><button type="button" data-d="out" class="dgr">تسجيل الخروج</button>';
+  box.querySelector('.dm').textContent=g.email();}).catch(function(){});}
+document.addEventListener('click',function(e){if(e.target.closest('#hmenu')){mark();sh.classList.add('on');devRender();}});
+sh.addEventListener('click',function(e){var d=e.target.closest('[data-d]');if(!d)return;var k=d.dataset.d,g=window.gDev;
+ if(k==='bk'){window.esbBackup();return;}if(k==='rs'){window.esbRestore();return;}
+ sh.classList.remove('on');if(!g)return;if(k==='qm')g.go('qm');else if(k==='id')g.id();else if(k==='out')g.logout();});
+var tc=0,tt=0;sh.querySelector('h3').addEventListener('click',function(){var n=Date.now(),g=window.gDev;if(n-tt>2500)tc=0;tt=n;if(++tc>=5){tc=0;if(g&&!g.logged()){sh.classList.remove('on');g.go('login');}}});
+
 })();
 </script>
 <script>try{if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}if(window.caches){caches.keys().then(function(k){k.forEach(function(x){if(x.indexOf('benzina')===0)caches.delete(x);});}).catch(function(){});}}catch(e){}</script>
@@ -1150,7 +1167,7 @@ function resume(s){if(resuming)return;resuming=true;leave();
     if(!r.players||!r.players[uid]){clearSess();home();gDlg('Ya no formas parte de esta sala',null,'🚫');return;}
     code=s.c;myName=s.n||'';isHost=false;view='play';saveSess();watch();
   }).catch(function(e){if(e&&e.code==='PERMISSION_DENIED')clearSess();fail(e);}).then(function(){resuming=false;});}
-function home(){view='home';leave();app(head('Crea una sala y comparte su código con tus amigos, o entra a una sala con un código.')+'<button class="gb" data-a="setup">➕ Crear sala</button><button class="gb alt" data-a="joinv">🔑 Entrar con código</button>'+gSec());admChk().then(function(){if(view!=='home'||!R)return;var gs=R.querySelector('#gsec'),ga=R.querySelector('#gadm');if(ga)ga.textContent=isAdm?'✅ Admin':'';if(isAdm&&!R.querySelector('[data-a="qm"]')){if(gs)gs.insertAdjacentHTML('beforebegin','<button class="gb alt" data-a="qm">✏️ Mis preguntas</button>');else R.insertAdjacentHTML('beforeend','<button class="gb alt" data-a="qm">✏️ Mis preguntas</button>');}});}
+function home(){view='home';leave();app(head('Crea una sala y comparte su código con tus amigos, o entra a una sala con un código.')+'<button class="gb" data-a="setup">➕ Crear sala</button><button class="gb alt" data-a="joinv">🔑 Entrar con código</button>');}
 function setup(){view='setup';var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'">'+TOPICS[k]+' ('+poolL(k,setLv).length+')</option>';}).join('');
   app(head('Configurar la sala')+'<div class="gc"><label>Categoría</label><select id="tp">'+t+'</select><label>Nivel</label><select id="lv">'+['all'].concat(LEVELS).map(function(l){return '<option value="'+l+'"'+(l===setLv?' selected':'')+'>'+(l==='all'?'Todos':l)+'</option>';}).join('')+'</select><label>Número de preguntas</label><input id="nq" type="number" min="1" value="10" inputmode="numeric"><p class="gn" id="hint"></p><label style="font-size:1rem;color:var(--ink)"><input type="checkbox" id="hp" checked style="width:auto;margin-right:8px">Yo también juego</label><label>Tu nombre como jugador</label><input id="hn" maxlength="16" dir="auto" placeholder="Anfitrión" value="'+esc(lastName())+'">'+avPick()+'<label>Tiempo por pregunta</label><select id="du"><option value="10">10 segundos</option><option value="15" selected>15 segundos</option><option value="20">20 segundos</option></select></div><button class="gb" data-a="create">Crear sala</button><button class="gb alt" data-a="home">Volver</button>');hint();loadBank().then(refreshSetup);}
 function refreshSetup(){if(view!=='setup'||!R)return;var t=R.querySelector('#tp');if(!t)return;[].forEach.call(t.options,function(o){o.textContent=TOPICS[o.value]+' ('+poolL(o.value,curLv()).length+')';});hint();}
@@ -1541,7 +1558,15 @@ function lbMeta(){if(!room)return '';var sv=function(p){return '<svg viewBox="0 
   tp=(typeof TI!=='undefined'&&TI[room.topic])?TI[room.topic][2]:'',
   qn=n+(n===1?' pregunta':' preguntas'),lvc=/^(A1|A2|B1|B2|C1|C2)$/.test(room.lv||'')?'<span>'+sv('<path d="M3 20h18M7 20v-6M12 20V8M17 20v-9"/>')+room.lv+'</span>':'';
   return '<div class="lbmeta">'+(tp?'<span>'+sv('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/>')+tp+'</span>':'')+lvc+(n?'<span>'+sv('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01"/>')+qn+'</span>':'')+(d?'<span>'+sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>')+d+' s</span>':'')+'<span>🔥 Bonus de racha</span></div>';}
-window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
+var gPend='';
+function gDevRun(){var w=gPend;gPend='';if(!w||view!=='home')return;if(w==='qm')admChk().then(function(a){if(a&&view==='home')qm();});else if(w==='login')aForm();}
+function devLogout(){leave();clearSess();forgetAuth();uid=null;try{localStorage.removeItem('esb:gmail');}catch(e){}isAdm=false;admDone=false;admP=null;siP=null;if(R&&R.isConnected)home();else view='home';}
+window.gDev={logged:function(){return !!gmail();},email:function(){return gmail();},isAdmin:function(){return admChk();},
+  id:function(){return signIn().then(gCopy);},logout:devLogout,
+  go:function(w){var here=R&&R.isConnected&&location.hash==='#/room';
+    if(here){if(view==='host'||view==='play'){gDlg('Termina o abandona la partida antes de abrir esto.',null,'\u26a0\ufe0f');return;}gPend=w;if(view!=='home')home();gDevRun();return;}
+    gPend=w;location.hash='#/room';}};
+window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else{home();gDevRun();}}gPend='';};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>
 <style id="gfs">

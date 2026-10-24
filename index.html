@@ -1720,4 +1720,13 @@ body.app.gfs #gameApp .awd.me{background:rgba(43,199,154,.16);outline-color:#2bc
 #gameApp .uvw button,#gameApp .ubar button{font:inherit;cursor:pointer;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:4px 10px;min-height:38px}
 #gameApp .uvw button.on{border-color:var(--teal);background:var(--tealbg);font-weight:700}
 </style>
+<style id="gqh">
+/* question header row: counter | timer (exact center) | streak — compact and symmetric */
+body.app.gfs #gameApp .qh,body.gq-host.app.gfs #gameApp .qh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:8px;margin:2px 0 8px;min-height:52px}
+body.app.gfs #gameApp .qh .qpill{grid-row:1;height:34px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 14px;font-size:.92rem;font-weight:800;letter-spacing:.03em;white-space:nowrap;border-radius:999px}
+body.app.gfs #gameApp .qh .qpill:not(.stkb){grid-column:1;justify-self:start}
+body.app.gfs #gameApp .qh .qpill.stkb{grid-column:3;justify-self:end;padding:0 12px;letter-spacing:0;gap:4px}
+body.app.gfs #gameApp .qh .gtm,body.gq-host.app.gfs #gameApp .qh .gtm{grid-column:2;grid-row:1;justify-self:center;width:52px!important;height:52px!important;font-size:1.35rem!important;border-width:3px;box-shadow:0 0 0 4px rgba(43,199,154,.14),0 6px 16px rgba(0,0,0,.32)}
+body.app.gfs #gameApp .qh .gtm.low{box-shadow:0 0 0 4px rgba(255,77,109,.18),0 6px 16px rgba(0,0,0,.32)}
+</style>
 </body></html>

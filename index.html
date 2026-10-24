@@ -974,19 +974,19 @@ function homeNew(){
 function gameCard(){return '<a class="go" href=#/game><span class="pl">⚡</span><div><b>تحدي السرعة</b><span>أجب قبل انتهاء الوقت</span><em>أفضل نتيجة: '+gBest()+'</em></div></a>';}
 
 
-var SGI={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',mix:'<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',words:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',tf:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',err:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',chev:'<path d="m6 9 6 6 6-6"/>',check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>'};
+var SGI={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',mix:'<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',words:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',tf:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',err:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',chev:'<path d="m6 9 6 6 6-6"/>',plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>'};
 function sgI(n,c){return '<svg class="gi'+(c?' '+c:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+SGI[n]+'</svg>';}
 function gUnitInfo(u){if(u==='all')return {n:'',t:'كل الوحدات'};var x=by[u]||{};return {n:x.b||'',t:x.t||u};}
 function gameHome(){var o=gOpts(),modes=[['mix','مزيج','#a98bff'],['words','كلمات','#35b9d9'],['tf','صح أم خطأ','#5bd16f'],['err','الأخطاء الشائعة','#ffb547']];
  var mt=modes.map(function(m){return '<button type="button" class="gmode'+(o.m===m[0]?' on':'')+'" data-m="'+m[0]+'" style="--c:'+m[2]+'"><i class="gmi">'+sgI(m[0])+'</i><b>'+m[1]+'</b><em class="gck">'+sgI('check')+'</em></button>';}).join('');
  var ui=gUnitInfo(o.u);
- var seg=function(k,arr,cur,suf){return '<div class="gseg" data-k="'+k+'">'+arr.map(function(v){return '<button type="button" class="'+(v===cur?'on':'')+'" data-v="'+v+'"><b>'+v+'</b><small>'+suf+'</small></button>';}).join('')+'</div>';};
+ var stp=function(k,val,suf,pre){return '<div class="gstp" data-k="'+k+'"><button type="button" class="gsm" data-d="1" aria-label="زيادة">'+sgI('plus')+'</button><label class="gsi"><input type="number" inputmode="numeric" min="1" max="999" value="'+val+'" dir="ltr" aria-label="'+suf+'"><small>'+suf+'</small></label><button type="button" class="gsm" data-d="-1" aria-label="إنقاص">'+sgI('minus')+'</button></div><div class="gpre" data-k="'+k+'">'+pre.map(function(v){return '<button type="button" class="'+(v===val?'on':'')+'" data-v="'+v+'">'+v+'</button>';}).join('')+'</div>';};
  return '<div class="sr gm gset"><h2 class="gt0"><i class="gtb">'+sgI('bolt')+'</i>تحدي السرعة</h2><p class="sb">أجب قبل انتهاء الوقت! أسئلة سريعة من مفرداتك ومن أخطائك الشائعة.</p>'
   +'<div class="gbest">'+sgI('trophy')+'<span>أفضل نتيجة</span><b>'+gBest()+'</b></div>'
   +'<div class="gl">'+sgI('list')+'نوع الأسئلة</div><div class="gmodes">'+mt+'</div>'
   +'<div class="gl">'+sgI('grid')+'الوحدة (للكلمات)</div><button type="button" class="gsel" id="gunit"><span class="gsb">'+(ui.n!==''?esc(String(ui.n)):sgI('grid'))+'</span><span class="gst">'+esc(ui.t)+'</span>'+sgI('chev','gch')+'</button>'
-  +'<div class="gl">'+sgI('clock')+'الوقت لكل سؤال</div>'+seg('t',[5,6,8],o.t,'ثوانٍ')
-  +'<div class="gl">'+sgI('hash')+'عدد الأسئلة</div>'+seg('n',[10,20],o.n,'سؤالاً')
+  +'<div class="gl">'+sgI('clock')+'الوقت لكل سؤال</div>'+stp('t',o.t,'ثانية لكل سؤال',[5,8,10,15,30])
+  +'<div class="gl">'+sgI('hash')+'عدد الأسئلة</div>'+stp('n',o.n,'سؤالاً',[10,20,30,50])
   +'<button class="bt" id="ggo">ابدأ التحدي</button></div>';}
 function gUnitClose(){var d=D.getElementById('gsh');if(d)d.remove();D.body.style.overflow='';}
 function gUnitSheet(){gUnitClose();var cur=gOpts().u,rows=[['all','','كل الوحدات']];
@@ -998,9 +998,17 @@ function gUnitSheet(){gUnitClose();var cur=gOpts().u,rows=[['all','','كل ال�
  [].forEach.call(d.querySelectorAll('.gsr'),function(b){b.onclick=function(){setOpt('es_game_u',b.dataset.u);gUnitClose();view.innerHTML=gameHome();gWire();};});
  var on=d.querySelector('.gsr.on');if(on)setTimeout(function(){try{on.scrollIntoView({block:'center'});}catch(e){}},30);}
 D.addEventListener('keydown',function(e){if(e.key==='Escape')gUnitClose();});
+function gKey(k){return k==='t'?'es_game_t':'es_game_n';}
+function gSync(k,v){$$('.gpre[data-k="'+k+'"] button').forEach(function(b){b.classList.toggle('on',+b.dataset.v===v);});}
+function gSet(k,v,inp){v=parseInt(v,10);if(!(v>=1))v=1;if(v>999)v=999;setOpt(gKey(k),String(v));if(inp)inp.value=v;gSync(k,v);}
 function gWire(){
  $$('.gmode').forEach(function(b){b.onclick=function(){setOpt('es_game_m',b.dataset.m);$$('.gmode').forEach(function(x){x.classList.toggle('on',x===b);});};});
- $$('.gseg').forEach(function(sg){[].forEach.call(sg.children,function(b){b.onclick=function(){setOpt(sg.dataset.k==='t'?'es_game_t':'es_game_n',b.dataset.v);[].forEach.call(sg.children,function(x){x.classList.toggle('on',x===b);});};});});
+ $$('.gstp').forEach(function(w){var k=w.dataset.k,inp=w.querySelector('input');
+  inp.onfocus=function(){try{inp.select();}catch(e){}};
+  inp.oninput=function(){var v=parseInt(inp.value,10);if(v>=1){v=Math.min(v,999);setOpt(gKey(k),String(v));gSync(k,v);}};
+  inp.onblur=function(){gSet(k,inp.value>=1?inp.value:gOpts()[k],inp);};
+  [].forEach.call(w.querySelectorAll('.gsm'),function(b){b.onclick=function(){gSet(k,(parseInt(inp.value,10)||gOpts()[k])+(+b.dataset.d),inp);};});});
+ $$('.gpre button').forEach(function(b){b.onclick=function(){var k=b.parentNode.dataset.k,inp=$('.gstp[data-k="'+k+'"] input');gSet(k,b.dataset.v,inp);};});
  var gu=$('#gunit');if(gu)gu.onclick=gUnitSheet;
  var go=$('#ggo');if(go)go.onclick=gStart;}
 function gStop(){gUnitClose();if(GM&&GM.timer){clearInterval(GM.timer);GM.timer=null;}}
@@ -1823,5 +1831,18 @@ body.app.gfs #gameApp .qh .gtm.low{box-shadow:0 0 0 4px rgba(255,77,109,.18),0 6
 .lsn .sb{margin:0 4px 16px}
 .hct,.hct:hover,.hct:active,.hct:visited{text-decoration:none}
 .hct *{text-decoration:none}
+</style>
+<style id="gfree">
+.gm.gset .gstp{display:flex;align-items:stretch;gap:10px}
+.gm.gset .gsm{flex:none;width:58px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);color:var(--teal);display:grid;place-items:center;cursor:pointer;padding:0;transition:border-color .15s,transform .1s}
+.gm.gset .gsm:active{border-color:var(--teal);transform:scale(.95)}
+.gm.gset .gsm .gi{width:22px;height:22px;stroke-width:2.4}
+.gm.gset .gsi{flex:1;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;border-radius:16px;border:1.5px solid var(--teal);background:linear-gradient(135deg,#0f3b3d,#0c2d33);box-shadow:0 0 0 1px var(--teal) inset;color:var(--sub);font-weight:400}
+.gm.gset .gsi input{width:100%;background:transparent;border:0;outline:0;box-shadow:none;text-align:center;color:var(--teal);font:inherit;font-size:1.8rem;font-weight:800;line-height:1.15;padding:0;margin:0;-moz-appearance:textfield;appearance:textfield}
+.gm.gset .gsi input::-webkit-outer-spin-button,.gm.gset .gsi input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.gm.gset .gsi small{font-size:.78rem;color:var(--sub)}
+.gm.gset .gpre{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.gm.gset .gpre button{flex:1;min-width:46px;padding:7px 8px;border-radius:12px;border:1.5px solid #233463;background:transparent;color:var(--sub);font:inherit;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+.gm.gset .gpre button.on{border-color:var(--teal);color:var(--teal);background:rgba(43,199,154,.1)}
 </style>
 </body></html>

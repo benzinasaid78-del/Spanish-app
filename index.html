@@ -1076,12 +1076,12 @@ var CFG={apiKey:"AIzaSyCc6noynOfYlH_iJQUx1LuIBpR6rN3lZI8",authDomain:"spanish-b3
 var R=null;
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 var SH=['▲','◆','●','■'];
-var TOPICS={gram:'Gramática',verb:'Verbos',voc:'Vocabulario',exp:'Expresiones'};
-var BANK={gram:[],verb:[],voc:[],exp:[]};
+var TOPICS={gram:'Gramática',verb:'Verbos',voc:'Vocabulario',exp:'Expresiones',tf:'Verdadero o falso'};
+var BANK={gram:[],verb:[],voc:[],exp:[],tf:[["«Mesa» es una palabra femenina.", "Verdadero", "Falso"], ["Se dice «el problema», no «la problema».", "Verdadero", "Falso"], ["«Mano» es una palabra masculina.", "Falso", "Verdadero"], ["La palabra «día» es masculina.", "Verdadero", "Falso"], ["«Agua» es femenina, pero se dice «el agua».", "Verdadero", "Falso"], ["La palabra «teléfono» lleva tilde.", "Verdadero", "Falso"], ["La palabra «café» se escribe sin tilde.", "Falso", "Verdadero"], ["La letra «h» siempre se pronuncia en español.", "Falso", "Verdadero"], ["La «ñ» es una letra del alfabeto español.", "Verdadero", "Falso"], ["En español, las preguntas empiezan con «¿».", "Verdadero", "Falso"], ["«Hola» se escribe con «h» al principio.", "Verdadero", "Falso"], ["«Yo soy» es una forma del verbo «ser».", "Verdadero", "Falso"], ["«Nosotros tenemos» es una forma del verbo «tener».", "Verdadero", "Falso"], ["«Yo voy» es una forma del verbo «ir».", "Verdadero", "Falso"], ["«Ellos hablamos» es una frase correcta.", "Falso", "Verdadero"], ["«Tú tienes» es una forma del verbo «tener».", "Verdadero", "Falso"], ["«Yo estoy» es una forma del verbo «ser».", "Falso", "Verdadero"], ["«Fui» es una forma del verbo «ir» en pretérito.", "Verdadero", "Falso"], ["«Vosotros habláis» se usa sobre todo en España.", "Verdadero", "Falso"], ["El participio de «hacer» es «hacido».", "Falso", "Verdadero"], ["«Rojo» es un color.", "Verdadero", "Falso"], ["«Temprano» es lo contrario de «tarde».", "Verdadero", "Falso"], ["«Frío» es lo contrario de «caliente».", "Verdadero", "Falso"], ["Los perros maúllan.", "Falso", "Verdadero"], ["«Sábado» y «domingo» son días del fin de semana.", "Verdadero", "Falso"], ["«Treinta» es el número 13.", "Falso", "Verdadero"], ["«Quince» es el número 50.", "Falso", "Verdadero"], ["El adjetivo concuerda con el sustantivo en género y número.", "Verdadero", "Falso"], ["Se dice «unos casas».", "Falso", "Verdadero"], ["«Las manos» es el plural de «la mano».", "Verdadero", "Falso"], ["En español, el sujeto siempre es obligatorio.", "Falso", "Verdadero"], ["«Me gusta los libros» es una frase correcta.", "Falso", "Verdadero"], ["«Soy profesor» usa el verbo «ser» para decir la profesión.", "Verdadero", "Falso"], ["«Estoy en casa» usa el verbo «estar» para decir dónde estás.", "Verdadero", "Falso"], ["«Voy a Madrid» lleva la preposición «a».", "Verdadero", "Falso"], ["Se dice «más mejor».", "Falso", "Verdadero"], ["«Gracias» se usa para saludar por la mañana.", "Falso", "Verdadero"], ["«Buenas noches» se dice al despedirse por la noche.", "Verdadero", "Falso"], ["El plural de «lápiz» es «lápices».", "Verdadero", "Falso"], ["El plural de «pez» es «pezes».", "Falso", "Verdadero"], ["«Nosotros» es un pronombre de singular.", "Falso", "Verdadero"], ["«Yo tienes» es una frase correcta.", "Falso", "Verdadero"]]};
 var uid=null,auth=null,off=0,view='home',code='',myName='',isHost=false,room=null,es=null,qs=null,hostTimer=null,early=null,fin={},qStart=0,lastQ=-1,gotFirst=false,hostName='';
 function lastName(){try{return localStorage.getItem('esb:gname')||'';}catch(e){return '';}}
 function now(){return Date.now()+off;}
-function app(h){R.innerHTML=h;R.toggleAttribute('data-rtl',view==='qm');fsSync();}
+function app(h){R.innerHTML=h;R.toggleAttribute('data-rtl',view==='qm');R.toggleAttribute('data-tf',tfNow());fsSync();}
 function fsSync(){var on=!!(room&&code&&(view==='host'||view==='play'));document.body.classList.toggle('gfs',on);
 if(on){var bar=document.getElementById('bar');if(bar&&!document.getElementById('gtools')){var tl=document.createElement('span');tl.id='gtools';
 var sb=document.createElement('button');sb.id='sndb';sb.type='button';sb.onclick=sToggle;tl.appendChild(sb);
@@ -1335,14 +1335,14 @@ function tryCreate(k,du,tp){if(k>6)return Promise.reject(lastErr||{code:'unknown
 function create(){var tp=gv('tp'),du=+gv('du'),nr=parseInt(gv('nq'),10)||10;var hp=R.querySelector('#hp');hostName=(hp&&!hp.checked)?'':((gv('hn')||'').trim().slice(0,16)||'Anfitrión');try{localStorage.setItem('esb:gname',hostName);}catch(e){}
   app(head('Creando la sala…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(admChk).then(function(){st('Cargando preguntas…');return loadBank();}).then(function(){var P=pool(tp),nq=Math.max(1,Math.min(P.length,nr));if(!P.length){app(head('Aún no hay preguntas en esta categoría.')+(bankErr?'<p class="gn" dir="ltr" style="font-size:.7rem">'+esc(bankErr)+'</p>':'')+'<button class="gb" data-a="setup">Volver</button>');return;}
-    qs=shuffle(P).slice(0,nq).map(function(r){var o=shuffle(r.slice(1));return {t:r[0],o:o,a:o.indexOf(r[1])};});return tryCreate(0,du,tp);}).catch(fail);}
+    qs=shuffle(P).slice(0,nq).map(function(r){var rest=r.slice(1);if(isTF(rest))return {t:r[0],o:['Verdadero','Falso'],a:/^verdadero$/i.test(String(r[1]).trim())?0:1};var o=shuffle(rest);return {t:r[0],o:o,a:o.indexOf(r[1])};});return tryCreate(0,du,tp);}).catch(fail);}
 function join(){var c=gv('cd').trim(),n=gv('nm').trim();if(!/^\d{4}$/.test(c)||!n){alert('Escribe un código de 4 dígitos y un apodo');return;}
   app(head('Entrando…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){return dbGet('rooms/'+c);}).then(function(r){
     if(r===null||r===undefined){alert('Código incorrecto');joinv();return;}
     if(r.kicked&&r.kicked[uid]){gDlg('El anfitrión te expulsó',null,'🚫');joinv();return;}
     if(r.createdAt&&Date.now()-r.createdAt-off>12*3600*1000){alert('Esta sala ha caducado');joinv();return;}if(r.ph&&r.ph!=='lobby'&&!(r.players&&r.players[uid])&&!(r.members&&r.members[uid])){gDlg('La partida ya empezó y no puedes unirte ahora. Espera la próxima o pide al anfitrión que cree una sala nueva.',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n,e:myAv}).catch(function(e){if(e&&e.code==='PERMISSION_DENIED')return dbSet('rooms/'+c+'/players/'+uid,{n:n});throw e;}).then(function(){if(r.ph==='lobby')dbSet('rooms/'+c+'/members/'+uid,true).catch(function(){});code=c;myName=n;isHost=false;view='play';offKnown=false;saveSess();watch();},function(e){if(e&&e.code==='PERMISSION_DENIED'){gDlg('No se pudo entrar: puede que la partida ya haya empezado o que no tengas permiso para esta sala.',null,'🚫');joinv();return;}throw e;});}).catch(fail);}
-function next(){if(!isHost||!room||room.ph==='q')return;if(room.ph==='lobby'&&!Object.keys(room.players||{}).some(function(k){return k!==uid;})){gDlg('Necesitas al menos un jugador además de ti para empezar.',null,'⚠️');return;}var i=room.i+1;
+function next(){if(!isHost||!room||room.ph==='q')return;var i=room.i+1;
   if(i>=room.n){dbUpd('rooms/'+code,{ph:'end'}).catch(fail);return;}
   var q=qs[i];clearTimeout(early);early=null;fin[i]=0;qStart=Date.now();
   dbUpd('rooms/'+code,{ph:'q',i:i,q:{t:q.t,o:q.o},rev:null,qts:{'.sv':'timestamp'}}).catch(fail);
@@ -1371,9 +1371,12 @@ function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;
   if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='cpcode')cpCode(b);else if(a==='closeq'){gConfirm('¿Cerrar la sala y sacar a todos?',close,1);}else if(a==='shlink')shLink();else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('¿Terminar la partida para todos?',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();else if(a==='av')avSet(b);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
+function isTF(a){if(!a||a.length!==2)return false;var x=String(a[0]).trim().toLowerCase(),y=String(a[1]).trim().toLowerCase();return (x==='verdadero'&&y==='falso')||(x==='falso'&&y==='verdadero');}
+function tfNow(){var q=room&&room.ph&&(isHost?(qs&&qs[room.i]):room.q);return !!(q&&q.o&&isTF(q.o));}
+function SHP(i){return tfNow()?['◆','▲'][i]:SH2[i];}
 function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}
 function qHead(){return '<div class="qh"><span class="qpill">'+(room.i+1)+' / '+room.n+'</span><div class="gtm" id="gtm">'+Math.ceil(pctLeft()/100*room.dur)+'</div></div><div class="gtb"><i id="gtbi" style="width:'+pctLeft()+'%"></i></div>';}
-function optBtn(o,i,mode,a){var c='go c'+i+(a>=0&&a!==i?' dim':''),h='<span class="sh">'+SH2[i]+'</span><span class="ot" dir="auto">'+esc(o)+'</span>';
+function optBtn(o,i,mode,a){var c='go c'+i+(a>=0&&a!==i?' dim':''),h='<span class="sh">'+SHP(i)+'</span><span class="ot" dir="auto">'+esc(o)+'</span>';
   return mode?'<button class="'+c+'" data-a="ans" data-v="'+i+'"'+(mode===2?' disabled':'')+'>'+h+'</button>':'<div class="'+c+'">'+h+'</div>';}
 function confetti(){var c='',cl=['#e21b3c','#1368ce','#ffa602','#26890c','#d6336c','#1f8a7a'];for(var i=0;i<36;i++)c+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;background:'+cl[i%6]+';animation-delay:'+(Math.random()*1.5).toFixed(2)+'s;animation-duration:'+(2.5+Math.random()*2).toFixed(2)+'s"></i>';return '<div class="conf">'+c+'</div>';}
 function podium(sc){var t=top(sc);if(!t.length)return '<p class="gn">Sin resultados</p>';var M=['🥇','🥈','🥉'],H=[150,112,84],D=[1.1,.7,.3],h='';
@@ -1386,7 +1389,7 @@ function hostScreen(){var p=plist(),q=qs&&qs[room.i];
   if(room.ph==='q'){var an=Object.keys(ansOf(room.i)).length,my0=ansOf(room.i)[uid],ma=my0?my0.a:-1;
     app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'':'')+'<div class="ansn">Han respondido '+an+' de '+p.length+'</div>');return;}
   if(room.ph==='rev'){var c=(room.rev&&room.rev.c)||[0,0,0,0],mx=Math.max.apply(null,c.concat([1]));
-    app('<p class="gs">Resultado</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SH2[i]+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>Clasificación</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'Resultado final':'Siguiente pregunta →')+'</button>');return;}
+    app('<p class="gs">Resultado</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SHP(i)+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>Clasificación</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'Resultado final':'Siguiente pregunta →')+'</button>');return;}
   if(room.ph==='end'){var more=rows(room.sc,3);
     app(confetti()+'<p class="gs">Fin de la partida</p>'+podium(room.sc)+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb" data-a="close">Cerrar sala</button>');}}
 function playerScreen(){var p=plist();
@@ -1400,7 +1403,7 @@ function playerScreen(){var p=plist();
   if(room.ph==='end'){var more=rows(sc,3);
     app((rank<=3?confetti():'')+'<p class="gs">Fin de la partida</p>'+podium(sc)+'<div class="res '+(rank<=3?'okr':'idl')+'"><div class="gbig">'+(['🥇','🥈','🥉'][rank-1]||'🎯')+'</div><div class="rt">Puesto '+rank+'</div><div class="rg">'+me+' puntos</div></div>'+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb alt" data-a="home">Salir</button>');}}
 setInterval(function(){var b=R&&R.querySelector('#gtbi');if(!b||!room||!qStart||room.ph!=='q')return;var f=pctLeft();b.style.width=f+'%';var lo=f<34;b.parentNode.classList.toggle('low',lo);var t=R.querySelector('#gtm');if(t)t.classList.toggle('low',lo);},200);
-var TI={gram:['📘','قواعد','Gramática'],verb:['🏃','أفعال','Verbos'],voc:['🔤','مفردات','Vocabulario'],exp:['💬','عبارات','Expresiones']};
+var TI={gram:['📘','قواعد','Gramática'],verb:['🏃','أفعال','Verbos'],voc:['🔤','مفردات','Vocabulario'],exp:['💬','عبارات','Expresiones'],tf:['✅','صح/خطأ','Verdadero o falso']};
 function mkPick(id,items,seg){var s=R&&R.querySelector('#'+id);if(!s)return;var o=R.querySelector('#pk_'+id);if(o)o.remove();s.style.display='none';
   var d=document.createElement('div');d.id='pk_'+id;d.className='pick'+(seg?' seg':'');
   d.innerHTML=items.map(function(it){return '<button type="button" data-a="pk" data-f="'+id+'" data-v="'+it.v+'" class="'+(String(s.value)===String(it.v)?'on':'')+'">'+it.h+'</button>';}).join('');
@@ -1461,7 +1464,7 @@ function runBoard(){var bd=R&&R.querySelector('#brd');if(!bd||bd.dataset.an!=='1
       rows.forEach(function(r){var a=+r.dataset.from,b=+r.dataset.to;r.style.top=(a+(b-a)*e)+'px';if(r.style.opacity==='0'&&f>.05)r.style.opacity=1;if(f>.5)r.querySelector('.bk').textContent=r.dataset.rank;});
       if(f<1)requestAnimationFrame(mv);else rows.forEach(function(r){r.style.top=r.dataset.to+'px';r.style.opacity=1;});})(m0);},1000);}
 function revHost(){var q=qs[room.i],c=(room.rev&&room.rev.c)||[0,0,0,0];
-  app('<div class="cab c'+q.a+'"><span>'+SH2[q.a]+' ✓</span><b dir="auto">'+esc(q.o[q.a])+'</b></div><div class="dist">'+[0,1,2,3].map(function(i){return '<span class="dk c'+i+(i===q.a?' ok':'')+'">'+SH2[i]+' '+(c[i]||0)+'</span>';}).join('')+'</div><div class="gc"><b>Clasificación</b>'+boardHtml()+'</div><button class="gb" data-a="next" style="margin-top:14px">'+(room.i+1>=room.n?'Resultado final':'Siguiente pregunta →')+'</button>');runBoard();}
+  app('<div class="cab c'+q.a+'"><span>'+SHP(q.a)+' ✓</span><b dir="auto">'+esc(q.o[q.a])+'</b></div><div class="dist">'+[0,1,2,3].map(function(i){return '<span class="dk c'+i+(i===q.a?' ok':'')+'">'+SHP(i)+' '+(c[i]||0)+'</span>';}).join('')+'</div><div class="gc"><b>Clasificación</b>'+boardHtml()+'</div><button class="gb" data-a="next" style="margin-top:14px">'+(room.i+1>=room.n?'Resultado final':'Siguiente pregunta →')+'</button>');runBoard();}
 function revPlayer(){var sc=room.sc||{},my=ansOf(room.i)[uid],a=my?my.a:-1,ok=!!((my&&room.rev&&my.a===room.rev.ans)||(room.rev&&room.rev.g&&room.rev.g[uid]>0)),me=sc[uid]?sc[uid].s:0,gain=(room.rev&&room.rev.g&&room.rev.g[uid]!=null)?room.rev.g[uid]:Math.max(0,me-((snapOf()[uid]||{}).s||0)),rk=ranked(entries(sc)).map(function(x){return x.u;}).indexOf(uid)+1;
   app('<div class="res sm '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'¡Correcto!':(a<0?'¡Se acabó el tiempo!':'Incorrecto'))+'</div><div class="rg">'+(ok?'+'+gain+' · ':'')+'Puesto '+rk+'</div></div><div class="gc"><b>Clasificación</b>'+boardHtml()+'</div>');runBoard();}
 var _hs3=hostScreen,_ps3=playerScreen;
@@ -1542,5 +1545,10 @@ body.app.inner:not(.lesson):not(.gfs) #view.page:not(.hm){flex:1 1 auto;align-se
 #gameApp[data-rtl] .gb,#gameApp[data-rtl] input,#gameApp[data-rtl] select,#gameApp[data-rtl] textarea,#gameApp[data-rtl] label,#gameApp[data-rtl] button{font-family:inherit}
 #gameApp .gs{text-align:center}
 #gdlg .dc{direction:ltr}
+</style>
+<style id="gtf">
+#gameApp[data-tf] .go.c0,#gameApp[data-tf] .cab.c0,#gameApp[data-tf] .dk.c0{background:#1368ce}
+#gameApp[data-tf] .go.c1,#gameApp[data-tf] .cab.c1,#gameApp[data-tf] .dk.c1{background:#e21b3c}
+#gameApp[data-tf] .go .ot{font-size:1.4rem;font-weight:800}
 </style>
 </body></html>

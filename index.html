@@ -1169,9 +1169,16 @@ function T(p,ms,code){return new Promise(function(res,rej){var t=setTimeout(func
 var KEY=CFG.apiKey,DBU=CFG.databaseURL.replace(/\/$/,'');
 function fx(url,o){return T(fetch(url,o).then(function(r){return r.text().then(function(t){var j=null;try{j=JSON.parse(t);}catch(e){}
   if(!r.ok){var m=j&&j.error;m=(m&&m.message)||m||r.status;throw {code:(typeof m==='string'&&/permission/i.test(m))?'PERMISSION_DENIED':String(m)};}return j;});}),15000,'timeout-db');}
-function signIn(){if(auth&&Date.now()<auth.exp)return Promise.resolve(auth);
-  if(auth&&auth.ref)return fx('https://securetoken.googleapis.com/v1/token?key='+KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(auth.ref)}).then(function(j){auth={uid:j.user_id,tok:j.id_token,ref:j.refresh_token,exp:Date.now()+(+j.expires_in-120)*1000};uid=auth.uid;return auth;});
-  return fx('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"returnSecureToken":true}'}).then(function(j){auth={uid:j.localId,tok:j.idToken,ref:j.refreshToken,exp:Date.now()+(+j.expiresIn-120)*1000};uid=auth.uid;return auth;});}
+var AK='esb:auth',siP=null;
+function saveAuth(){try{if(auth&&auth.ref)localStorage.setItem(AK,JSON.stringify({uid:auth.uid,ref:auth.ref}));}catch(e){}}
+function loadAuth(){try{var o=JSON.parse(localStorage.getItem(AK)||'null');if(o&&o.ref&&o.uid){uid=o.uid;return {uid:o.uid,tok:'',ref:o.ref,exp:0};}}catch(e){}return null;}
+function forgetAuth(){auth=null;try{localStorage.removeItem(AK);}catch(e){}}
+function newUser(){return fx('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"returnSecureToken":true}'}).then(function(j){auth={uid:j.localId,tok:j.idToken,ref:j.refreshToken,exp:Date.now()+(+j.expiresIn-120)*1000};uid=auth.uid;saveAuth();return auth;});}
+function refreshUser(){return fx('https://securetoken.googleapis.com/v1/token?key='+KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(auth.ref)}).then(function(j){auth={uid:j.user_id,tok:j.id_token,ref:j.refresh_token,exp:Date.now()+(+j.expires_in-120)*1000};uid=auth.uid;saveAuth();return auth;},function(e){var c=String((e&&(e.code||e.message))||'');if(/TOKEN|USER|INVALID|MISSING|CREDENTIAL/i.test(c)){forgetAuth();return newUser();}throw e;});}
+function signIn(){if(auth&&Date.now()<auth.exp)return Promise.resolve(auth);if(siP)return siP;
+  if(!auth)auth=loadAuth();
+  var p=(auth&&auth.ref)?refreshUser():newUser();
+  siP=p.then(function(a){siP=null;return a;},function(e){siP=null;throw e;});return siP;}
 function U(p){return signIn().then(function(a){return DBU+'/'+p+'.json?auth='+encodeURIComponent(a.tok);});}
 function dbGet(p){return U(p).then(function(u){return fx(u);});}
 function dbSet(p,v){return U(p).then(function(u){return fx(u,{method:'PUT',body:JSON.stringify(v)});});}
@@ -1181,7 +1188,27 @@ function ensure(){st('جارٍ الاتصال…');return signIn();}
 function fail(e){leave();var c=(e&&(e.code||e.message))||'unknown';
   var net='تعذّر الاتصال. تحقق من الإنترنت ثم أعد المحاولة.',bad='تعذّر تجهيز الغرفة الآن. حاول مرة أخرى بعد قليل.',m={'timeout-db':net,'Failed to fetch':net,'OPERATION_NOT_ALLOWED':bad,'ADMIN_ONLY_OPERATION':bad,'PERMISSION_DENIED':bad,'auth_revoked':'انتهت الجلسة، أعد المحاولة.'};
   app(head(m[c]||net)+'<p class="gn" dir="ltr" style="font-size:.65rem;opacity:.5">'+esc(c)+'</p><button class="gb" data-a="home">رجوع</button>');}
-function leave(){try{if(es)es.close();}catch(e){}es=null;room=null;code='';qs=null;isHost=false;clearTimeout(hostTimer);clearTimeout(early);early=null;fin={};qStart=0;lastQ=-1;gotFirst=false;hostName='';}
+function leave(){try{if(es)es.close();}catch(e){}es=null;MA={};room=null;code='';qs=null;isHost=false;clearTimeout(hostTimer);clearTimeout(early);early=null;fin={};qStart=0;lastQ=-1;gotFirst=false;hostName='';}
+var SK='esb:sess',resuming=false;
+function saveSess(){try{localStorage.setItem(SK,JSON.stringify({c:code,h:isHost?1:0,n:isHost?hostName:myName,t:Date.now()}));}catch(e){}}
+function clearSess(){try{localStorage.removeItem(SK);localStorage.removeItem(MAK);}catch(e){}}
+function getSess(){try{var o=JSON.parse(localStorage.getItem(SK)||'null');if(o&&/^\d{4}$/.test(o.c)&&Date.now()-o.t<6*3600*1000)return o;}catch(e){}return null;}
+function resume(s){if(resuming)return;resuming=true;leave();
+  app(head('جارٍ استعادة الغرفة…')+'<p class="gn" id="gst" dir="rtl"></p>');
+  ensure().then(function(){return dbGet('rooms/'+s.c);}).then(function(r){
+    if(!r){clearSess();home();return;}
+    if(s.h){
+      if(r.host!==uid){clearSess();home();return;}
+      return dbGet('secrets/'+s.c).then(function(sec){
+        if(!sec||!sec.qs){clearSess();home();gDlg('تعذّرت استعادة الغرفة لأن أسئلتها غير متاحة',null,'⚠️');return;}
+        qs=Array.isArray(sec.qs)?sec.qs:Object.keys(sec.qs).map(function(k){return sec.qs[k];});
+        code=s.c;isHost=true;hostName=s.n||'';fin={};view='host';
+        if(r.ph==='q'){var i=r.i;qStart=Date.now();hostTimer=setTimeout(function(){finish(i);},(r.dur||15)*1000+900);}
+        saveSess();watch();});
+    }
+    if(!r.players||!r.players[uid]){clearSess();home();gDlg('لم تعد ضمن هذه الغرفة',null,'🚫');return;}
+    code=s.c;myName=s.n||'';isHost=false;view='play';saveSess();watch();
+  }).catch(function(e){if(e&&e.code==='PERMISSION_DENIED')clearSess();fail(e);}).then(function(){resuming=false;});}
 function home(){view='home';leave();app(head('أنشئ غرفة وشارك رمزها مع أصدقائك، أو ادخل إلى غرفة برمز.')+'<button class="gb" data-a="setup">➕ إنشاء غرفة</button><button class="gb alt" data-a="joinv">🔑 الدخول إلى غرفة برمز</button><button class="gb alt" data-a="qm">✏️ أسئلتي الخاصة</button>');}
 function setup(){view='setup';var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'">'+TOPICS[k]+' ('+pool(k).length+')</option>';}).join('');
   app(head('إعداد الغرفة')+'<div class="gc"><label>الصنف</label><select id="tp">'+t+'</select><label>عدد الأسئلة</label><input id="nq" type="number" min="1" value="10" inputmode="numeric"><p class="gn" id="hint"></p><label style="font-size:1rem;color:var(--ink)"><input type="checkbox" id="hp" checked style="width:auto;margin-left:8px">أشارك في اللعب أنا أيضاً</label><label>اسمك كلاعب</label><input id="hn" maxlength="16" dir="auto" placeholder="المضيف" value="'+esc(lastName())+'"><label>الوقت لكل سؤال</label><select id="du"><option value="10">10 ثوانٍ</option><option value="15" selected>15 ثانية</option><option value="20">20 ثانية</option></select></div><button class="gb" data-a="create">إنشاء الغرفة</button><button class="gb alt" data-a="home">رجوع</button>');hint();loadBank().then(refreshSetup);}
@@ -1238,14 +1265,18 @@ function qdbulk(){if(dbSaving)return;var ta=R.querySelector('#qb'),tp=qmTp,lines
       alert('تم حفظ '+ok+' سؤال في قاعدة البيانات ('+TOPICS[tp]+')\nالمجموع الآن في هذا الصنف: '+dbBank[tp].length+(dup?'\nتم تجاهل '+dup+' مكرر':'')+(bad?'\nتم تجاهل '+bad+' سطر بصيغة خاطئة':''));
       qm();});
   }).catch(function(e){dbSaving=false;var c=(e&&(e.code||e.message))||'unknown';
-    alert(c==='PERMISSION_DENIED'?'رُفض الحفظ: قواعد Firebase لا تسمح بالكتابة في bank':'فشل الحفظ: '+c);});}
+    alert(c==='PERMISSION_DENIED'?'رُفض الحفظ: هذا الحساب ليس مشرفاً.\nمعرّفك (أضفه تحت admins في Firebase):\n'+uid:'فشل الحفظ: '+c);});}
 function qdel(i){gConfirm('حذف هذا السؤال؟',function(){var o=myQ();o[qmTp].splice(i,1);saveQ(o);qm();},1);}
 function onchange(e){var id=e.target&&e.target.id;if(id==='qt'){qmTp=e.target.value;qm();}else if(id==='tp'){hint();}}
 function joinv(){view='joinv';app(head('الدخول إلى غرفة')+'<div class="gc"><label>رمز الغرفة (4 أرقام)</label><input id="cd" inputmode="numeric" maxlength="4" dir="ltr"><label>اسمك المستعار</label><input id="nm" maxlength="16"></div><button class="gb" data-a="join">دخول</button><button class="gb alt" data-a="home">رجوع</button>');}
 function top(sc){return Object.keys(sc||{}).map(function(k){return sc[k];}).sort(function(a,b){return b.s-a.s;}).slice(0,5);}
 function rows(sc){var t=top(sc);if(!t.length)return '<p class="gn">لا نقاط بعد</p>';return t.map(function(r,i){return '<div class="gr"><span>'+['🥇','🥈','🥉','4','5'][i]+' '+esc(r.n)+'</span><b>'+r.s+'</b></div>';}).join('');}
 function plist(){return Object.keys((room&&room.players)||{}).map(function(k){return room.players[k].n;});}
-function ansOf(i){return (room&&room.ans&&room.ans[i])||{};}
+var MAK='esb:ma',MA={};
+function maLoad(){try{var o=JSON.parse(localStorage.getItem(MAK)||'{}');return(o&&o.c===code&&o.m)?o.m:{};}catch(e){return {};}}
+function myA(i){var k=code+':'+i;if(MA[k]!==undefined)return MA[k];var m=maLoad();if(m[i]!==undefined){MA[k]=m[i];return m[i];}return undefined;}
+function setA(i,a){var k=code+':'+i,m=maLoad();if(a===undefined){delete MA[k];delete m[i];}else{MA[k]=a;m[i]=a;}try{localStorage.setItem(MAK,JSON.stringify({c:code,m:m}));}catch(e){}}
+function ansOf(i){var d=(room&&room.done&&room.done[i])||{},o={};Object.keys(d).forEach(function(u){o[u]={a:-1};});var a=myA(i);if(a!==undefined&&uid)o[uid]={a:a};return o;}
 function draw(){if(!room)return;if(view==='host')hostScreen();else if(view==='play')playerScreen();}
 function hostScreen(){var p=plist(),q=qs&&qs[room.i];
   if(room.ph==='lobby'){app(head('ادعُ أصدقاءك ليدخلوا الرمز')+'<div class="gc"><div class="gcode">'+code+'</div></div><div class="gc"><p class="gn">اللاعبون ('+p.length+')</p><div class="gchips">'+p.map(function(n){return '<span>'+esc(n)+'</span>';}).join('')+'</div></div><button class="gb" data-a="next">▶ ابدأ اللعبة</button><button class="gb alt" data-a="close">إغلاق الغرفة</button>');return;}
@@ -1271,15 +1302,15 @@ function setAt(root,path,val,merge){var ks=path.split('/').filter(Boolean),i,cur
   else if(val===null)delete cur[l];else cur[l]=val;return root;}
 function onEv(ev){var d;try{d=JSON.parse(ev.data);}catch(e){return;}if(!d)return;
   room=setAt(room,d.path||'/',d.data,ev.type==='patch');
-  if(!room){if(view!=='home'&&gotFirst){alert('أُغلقت الغرفة');home();}return;}
+  if(!room){if(view!=='home'&&gotFirst){clearSess();alert('أُغلقت الغرفة');home();}return;}
   gotFirst=true;
   if(!isHost&&room.ph==='q'&&room.i!==lastQ){lastQ=room.i;qStart=Date.now();}
   if(isHost&&room.ph==='q'){var ps=Object.keys(room.players||{}).length,an=Object.keys(ansOf(room.i)).length;if(ps&&an>=ps&&!early&&!fin[room.i]){early=setTimeout(function(){finish(room.i);},700);}}
   draw();}
-function watch(){st('جارٍ فتح الغرفة…');U('rooms/'+code).then(function(u){es=new EventSource(u);es.addEventListener('put',onEv);es.addEventListener('patch',onEv);es.addEventListener('auth_revoked',function(){fail({code:'auth_revoked'});});}).catch(fail);}
+function watch(){st('جارٍ فتح الغرفة…');U('rooms/'+code).then(function(u){es=new EventSource(u);es.addEventListener('put',onEv);es.addEventListener('patch',onEv);es.addEventListener('auth_revoked',function(){var s=getSess();if(s){resume(s);}else fail({code:'auth_revoked'});});}).catch(fail);}
 var lastErr=null;
 function tryCreate(k,du,tp){if(k>6)return Promise.reject(lastErr||{code:'unknown'});var c=String(1000+Math.floor(Math.random()*9000));st('جارٍ تجهيز الغرفة…');
-  return dbSet('rooms/'+c,{host:uid,ph:'lobby',i:-1,n:qs.length,dur:du,topic:tp}).then(function(){code=c;isHost=true;fin={};if(hostName)dbSet('rooms/'+c+'/players/'+uid,{n:hostName}).catch(function(){});dbSet('secrets/'+c,{qs:qs}).catch(function(){});view='host';watch();},function(e){lastErr=e;if(e&&e.code!=='PERMISSION_DENIED')return Promise.reject(e);return tryCreate(k+1,du,tp);});}
+  return dbSet('rooms/'+c,{host:uid,ph:'lobby',i:-1,n:qs.length,dur:du,topic:tp}).then(function(){code=c;isHost=true;fin={};if(hostName)dbSet('rooms/'+c+'/players/'+uid,{n:hostName}).catch(function(){});dbSet('secrets/'+c,{qs:qs}).catch(function(){});view='host';saveSess();watch();},function(e){lastErr=e;if(e&&e.code!=='PERMISSION_DENIED')return Promise.reject(e);return tryCreate(k+1,du,tp);});}
 function create(){var tp=gv('tp'),du=+gv('du'),nr=parseInt(gv('nq'),10)||10;var hp=R.querySelector('#hp');hostName=(hp&&!hp.checked)?'':((gv('hn')||'').trim().slice(0,16)||'المضيف');try{localStorage.setItem('esb:gname',hostName);}catch(e){}
   app(head('جارٍ إنشاء الغرفة…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){st('جارٍ تحميل الأسئلة…');return loadBank();}).then(function(){var P=pool(tp),nq=Math.max(1,Math.min(P.length,nr));if(!P.length){app(head('لا توجد أسئلة في هذا الصنف بعد.')+(bankErr?'<p class="gn" dir="ltr" style="font-size:.7rem">'+esc(bankErr)+'</p>':'')+'<button class="gb" data-a="setup">رجوع</button>');return;}
@@ -1288,19 +1319,23 @@ function join(){var c=gv('cd').trim(),n=gv('nm').trim();if(!/^\d{4}$/.test(c)||!
   app(head('جارٍ الدخول…')+'<p class="gn" id="gst" dir="rtl"></p>');
   ensure().then(function(){return dbGet('rooms/'+c);}).then(function(r){
     if(r===null||r===undefined){alert('الرمز غير صحيح');joinv();return;}
-    if(r.kicked&&r.kicked[uid]){gDlg('تم طردك من قبل المالك',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';watch();});}).catch(fail);}
+    if(r.kicked&&r.kicked[uid]){gDlg('تم طردك من قبل المالك',null,'🚫');joinv();return;}return dbSet('rooms/'+c+'/players/'+uid,{n:n}).then(function(){code=c;myName=n;isHost=false;view='play';saveSess();watch();});}).catch(fail);}
 function next(){if(!isHost||!room||room.ph==='q')return;var i=room.i+1;
   if(i>=room.n){dbUpd('rooms/'+code,{ph:'end'}).catch(fail);return;}
   var q=qs[i];clearTimeout(early);early=null;fin[i]=0;qStart=Date.now();
-  dbUpd('rooms/'+code,{ph:'q',i:i,q:{t:q.t,o:q.o},rev:null}).catch(fail);
+  dbUpd('rooms/'+code,{ph:'q',i:i,q:{t:q.t,o:q.o},rev:null,qts:{'.sv':'timestamp'}}).catch(fail);
   clearTimeout(hostTimer);hostTimer=setTimeout(function(){finish(i);},room.dur*1000+900);}
+var fretry={};
 function finish(i){if(fin[i]||!isHost)return;fin[i]=1;clearTimeout(hostTimer);clearTimeout(early);early=null;
-  dbGet('rooms/'+code+'/ans/'+i).then(function(a){a=a||{};var q=qs[i],sc=JSON.parse(JSON.stringify(room.sc||{})),cnt=[0,0,0,0],pl=room.players||{};
-    Object.keys(a).forEach(function(u){var r=a[u];if(r&&r.a>=0&&r.a<4){cnt[r.a]++;if(r.a===q.a){var f=Math.min(1,Math.max(0,(+r.t||0)/(room.dur*1000)));var cur=sc[u]||{n:(pl[u]||{}).n||'؟',s:0};cur.s+=Math.round(1000*(1-f/2));sc[u]=cur;}}});
-    return dbUpd('rooms/'+code,{ph:'rev',rev:{i:i,ans:q.a,c:cnt},sc:sc});}).catch(function(){});}
-function close(){var c=code;if(isHost){dbDel('secrets/'+c).catch(function(){});dbDel('rooms/'+c).catch(function(){});}home();}
-function ans(i){if(!room||room.ph!=='q')return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}var t=Math.round(Math.min(room.dur*1000,Math.max(0,Date.now()-qStart)));
-  dbSet('rooms/'+code+'/ans/'+room.i+'/'+uid,{a:i,t:t}).catch(function(){});}
+  dbGet('answers/'+code+'/'+i).then(function(a){a=a||{};var q=qs[i],sc=JSON.parse(JSON.stringify(room.sc||{})),cnt=[0,0,0,0],pl=room.players||{},ms=room.dur*1000,t0=+room.qts||0;
+    Object.keys(a).forEach(function(u){var r=a[u];if(!r||!(r.a>=0&&r.a<4)||!pl[u]||!t0||!r.ts)return;var el=(+r.ts)-t0;if(el<0||el>ms+1500)return;cnt[r.a]++;
+      if(r.a===q.a){var f=Math.min(1,Math.max(0,el/ms));var cur=sc[u]||{n:(pl[u]||{}).n||'؟',s:0};cur.s+=Math.round(1000*(1-f/2));sc[u]=cur;}});
+    return dbUpd('rooms/'+code,{ph:'rev',rev:{i:i,ans:q.a,c:cnt},sc:sc});}).catch(function(){
+      fretry[i]=(fretry[i]||0)+1;if(fretry[i]>8||!isHost)return;fin[i]=0;hostTimer=setTimeout(function(){finish(i);},1500);});}
+function close(){var c=code;clearSess();if(isHost){var nf=function(){};Promise.all([dbDel('secrets/'+c).catch(nf),dbDel('answers/'+c).catch(nf)]).then(function(){return dbDel('rooms/'+c);}).catch(nf);}home();}
+function ans(i){if(!room||room.ph!=='q'||!uid)return;if(myA(room.i)!==undefined)return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}
+  var q=room.i,u={};setA(q,i);u['answers/'+code+'/'+q+'/'+uid]={a:i,ts:{'.sv':'timestamp'}};u['rooms/'+code+'/done/'+q+'/'+uid]=true;
+  draw();dbUpd('',u).catch(function(){setA(q,undefined);draw();});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
   if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='qdel')qdel(+b.dataset.v);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
@@ -1357,7 +1392,7 @@ function extraPlayer(){if(room&&R&&(room.ph==='q'||room.ph==='rev'))R.insertAdja
 var _hs=hostScreen,_ps=playerScreen,_draw=draw;
 hostScreen=function(){_hs();extraHost();};
 playerScreen=function(){_ps();extraPlayer();};
-draw=function(){if(!isHost&&view==='play'&&room&&gotFirst&&!(room.players&&room.players[uid])){gDlg('تم طردك من قبل المالك',null,'🚫');home();return;}_draw();};
+draw=function(){if(!isHost&&view==='play'&&room&&gotFirst&&!(room.players&&room.players[uid])){clearSess();gDlg('تم طردك من قبل المالك',null,'🚫');home();return;}_draw();};
 function gDlg(msg,yes,ico,danger){var old=document.getElementById('gdlg');if(old)old.remove();
   var d=document.createElement('div');d.id='gdlg';d.className='gdlg';
   d.innerHTML='<div class="dc" dir="rtl" role="dialog" aria-modal="true"><div class="di"></div><div class="dm"></div><div class="db"></div></div>';
@@ -1371,9 +1406,9 @@ function alert(m){gDlg(String(m),null,'💬');}
 var kickedSet={};
 function kick(u){var P=(room&&room.players)||{},n=(P[u]||{}).n||'',c=code,i=room.i;
   gConfirm('طرد اللاعب «'+n+'» من الغرفة؟',function(){kickedSet[c+u]=1;
-    dbDel('rooms/'+c+'/players/'+u).then(function(){dbDel('rooms/'+c+'/sc/'+u).catch(function(){});if(i>=0)dbDel('rooms/'+c+'/ans/'+i+'/'+u).catch(function(){});})
+    dbDel('rooms/'+c+'/players/'+u).then(function(){dbSet('rooms/'+c+'/kicked/'+u,true).catch(function(){});dbDel('rooms/'+c+'/sc/'+u).catch(function(){});if(i>=0){dbDel('answers/'+c+'/'+i+'/'+u).catch(function(){});dbDel('rooms/'+c+'/done/'+i+'/'+u).catch(function(){});}})
     .catch(function(e){delete kickedSet[c+u];gDlg('تعذر تنفيذ الطرد\n'+((e&&(e.code||e.message))||''),null,'⚠️');});},1);}
-function leaveRoom(){var c=code,u=uid,ph=room&&room.ph;function go(){dbDel('rooms/'+c+'/players/'+u).catch(function(){});home();}
+function leaveRoom(){var c=code,u=uid,ph=room&&room.ph;function go(){clearSess();dbDel('rooms/'+c+'/players/'+u).catch(function(){});home();}
   if(ph==='q'||ph==='rev')gConfirm('هل تريد مغادرة اللعبة؟',go,1);else go();}
 var snap={},snapKey='',animKey='',RH=58;
 function snapTake(){var k=code+':'+room.i;if(snapKey!==k){snapKey=k;snap=JSON.parse(JSON.stringify(room.sc||{}));}}
@@ -1396,6 +1431,6 @@ function revPlayer(){var sc=room.sc||{},my=ansOf(room.i)[uid],a=my?my.a:-1,ok=my
 var _hs3=hostScreen,_ps3=playerScreen;
 hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){revHost();extraHost();return;}_hs3();};
 playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){revPlayer();extraPlayer();return;}_ps3();};
-window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else home();};
+window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
 })();</script>
 </body></html>

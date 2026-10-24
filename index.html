@@ -407,6 +407,37 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 .pkx{position:absolute;top:-7px;inset-inline-end:-7px;width:26px;height:26px;border-radius:50%;border:0;background:#e21b3c;color:#fff;font-size:.8rem;cursor:pointer}
 .pwait{grid-column:1/-1;text-align:center;color:var(--sub);padding:18px}
 .pe{font-size:1.7rem}
+#gameApp .lbshare{display:flex;gap:10px;margin:14px 0 4px}
+#gameApp .lbshare .gb{flex:1;margin:0;min-height:46px;font-size:.95rem}
+#gameApp .lbmeta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0 4px}
+#gameApp .lbmeta span{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.07);border:1px solid var(--line);font-size:.85rem;font-weight:700;color:var(--ink)}
+#gameApp .lbmeta svg{width:15px;height:15px;opacity:.8;flex:none}
+.lbstart2{width:100%;margin:14px 0 6px;min-height:58px;font-size:1.2rem}
+.lbwait2{text-align:center;color:var(--sub);font-weight:700;margin:16px 0 6px}
+.dots::after{content:'';animation:gdots 1.2s steps(1,end) infinite}
+@keyframes gdots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+.lbhd{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 8px;font-weight:800;color:var(--sub)}
+.lbhd b{background:rgba(255,255,255,.12);color:var(--ink);border-radius:999px;padding:2px 14px}
+.ptiles{grid-template-columns:1fr 1fr!important;gap:12px!important}
+.ptile{justify-content:center;min-height:76px;font-size:1.1rem}
+.ptile .pnm{flex:1;text-align:center}
+.ptile.c0{background:linear-gradient(135deg,#7c4dff,#4527a0)}.ptile.c1{background:linear-gradient(135deg,#00b884,#00775a)}
+.ptile.c2{background:linear-gradient(135deg,#2e7dff,#1745a3)}.ptile.c3{background:linear-gradient(135deg,#f08a2c,#c1471a)}
+.ptile.c4{background:linear-gradient(135deg,#e8467f,#a01c52)}.ptile.c5{background:linear-gradient(135deg,#17a9bd,#0b6479)}
+.phost{position:absolute;bottom:7px;left:0;right:0;text-align:center;font-style:normal;font-size:.7rem;font-weight:700;opacity:.85}
+.ptile:has(.phost){padding-bottom:22px}
+.lbx{display:block;margin:18px auto 0;padding:10px 28px;border-radius:24px;border:1px solid rgba(226,27,60,.55);background:transparent;color:#ff7a8c;font:inherit;font-weight:700;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.dots::after{animation:none;content:'...'}}
+.lbcode{background:linear-gradient(160deg,rgba(70,100,210,.30),rgba(18,28,80,.60));color:var(--ink);border:1.5px solid rgba(130,160,255,.35);border-radius:22px;padding:12px 36px;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08)}
+.lbcode small{color:var(--sub);font-family:Lora,Georgia,serif;font-size:.78rem;font-weight:400;letter-spacing:.06em}
+.lbcode b{background:linear-gradient(90deg,#4ee3c1,#8f7bff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.lbshare .gb,.lbmeta span,.lbstart2,.lbhd,.lbwait2,.lbx,.pwait,.phost,.ptile .pnm,.lbshare+*,#gameApp .gb.alt[data-a=home]{font-family:Lora,Georgia,"Times New Roman",serif}
+.lbmeta,.lbhd,.lbshare,.lbwait2,.pwait,.ptile{direction:ltr}
+.lbhd{font-weight:600}
+.lbstart2{letter-spacing:.02em}
+#gameApp .lbmeta{gap:12px;margin:18px 0 24px}
+#gameApp .lbmeta span{padding:8px 15px}
+#gameApp .lbstart2{margin:0 0 8px}
 </style>
 </head>
 <body class="app">
@@ -1263,15 +1294,17 @@ var myAv=(function(){try{var v=localStorage.getItem('esb:gav');if(v&&AVL.indexOf
 function avPick(){return '';return '<label>اختر شخصيتك</label><div class="avp">'+AVL.map(function(e){return '<button type="button" class="avb'+(e===myAv?' sel':'')+'" data-a="av" data-v="'+e+'">'+e+'</button>';}).join('')+'</div>';}
 function avSet(b){myAv=b.dataset.v;[].forEach.call(R.querySelectorAll('.avb'),function(x){x.classList.toggle('sel',x===b);});try{localStorage.setItem('esb:gav',myAv);}catch(e){}}
 var tSeen={};
-function tiles(P,kick){var ks=Object.keys(P||{});if(!ks.length)return '<div class="pwait">بانتظار اللاعبين…</div>';
-  return ks.map(function(k){var p=P[k],key=code+k,nw=!tSeen[key];tSeen[key]=1;
-    return '<div class="ptile'+(k===uid?' me':'')+(nw?' pop':'')+'"><span class="pnm" dir="auto">'+esc(p.n)+'</span>'+(kick&&k!==uid?'<button class="pkx" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">✕</button>':'')+'</div>';}).join('');}
-function lobbyHtml(host){var P=(room&&room.players)||{},n=Object.keys(P).length;
-  return '<div class="lbtop"><div class="lbcode"><small>رمز الغرفة</small><b>'+esc(code)+'</b></div></div>'
-   +'<div class="lbname">Benzina</div>'
-   +'<div class="lbbar"><span class="lbcount">'+n+'</span>'+(host?'<button class="gb lbstart" data-a="next">ابدأ</button>':'<span class="lbwait">بانتظار المضيف…</span>')+'</div>'
-   +'<div class="ptiles">'+tiles(P,host)+'</div>'
-   +(host?'<button class="gb alt" data-a="close">إغلاق الغرفة</button>':'<button class="gb alt" data-a="home">خروج</button>');}
+function tiles(P,kick){var ks=Object.keys(P||{});if(!ks.length)return '<div class="pwait">Esperando jugadores<i class="dots"></i></div>';
+  return ks.map(function(k,i){var p=P[k],key=code+k,nw=!tSeen[key];tSeen[key]=1;
+    return '<div class="ptile c'+(i%6)+(nw?' pop':'')+'"><span class="pnm" dir="auto">'+esc(p.n)+'</span>'+(room&&room.host===k?'<em class="phost">Anfitrión</em>':'')+(kick&&k!==uid?'<button class="pkx" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">✕</button>':'')+'</div>';}).join('');}
+function lobbyHtml(host){var P=(room&&room.players)||{},ks=Object.keys(P),alone=!ks.some(function(k){return k!==uid;});
+  return '<div class="lbtop"><div class="lbcode"><small>Código de la sala</small><b>'+esc(code)+'</b></div></div>'
+   +(host?'<div class="lbshare"><button class="gb alt" data-a="cpcode">Copiar código</button><button class="gb alt" data-a="shlink">Compartir enlace</button></div>':'')
+   +lbMeta()
+   +(host?'<button class="gb lbstart2" data-a="next">Iniciar juego</button>':'<div class="lbwait2">Esperando al anfitrión<i class="dots"></i></div>')
+   +'<div class="lbhd"><span>Jugadores</span><b>'+ks.length+'</b></div>'
+   +'<div class="ptiles">'+tiles(P,host)+(host&&alone&&ks.length?'<div class="pwait">Esperando jugadores<i class="dots"></i></div>':'')+'</div>'
+   +(host?'<button class="lbx" data-a="closeq">Cerrar sala</button>':'<button class="gb alt" data-a="home">Salir</button>');}
 function joinv(){view='joinv';app(head('الدخول إلى غرفة')+'<div class="gc"><label>رمز الغرفة (4 أرقام)</label><input id="cd" inputmode="numeric" maxlength="4" dir="ltr"><label>اسمك المستعار</label><input id="nm" maxlength="16">'+avPick()+'</div><button class="gb" data-a="join">دخول</button><button class="gb alt" data-a="home">رجوع</button>');}
 function top(sc){return Object.keys(sc||{}).map(function(k){return sc[k];}).sort(function(a,b){return b.s-a.s;}).slice(0,5);}
 function plist(){return Object.keys((room&&room.players)||{}).map(function(k){return room.players[k].n;});}
@@ -1335,7 +1368,7 @@ function ans(i){if(!room||room.ph!=='q'||!uid)return;if(myA(room.i)!==undefined)
   dbSet('answers/'+code+'/'+q+'/'+uid,{a:i,ts:{'.sv':'timestamp'}}).then(function(){return dbSet('rooms/'+code+'/done/'+q+'/'+uid,true);})
    .catch(function(e){setA(q,undefined);draw();gDlg('تعذّر إرسال إجابتك: '+((e&&(e.code||e.message))||'unknown'),null,'⚠️');});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
-  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();else if(a==='av')avSet(b);}
+  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='cpcode')cpCode(b);else if(a==='closeq'){gConfirm('إغلاق الغرفة وإخراج الجميع؟',close,1);}else if(a==='shlink')shLink();else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();else if(a==='av')avSet(b);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
 function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}
@@ -1435,6 +1468,14 @@ var _hs3=hostScreen,_ps3=playerScreen;
 hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){if(keepBoard())return;revHost();extraHost();return;}_hs3();};
 playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){if(keepBoard())return;revPlayer();extraPlayer();return;}_ps3();};
 
+function cpText(t){return (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}a.remove();});}
+function cpCode(b){cpText(code).then(function(){var o=b.textContent;b.textContent='Copiado';setTimeout(function(){if(b.isConnected)b.textContent=o;},1500);});}
+function shLink(){var t='انضم إلى لعبتي في Benzina، رمز الغرفة: '+code+'\n'+location.origin+location.pathname;
+  if(navigator.share){navigator.share({text:t}).catch(function(){});}else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank');}
+function lbMeta(){if(!room)return '';var sv=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';},n=+room.n||0,d=+room.dur||0,
+  tp=(typeof TI!=='undefined'&&TI[room.topic])?TI[room.topic][2]:'',
+  qn=n+(n===1?' pregunta':' preguntas');
+  return '<div class="lbmeta">'+(tp?'<span>'+sv('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/>')+tp+'</span>':'')+(n?'<span>'+sv('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 17h.01"/>')+qn+'</span>':'')+(d?'<span>'+sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>')+d+' s</span>':'')+'</div>';}
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>

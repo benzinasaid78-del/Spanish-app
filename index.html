@@ -407,23 +407,6 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 .pkx{position:absolute;top:-7px;inset-inline-end:-7px;width:26px;height:26px;border-radius:50%;border:0;background:#e21b3c;color:#fff;font-size:.8rem;cursor:pointer}
 .pwait{grid-column:1/-1;text-align:center;color:var(--sub);padding:18px}
 .pe{font-size:1.7rem}
-#gameApp .lbc{background:linear-gradient(160deg,rgba(40,70,160,.35),rgba(15,25,70,.6));border:2px solid var(--line);border-radius:22px;padding:16px;text-align:center;animation:gup .35s both}
-#gameApp .lbt{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;color:var(--sub)}
-#gameApp .lbcode{margin:12px auto;max-width:300px;border:2px solid var(--line);border-radius:18px;padding:6px 0;font-size:3.4rem;font-weight:800;letter-spacing:.08em;color:var(--ink);background:rgba(20,40,110,.35);animation:gpop .5s both;direction:ltr}
-#gameApp .lbh{display:flex;align-items:center;justify-content:center;gap:8px;color:#5aa9ff;font-size:.9rem}
-#gameApp .lbs{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:68px;margin:16px 0 14px;border:0;border-radius:40px;background:linear-gradient(#2fe08f,#10a86a);color:#fff;font:inherit;font-size:1.7rem;font-weight:800;cursor:pointer;box-shadow:0 0 0 3px rgba(47,224,143,.35),0 8px 22px rgba(16,168,106,.45);transition:transform .1s}
-#gameApp .lbs:active{transform:scale(.97)}
-#gameApp .lbn{display:flex;align-items:center;justify-content:center;gap:12px;border:2px solid var(--line);border-radius:20px;padding:14px;margin-bottom:14px;font-weight:700;color:var(--sub)}
-#gameApp .lbn b{color:var(--ink);font-size:1.4rem;padding-right:12px;border-right:2px solid var(--line)}
-#gameApp .lbg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-#gameApp .lbp{position:relative;min-height:84px;border-radius:18px;padding:0 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;font-weight:800;text-align:center;overflow:hidden;animation:gpop .4s both}
-#gameApp .lbp span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-#gameApp .lbp.me{outline:3px solid #35f0a0;box-shadow:0 0 16px rgba(53,240,160,.55)}
-#gameApp .lbp.k0{background:linear-gradient(145deg,#7c4dff,#4527a0)}#gameApp .lbp.k1{background:linear-gradient(145deg,#00c98d,#00875a)}
-#gameApp .lbp.k2{background:linear-gradient(145deg,#2e7dff,#1745a3)}#gameApp .lbp.k3{background:linear-gradient(145deg,#ff9a3d,#d9531e)}
-#gameApp .lbp.k4{background:linear-gradient(145deg,#ff4f8b,#b3205a)}#gameApp .lbp.k5{background:linear-gradient(145deg,#19b5c9,#0b6f86)}
-#gameApp .lk{position:absolute;top:8px;left:8px;width:28px;height:28px;border:0;border-radius:50%;background:#ff4d5e;color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;display:grid;place-items:center}
-#gameApp .lbx{display:block;margin:0 auto;min-width:220px;padding:14px 26px;border:2px solid var(--line);border-radius:30px;background:rgba(20,40,110,.3);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body class="app">
@@ -1244,7 +1227,7 @@ function qm(){view='qm';var o=myQ(),L=o[qmTp];
   var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'"'+(k===qmTp?' selected':'')+'>'+TOPICS[k]+' ('+o[k].length+')</option>';}).join('');
   app(head('أسئلتي الخاصة')+'<div class="gc"><label>الصنف</label><select id="qt">'+t+'</select><p class="gn">أسئلتك المضافة في هذا الصنف: '+L.length+'</p></div>'
    +'<div class="gc"><b>إضافة سؤال</b><label>السؤال</label><input id="qq" maxlength="150" dir="auto"><label>الإجابة الصحيحة</label><input id="qa" maxlength="60" dir="auto"><label>إجابة خاطئة 1</label><input id="q1" maxlength="60" dir="auto"><label>إجابة خاطئة 2 (اختياري)</label><input id="q2" maxlength="60" dir="auto"><label>إجابة خاطئة 3 (اختياري)</label><input id="q3" maxlength="60" dir="auto"><button class="gb" style="margin-top:10px" data-a="qadd">➕ إضافة السؤال</button></div>'
-   +'<div class="gc"><b>إضافة دفعة أسئلة</b><p class="gn">سطر لكل سؤال: السؤال | الصحيحة | خاطئة | خاطئة | خاطئة</p><textarea id="qb" rows="5" dir="auto"></textarea><button class="gb" style="margin-top:10px" data-a="qdbulk">☁️ حفظ في قاعدة البيانات (يحمّلها كل اللاعبين)</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
+   +'<div class="gc"><b>إضافة دفعة أسئلة</b><p class="gn">سطر لكل سؤال: السؤال | الصحيحة | خاطئة | خاطئة | خاطئة</p><textarea id="qb" rows="5" dir="auto"></textarea><button class="gb" style="margin-top:10px" data-a="qdbulk">حفظ في قاعدة البيانات</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
    +'<div class="gc"><b>أسئلتك في هذا الصنف</b>'+(L.length?L.map(function(q,i){return '<div class="gr"><span dir="auto">'+esc(q[0])+'</span><button class="gx" data-a="qdel" data-v="'+i+'">🗑</button></div>';}).join(''):'<p class="gn">لا أسئلة بعد</p>')+'</div><button class="gb alt" data-a="home">رجوع</button>');}
 function qadd(){var q=gv('qq').trim(),a=gv('qa').trim(),w=[gv('q1'),gv('q2'),gv('q3')].map(function(x){return x.trim();}).filter(Boolean);
   if(!q||!a||!w.length){alert('اكتب السؤال والإجابة الصحيحة وإجابة خاطئة واحدة على الأقل');return;}
@@ -1277,17 +1260,16 @@ function qdel(i){gConfirm('حذف هذا السؤال؟',function(){var o=myQ();
 function onchange(e){var id=e.target&&e.target.id;if(id==='qt'){if(isAdm){qmTp=e.target.value;qm();}}else if(id==='tp'){hint();}}
 var AVL=['🦊','🐼','🐯','🦁','🐸','🐙','🦄','🐵','🐧','🦉','🐢','🐬','🦋','🐝','🐞','🐳','🍉','🍕','🌮','🍩','⚽','🎸','🚀','👾'];
 var myAv=(function(){try{var v=localStorage.getItem('esb:gav');if(v&&AVL.indexOf(v)>=0)return v;}catch(e){}return AVL[Math.floor(Math.random()*AVL.length)];})();
-function avPick(){return '<label>اختر شخصيتك</label><div class="avp">'+AVL.map(function(e){return '<button type="button" class="avb'+(e===myAv?' sel':'')+'" data-a="av" data-v="'+e+'">'+e+'</button>';}).join('')+'</div>';}
+function avPick(){return '';return '<label>اختر شخصيتك</label><div class="avp">'+AVL.map(function(e){return '<button type="button" class="avb'+(e===myAv?' sel':'')+'" data-a="av" data-v="'+e+'">'+e+'</button>';}).join('')+'</div>';}
 function avSet(b){myAv=b.dataset.v;[].forEach.call(R.querySelectorAll('.avb'),function(x){x.classList.toggle('sel',x===b);});try{localStorage.setItem('esb:gav',myAv);}catch(e){}}
 var tSeen={};
 function tiles(P,kick){var ks=Object.keys(P||{});if(!ks.length)return '<div class="pwait">بانتظار اللاعبين…</div>';
   return ks.map(function(k){var p=P[k],key=code+k,nw=!tSeen[key];tSeen[key]=1;
-    return '<div class="ptile'+(k===uid?' me':'')+(nw?' pop':'')+'"><span class="pav">'+esc(p.e||'🙂')+'</span><span class="pnm" dir="auto">'+esc(p.n)+'</span>'+(kick&&k!==uid?'<button class="pkx" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">✕</button>':'')+'</div>';}).join('');}
+    return '<div class="ptile'+(k===uid?' me':'')+(nw?' pop':'')+'"><span class="pnm" dir="auto">'+esc(p.n)+'</span>'+(kick&&k!==uid?'<button class="pkx" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">✕</button>':'')+'</div>';}).join('');}
 function lobbyHtml(host){var P=(room&&room.players)||{},n=Object.keys(P).length;
   return '<div class="lbtop"><div class="lbcode"><small>رمز الغرفة</small><b>'+esc(code)+'</b></div></div>'
-   +'<div class="lbhint">افتح التطبيق ← العب مع الأصدقاء ← الدخول برمز</div>'
    +'<div class="lbname">Benzina</div>'
-   +'<div class="lbbar"><span class="lbcount">👤 '+n+'</span>'+(host?'<button class="gb lbstart" data-a="next">▶ ابدأ</button>':'<span class="lbwait">بانتظار المضيف…</span>')+'</div>'
+   +'<div class="lbbar"><span class="lbcount">'+n+'</span>'+(host?'<button class="gb lbstart" data-a="next">ابدأ</button>':'<span class="lbwait">بانتظار المضيف…</span>')+'</div>'
    +'<div class="ptiles">'+tiles(P,host)+'</div>'
    +(host?'<button class="gb alt" data-a="close">إغلاق الغرفة</button>':'<button class="gb alt" data-a="home">خروج</button>');}
 function joinv(){view='joinv';app(head('الدخول إلى غرفة')+'<div class="gc"><label>رمز الغرفة (4 أرقام)</label><input id="cd" inputmode="numeric" maxlength="4" dir="ltr"><label>اسمك المستعار</label><input id="nm" maxlength="16">'+avPick()+'</div><button class="gb" data-a="join">دخول</button><button class="gb alt" data-a="home">رجوع</button>');}
@@ -1369,21 +1351,21 @@ function rows(sc,from){from=from||0;var t=top(sc).slice(from);if(!t.length)retur
 function hostScreen(){var p=plist(),q=qs&&qs[room.i];
   if(room.ph==='lobby'){app(lobbyHtml(true));return;}
   if(room.ph==='q'){var an=Object.keys(ansOf(room.i)).length,my0=ansOf(room.i)[uid],ma=my0?my0.a:-1;
-    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'<p class="gn">✓ تم تسجيل إجابتك</p>':'')+'<div class="ansn">أجاب '+an+' من '+p.length+'</div>');return;}
+    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'':'')+'<div class="ansn">أجاب '+an+' من '+p.length+'</div>');return;}
   if(room.ph==='rev'){var c=(room.rev&&room.rev.c)||[0,0,0,0],mx=Math.max.apply(null,c.concat([1]));
-    app('<p class="gs">النتيجة</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SH2[i]+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>المتصدرون</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'🏁 النتيجة النهائية':'السؤال التالي ←')+'</button>');return;}
+    app('<p class="gs">النتيجة</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SH2[i]+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>المتصدرون</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'النتيجة النهائية':'السؤال التالي ←')+'</button>');return;}
   if(room.ph==='end'){var more=rows(room.sc,3);
-    app(confetti()+'<p class="gs">🏆 انتهت اللعبة</p>'+podium(room.sc)+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb" data-a="close">إغلاق الغرفة</button>');}}
+    app(confetti()+'<p class="gs">انتهت اللعبة</p>'+podium(room.sc)+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb" data-a="close">إغلاق الغرفة</button>');}}
 function playerScreen(){var p=plist();
   if(room.ph==='lobby'){app(lobbyHtml(false));return;}
   var my=ansOf(room.i)[uid],a=my?my.a:-1;
   if(room.ph==='q'){var late=qStart&&Date.now()>=qStart+room.dur*1000,dis=a>=0||late;prevMe=(room.sc&&room.sc[uid])?room.sc[uid].s:0;
-    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(room.q.t)+'</div></div><div class="gopts">'+room.q.o.map(function(o,i){return optBtn(o,i,dis?2:1,a);}).join('')+'</div>'+(a>=0?'<p class="gn">✓ تم تسجيل إجابتك، انتظر البقية</p>':''));return;}
+    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(room.q.t)+'</div></div><div class="gopts">'+room.q.o.map(function(o,i){return optBtn(o,i,dis?2:1,a);}).join('')+'</div>'+(a>=0?'<p class="gn">تم تسجيل إجابتك</p>':''));return;}
   var sc=room.sc||{},me=sc[uid]?sc[uid].s:0,rank=1+Object.keys(sc).filter(function(k){return sc[k].s>me;}).length;
   if(room.ph==='rev'){var ok=my&&room.rev&&my.a===room.rev.ans;
     app('<div class="res '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'إجابة صحيحة!':(a<0?'انتهى الوقت':'إجابة خاطئة'))+'</div>'+(ok?'<div class="rg">+'+Math.max(0,me-prevMe)+'</div>':'')+'</div><div class="gc"><p class="gn">نقاطك: <b>'+me+'</b> · ترتيبك: <b>'+rank+'</b></p>'+rows(sc)+'</div>');return;}
   if(room.ph==='end'){var more=rows(sc,3);
-    app((rank<=3?confetti():'')+'<p class="gs">🏆 انتهت اللعبة</p>'+podium(sc)+'<div class="res '+(rank<=3?'okr':'idl')+'"><div class="gbig">'+(['🥇','🥈','🥉'][rank-1]||'🎯')+'</div><div class="rt">المركز '+rank+'</div><div class="rg">'+me+' نقطة</div></div>'+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb alt" data-a="home">خروج</button>');}}
+    app((rank<=3?confetti():'')+'<p class="gs">انتهت اللعبة</p>'+podium(sc)+'<div class="res '+(rank<=3?'okr':'idl')+'"><div class="gbig">'+(['🥇','🥈','🥉'][rank-1]||'🎯')+'</div><div class="rt">المركز '+rank+'</div><div class="rg">'+me+' نقطة</div></div>'+(more?'<div class="gc">'+more+'</div>':'')+'<button class="gb alt" data-a="home">خروج</button>');}}
 setInterval(function(){var b=R&&R.querySelector('#gtbi');if(!b||!room||!qStart||room.ph!=='q')return;var f=pctLeft();b.style.width=f+'%';var lo=f<34;b.parentNode.classList.toggle('low',lo);var t=R.querySelector('#gtm');if(t)t.classList.toggle('low',lo);},200);
 var TI={gram:['📘','قواعد','Gramática'],verb:['🏃','أفعال','Verbos'],voc:['🔤','مفردات','Vocabulario'],exp:['💬','عبارات','Expresiones']};
 function mkPick(id,items,seg){var s=R&&R.querySelector('#'+id);if(!s)return;var o=R.querySelector('#pk_'+id);if(o)o.remove();s.style.display='none';
@@ -1402,9 +1384,9 @@ refreshSetup=function(){_refresh();enhSetup();};
 qm=function(){_qm();enhQm();};
 function extraHost(){if(!room||!R)return;var ph=room.ph,P=room.players||{},ks=Object.keys(P).filter(function(k){return k!==uid;});
   Object.keys(P).forEach(function(k){if(k!==uid&&kickedSet[code+k])dbDel('rooms/'+code+'/players/'+k).catch(function(){});});if(ph==='lobby')return;
-  if(ph==='rev'&&ks.length){var b=R.querySelector('.gb');var h='<details class="gc mgr"><summary>👥 إدارة اللاعبين ('+ks.length+')</summary>'+ks.map(function(k){return '<div class="gr"><span class="rn" dir="auto">'+esc(P[k].n)+'</span><button class="gx kx" data-a="kick" data-v="'+esc(k)+'">طرد ✕</button></div>';}).join('')+'</details>';if(b)b.insertAdjacentHTML('beforebegin',h);}
+  if(ph==='rev'&&ks.length){var b=R.querySelector('.gb');var h='<details class="gc mgr"><summary>إدارة اللاعبين ('+ks.length+')</summary>'+ks.map(function(k){return '<div class="gr"><span class="rn" dir="auto">'+esc(P[k].n)+'</span><button class="gx kx" data-a="kick" data-v="'+esc(k)+'">طرد ✕</button></div>';}).join('')+'</details>';if(b)b.insertAdjacentHTML('beforebegin',h);}
   if(ph==='q')R.insertAdjacentHTML('beforeend','<button class="gb alt sm" data-a="skipq">⏭ إنهاء السؤال الآن</button>');if(ph==='q'||ph==='rev')R.insertAdjacentHTML('beforeend','<button class="gb alt sm" data-a="endg">إنهاء اللعبة للجميع</button>');}
-function extraPlayer(){if(room&&R&&(room.ph==='q'||room.ph==='rev'))R.insertAdjacentHTML('beforeend','<button class="gb alt sm" data-a="leave">🚪 مغادرة اللعبة</button>');}
+function extraPlayer(){if(room&&R&&(room.ph==='q'||room.ph==='rev'))R.insertAdjacentHTML('beforeend','<button class="gb alt sm" data-a="leave">مغادرة اللعبة</button>');}
 var _hs=hostScreen,_ps=playerScreen,_draw=draw;
 hostScreen=function(){_hs();extraHost();};
 playerScreen=function(){_ps();extraPlayer();};
@@ -1446,22 +1428,13 @@ function runBoard(){var bd=R&&R.querySelector('#brd');if(!bd||bd.dataset.an!=='1
       rows.forEach(function(r){var a=+r.dataset.from,b=+r.dataset.to;r.style.top=(a+(b-a)*e)+'px';if(r.style.opacity==='0'&&f>.05)r.style.opacity=1;if(f>.5)r.querySelector('.bk').textContent=r.dataset.rank;});
       if(f<1)requestAnimationFrame(mv);else rows.forEach(function(r){r.style.top=r.dataset.to+'px';r.style.opacity=1;});})(m0);},1000);}
 function revHost(){var q=qs[room.i],c=(room.rev&&room.rev.c)||[0,0,0,0];
-  app('<div class="cab c'+q.a+'"><span>'+SH2[q.a]+' ✓</span><b dir="auto">'+esc(q.o[q.a])+'</b></div><div class="dist">'+[0,1,2,3].map(function(i){return '<span class="dk c'+i+(i===q.a?' ok':'')+'">'+SH2[i]+' '+(c[i]||0)+'</span>';}).join('')+'</div><div class="gc"><b>🏆 الترتيب</b>'+boardHtml()+'</div><button class="gb" data-a="next" style="margin-top:14px">'+(room.i+1>=room.n?'🏁 النتيجة النهائية':'السؤال التالي ←')+'</button>');runBoard();}
+  app('<div class="cab c'+q.a+'"><span>'+SH2[q.a]+' ✓</span><b dir="auto">'+esc(q.o[q.a])+'</b></div><div class="dist">'+[0,1,2,3].map(function(i){return '<span class="dk c'+i+(i===q.a?' ok':'')+'">'+SH2[i]+' '+(c[i]||0)+'</span>';}).join('')+'</div><div class="gc"><b>الترتيب</b>'+boardHtml()+'</div><button class="gb" data-a="next" style="margin-top:14px">'+(room.i+1>=room.n?'النتيجة النهائية':'السؤال التالي ←')+'</button>');runBoard();}
 function revPlayer(){var sc=room.sc||{},my=ansOf(room.i)[uid],a=my?my.a:-1,ok=my&&room.rev&&my.a===room.rev.ans,me=sc[uid]?sc[uid].s:0,gain=Math.max(0,me-((snapOf()[uid]||{}).s||0)),rk=ranked(entries(sc)).map(function(x){return x.u;}).indexOf(uid)+1;
-  app('<div class="res sm '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'إجابة صحيحة!':(a<0?'انتهى الوقت':'إجابة خاطئة'))+'</div><div class="rg">'+(ok?'+'+gain+' · ':'')+'المركز '+rk+'</div></div><div class="gc"><b>🏆 الترتيب</b>'+boardHtml()+'</div>');runBoard();}
+  app('<div class="res sm '+(ok?'okr':(a<0?'idl':'nor'))+'"><div class="gbig">'+(ok?'✓':(a<0?'⏰':'✗'))+'</div><div class="rt">'+(ok?'إجابة صحيحة!':(a<0?'انتهى الوقت':'إجابة خاطئة'))+'</div><div class="rg">'+(ok?'+'+gain+' · ':'')+'المركز '+rk+'</div></div><div class="gc"><b>الترتيب</b>'+boardHtml()+'</div>');runBoard();}
 var _hs3=hostScreen,_ps3=playerScreen;
 hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){if(keepBoard())return;revHost();extraHost();return;}_hs3();};
 playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){if(keepBoard())return;revPlayer();extraPlayer();return;}_ps3();};
-var IC={tr:'<svg viewBox="0 0 24 24" width="24" height="24" fill="#ffc83d"><path d="M7 3h10v4a5 5 0 0 1-10 0V3zM3 4h3v2a3 3 0 0 1-3-2zm18 0h-3v2a3 3 0 0 0 3-2zM11 13h2v3h3v3H8v-3h3z"/></svg>',pl:'<svg viewBox="0 0 24 24" width="30" height="30" fill="#fff"><path d="M8 5v14l11-7z"/></svg>',us:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#3b9cff" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14c3 0 6 2 6 5"/></svg>',ln:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3b9cff" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'};
-function lobbyView(host){var P=room.players||{},ks=Object.keys(P);
-  var cards=ks.map(function(k,i){return '<div class="lbp k'+(i%6)+(k===uid?' me':'')+'">'+(host&&k!==uid?'<button class="lk" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">×</button>':'')+'<span dir="auto">'+esc(P[k].n)+'</span></div>';}).join('');
-  app('<div class="lbc"><div class="lbt">'+IC.tr+'<span>رمز الغرفة</span></div><div class="lbcode">'+esc(code)+'</div><div class="lbh">'+IC.ln+'<span>افتح التطبيق ← العب مع الأصدقاء ← الدخول برمز</span></div></div>'
-   +(host?'<button class="lbs" data-a="next">'+IC.pl+'<span>ابدأ</span></button>':'<p class="gs" style="margin-top:14px">بانتظار المضيف ليبدأ اللعبة</p>')
-   +'<div class="lbn">'+IC.us+'<span>اللاعبون الآن</span><b>'+ks.length+'</b></div><div class="lbg">'+cards+'</div>'
-   +(host?'<button class="lbx" data-a="close">إغلاق الغرفة</button>':'<button class="lbx" data-a="home">خروج</button>'));}
-var _hs4=hostScreen,_ps4=playerScreen;
-hostScreen=function(){if(room&&room.ph==='lobby'){lobbyView(true);extraHost();return;}_hs4();};
-playerScreen=function(){if(room&&room.ph==='lobby'){lobbyView(false);return;}_ps4();};
+
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>

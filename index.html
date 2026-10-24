@@ -461,6 +461,17 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 <style>#stg .sh.lg>p,#stg .sh.lg>.fz,#stg .sh.lg>.pv{display:none}
 #stg .sh.lg .dv{margin-top:6px;padding-top:0;border-top:0}
 </style>
+<style>body.gq-host.app.gfs{height:100dvh;min-height:0;overflow:hidden}
+body.gq-host.app.gfs #bar b{background:rgba(255,255,255,.07)!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#cfd6ff;-webkit-text-fill-color:#cfd6ff;letter-spacing:0;text-indent:0;text-transform:none;font-size:1rem;font-weight:700;padding:6px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.14);font-family:Lora,Georgia,"Times New Roman",serif;white-space:nowrap}
+body.gq-host.app.gfs #gameApp{min-height:0;overflow:hidden;padding:2px 14px 10px}
+body.gq-host.app.gfs #gameApp .qh{margin:0 0 6px}
+body.gq-host.app.gfs #gameApp .gtm{width:60px!important;height:60px!important;font-size:1.6rem!important}
+body.gq-host.app.gfs #gameApp .gtb{margin:0 0 8px}
+body.gq-host.app.gfs #gameApp .gqc{min-height:0;flex:0 1 auto;padding:14px}
+body.gq-host.app.gfs #gameApp .gq{font-size:clamp(1.15rem,5.2vw,1.6rem);line-height:1.4}
+body.gq-host.app.gfs #gameApp .gopts{min-height:0;flex:1 1 0;margin-top:8px;gap:10px}
+body.gq-host.app.gfs #gameApp .gb.sm{min-height:42px;margin-top:8px;flex:none}
+</style>
 </head>
 <body class="app">
 <main class="page cover" id=top><div class=title><h1>الإسبانية من الصفر إلى الاحتراف</h1><span>(Español de España – de A0 a C2)</span></div>
@@ -995,7 +1006,7 @@ function gEnd(){gStop();var n=GM.q.length,best=gBest(),nb=GM.score>best;if(nb)se
 function route(){
  var h=decodeURIComponent(location.hash.slice(1)),b=D.body,m;gStop();
  $$('main.page.active').forEach(function(x){x.classList.remove('active');});view.classList.remove('hm');
- b.classList.remove('lesson','inner','hmb','gfs');$('#bk').textContent='→ رجوع';if(window.gStopSnd)window.gStopSnd();
+ b.classList.remove('lesson','inner','hmb','gfs','gq-host');$('#bk').textContent='→ رجوع';if(window.gStopSnd)window.gStopSnd();
  var wait=null,back='#/',ttl='';
  if(by[h]&&!D.getElementById(h)&&ESL.groupOf(h)){wait=function(){return ESL.ensure(h);};back='#/l/'+LV[by[h].lv].key;ttl=by[h].t;}
  else if((h==='/cards'||h==='/me')&&!ESL.dataReady()){wait=ESL.ensureData;ttl=h==='/me'?'حسابي':'بطاقات المفردات';}
@@ -1118,7 +1129,7 @@ var LEVELS=['A1','A2','B1','B2','C1','C2'],LVL={},IDS={},MLV=null,LVN={A1:'مب�
 var uid=null,auth=null,off=0,view='home',code='',myName='',isHost=false,room=null,es=null,qs=null,hostTimer=null,early=null,fin={},qStart=0,lastQ=-1,gotFirst=false,hostName='';
 function lastName(){try{return localStorage.getItem('esb:gname')||'';}catch(e){return '';}}
 function now(){return Date.now()+off;}
-function app(h){R.innerHTML=h;R.toggleAttribute('data-rtl',view==='qm');R.toggleAttribute('data-tf',tfNow());fsSync();}
+function app(h){hdChip(null);R.innerHTML=h;R.toggleAttribute('data-rtl',view==='qm');R.toggleAttribute('data-tf',tfNow());fsSync();}
 function fsSync(){var on=!!(room&&code&&(view==='host'||view==='play'));document.body.classList.toggle('gfs',on);
 if(on){var bar=document.getElementById('bar');if(bar&&!document.getElementById('gtools')){var tl=document.createElement('span');tl.id='gtools';
 var sb=document.createElement('button');sb.id='sndb';sb.type='button';sb.onclick=sToggle;tl.appendChild(sb);
@@ -1482,7 +1493,7 @@ function restRows(sc){return rows(sc,Math.min(3,top(sc).length),1);}
 function hostScreen(){var p=plist(),q=qs&&qs[room.i];
   if(room.ph==='lobby'){app(lobbyHtml(true));return;}
   if(room.ph==='q'){var an=Object.keys(ansOf(room.i)).length,my0=ansOf(room.i)[uid],ma=my0?my0.a:-1;
-    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'':'')+'<div class="ansn">Han respondido '+an+' de '+p.length+'</div>');return;}
+    app(qHead()+'<div class="gc gqc"><div class="gq" dir="auto">'+esc(q.t)+'</div></div><div class="gopts">'+q.o.map(function(o,i){return optBtn(o,i,hostName?(ma>=0?2:1):0,ma);}).join('')+'</div>'+(hostName&&ma>=0?'':''));hdChip('Han respondido '+an+' de '+p.length);return;}
   if(room.ph==='rev'){var c=(room.rev&&room.rev.c)||[0,0,0,0],mx=Math.max.apply(null,c.concat([1]));
     app('<p class="gs">Resultado</p><div class="gopts">'+q.o.map(function(o,i){return '<div class="go c'+i+(i===q.a?' right':' dim')+'"><span class="sh">'+SHP(i)+(i===q.a?' ✓':'')+'</span><span class="ot" dir="auto">'+esc(o)+'</span><div class="gbar"><i style="width:'+Math.round((c[i]||0)/mx*100)+'%"></i></div><small>'+(c[i]||0)+'</small></div>';}).join('')+'</div><div class="gc" style="margin-top:14px"><b>Clasificación</b>'+rows(room.sc)+'</div><button class="gb" data-a="next">'+(room.i+1>=room.n?'Resultado final':'Siguiente pregunta →')+'</button>');return;}
   if(room.ph==='end'){var more=restRows(room.sc);
@@ -1591,6 +1602,9 @@ window.gDev.login=function(em,pw){if(view==='host'||view==='play')return Promise
     try{localStorage.setItem('esb:gmail',j.email||em);}catch(x){}
     isAdm=false;admDone=false;admP=null;siP=null;return admChk();
   }).then(function(ok){if(!ok)devLogout();else if(R&&R.isConnected)home();return ok;},function(er){var c=String((er&&(er.code||er.message))||er);throw /INVALID|NOT_FOUND|MISSING/.test(c)?'البريد أو كلمة السر غير صحيحة':/TOO_MANY/.test(c)?'محاولات كثيرة، انتظر قليلًا':/OPERATION_NOT_ALLOWED/.test(c)?'فعّل Email/Password في Firebase':'تعذّر الاتصال، حاول مجددًا';});};
+function hdChip(t){var b=document.body,e=document.getElementById('bt');if(!e)return;
+  if(t){if(!e.dataset.o)e.dataset.o=e.textContent;e.textContent=t;b.classList.add('gq-host');}
+  else if(e.dataset.o){e.textContent=e.dataset.o;delete e.dataset.o;b.classList.remove('gq-host');}}
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else{home();gDevRun();}}gPend='';};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>

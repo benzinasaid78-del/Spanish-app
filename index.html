@@ -1616,4 +1616,10 @@ body.app.gfs #gtools{display:flex;gap:6px;flex:0 0 86px;justify-content:flex-sta
 body.app.gfs #bar #bk{flex:0 0 86px}
 body.app.gfs #gtools button{display:grid;place-items:center;flex:0 0 40px;width:40px;height:34px;padding:0;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#cfd6ff;font-size:1.05rem;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
 </style>
+<style>
+/* تمتد البطاقة حتى الشريط السفلي فلا يظهر فراغ تحتها (كل الشاشات الداخلية عدا الدروس وغرفة اللعبة) */
+body.app.inner:not(.lesson):not(.gfs){display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+body.app.inner:not(.lesson):not(.gfs) #bar{width:100%;box-sizing:border-box;align-self:center;margin-inline:0;flex:0 0 auto}
+body.app.inner:not(.lesson):not(.gfs) #view.page:not(.hm){flex:1 1 auto;align-self:center;width:100%;box-sizing:border-box;margin-inline:0}
+</style>
 </body></html>

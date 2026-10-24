@@ -971,24 +971,36 @@ function homeNew(){
 function gameCard(){return '<a class="go" href=#/game><span class="pl">⚡</span><div><b>تحدي السرعة</b><span>أجب قبل انتهاء الوقت</span><em>أفضل نتيجة: '+gBest()+'</em></div></a>';}
 
 
-function gameHome(){var o=gOpts(),modes=[['mix','🔀','مزيج'],['words','📘','كلمات'],['tf','✔️','صح أم خطأ'],['err','⚠️','الأخطاء الشائعة']];
- var mt=modes.map(function(m){return '<button class="gmode'+(o.m===m[0]?' on':'')+'" data-m="'+m[0]+'"><span>'+m[1]+'</span>'+m[2]+'</button>';}).join('');
- var uo='<option value="all"'+(o.u==='all'?' selected':'')+'>كل الوحدات</option>';
- $$('main.vocab').forEach(function(pg){var x=by[pg.id]||{};uo+='<option value="'+pg.id+'"'+(o.u===pg.id?' selected':'')+'>وحدة '+esc(x.b||'')+' · '+esc(x.t||pg.id)+'</option>';});
- var to=[5,6,8].map(function(v){return '<option value="'+v+'"'+(o.t===v?' selected':'')+'>'+v+' ثوانٍ</option>';}).join('');
- var no=[10,20].map(function(v){return '<option value="'+v+'"'+(o.n===v?' selected':'')+'>'+v+' سؤالاً</option>';}).join('');
- return '<div class="sr gm"><h2>⚡ تحدي السرعة</h2><p class="sb">أجب قبل انتهاء الوقت! أسئلة سريعة من مفرداتك ومن أخطائك الشائعة.</p>'
- +'<div class="cd">🏆 أفضل نتيجة: <b>'+gBest()+'</b></div>'
- +'<label>نوع الأسئلة</label><div class="gmodes">'+mt+'</div>'
- +'<label>الوحدة (للكلمات)</label><select id="gu">'+uo+'</select>'
- +'<label>الوقت لكل سؤال</label><select id="gt">'+to+'</select>'
- +'<label>عدد الأسئلة</label><select id="gn">'+no+'</select>'
- +'<button class="bt" id="ggo">ابدأ التحدي</button></div>';}
+var SGI={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',mix:'<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',words:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',tf:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',err:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',chev:'<path d="m6 9 6 6 6-6"/>',check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>'};
+function sgI(n,c){return '<svg class="gi'+(c?' '+c:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+SGI[n]+'</svg>';}
+function gUnitInfo(u){if(u==='all')return {n:'',t:'كل الوحدات'};var x=by[u]||{};return {n:x.b||'',t:x.t||u};}
+function gameHome(){var o=gOpts(),modes=[['mix','مزيج','#a98bff'],['words','كلمات','#35b9d9'],['tf','صح أم خطأ','#5bd16f'],['err','الأخطاء الشائعة','#ffb547']];
+ var mt=modes.map(function(m){return '<button type="button" class="gmode'+(o.m===m[0]?' on':'')+'" data-m="'+m[0]+'" style="--c:'+m[2]+'"><i class="gmi">'+sgI(m[0])+'</i><b>'+m[1]+'</b><em class="gck">'+sgI('check')+'</em></button>';}).join('');
+ var ui=gUnitInfo(o.u);
+ var seg=function(k,arr,cur,suf){return '<div class="gseg" data-k="'+k+'">'+arr.map(function(v){return '<button type="button" class="'+(v===cur?'on':'')+'" data-v="'+v+'"><b>'+v+'</b><small>'+suf+'</small></button>';}).join('')+'</div>';};
+ return '<div class="sr gm gset"><h2 class="gt0"><i class="gtb">'+sgI('bolt')+'</i>تحدي السرعة</h2><p class="sb">أجب قبل انتهاء الوقت! أسئلة سريعة من مفرداتك ومن أخطائك الشائعة.</p>'
+  +'<div class="gbest">'+sgI('trophy')+'<span>أفضل نتيجة</span><b>'+gBest()+'</b></div>'
+  +'<div class="gl">'+sgI('list')+'نوع الأسئلة</div><div class="gmodes">'+mt+'</div>'
+  +'<div class="gl">'+sgI('grid')+'الوحدة (للكلمات)</div><button type="button" class="gsel" id="gunit"><span class="gsb">'+(ui.n!==''?esc(String(ui.n)):sgI('grid'))+'</span><span class="gst">'+esc(ui.t)+'</span>'+sgI('chev','gch')+'</button>'
+  +'<div class="gl">'+sgI('clock')+'الوقت لكل سؤال</div>'+seg('t',[5,6,8],o.t,'ثوانٍ')
+  +'<div class="gl">'+sgI('hash')+'عدد الأسئلة</div>'+seg('n',[10,20],o.n,'سؤالاً')
+  +'<button class="bt" id="ggo">ابدأ التحدي</button></div>';}
+function gUnitClose(){var d=D.getElementById('gsh');if(d)d.remove();D.body.style.overflow='';}
+function gUnitSheet(){gUnitClose();var cur=gOpts().u,rows=[['all','','كل الوحدات']];
+ $$('main.vocab').forEach(function(pg){var x=by[pg.id]||{};rows.push([pg.id,x.b||'',x.t||pg.id]);});
+ var h='<div class="gshb"></div><div class="gshp" role="dialog" aria-modal="true"><div class="gshg"></div><div class="gshh"><b>اختر الوحدة</b><button type="button" class="gshx" aria-label="إغلاق">'+sgI('x')+'</button></div><div class="gshl">'
+  +rows.map(function(r){return '<button type="button" class="gsr'+(r[0]===cur?' on':'')+'" data-u="'+r[0]+'"><span class="gsb">'+(r[1]!==''?esc(String(r[1])):sgI('grid'))+'</span><span class="gst">'+esc(r[2])+'</span><i class="gsc">'+sgI('check')+'</i></button>';}).join('')+'</div></div>';
+ var d=D.createElement('div');d.id='gsh';d.innerHTML=h;D.body.appendChild(d);D.body.style.overflow='hidden';
+ d.querySelector('.gshb').onclick=gUnitClose;d.querySelector('.gshx').onclick=gUnitClose;
+ [].forEach.call(d.querySelectorAll('.gsr'),function(b){b.onclick=function(){setOpt('es_game_u',b.dataset.u);gUnitClose();view.innerHTML=gameHome();gWire();};});
+ var on=d.querySelector('.gsr.on');if(on)setTimeout(function(){try{on.scrollIntoView({block:'center'});}catch(e){}},30);}
+D.addEventListener('keydown',function(e){if(e.key==='Escape')gUnitClose();});
 function gWire(){
- $$('.gmode').forEach(function(b){b.onclick=function(){setOpt('es_game_m',b.dataset.m);view.innerHTML=gameHome();gWire();};});
- [['gu','es_game_u'],['gt','es_game_t'],['gn','es_game_n']].forEach(function(p){var e=$('#'+p[0]);if(e)e.onchange=function(){setOpt(p[1],e.value);};});
+ $$('.gmode').forEach(function(b){b.onclick=function(){setOpt('es_game_m',b.dataset.m);$$('.gmode').forEach(function(x){x.classList.toggle('on',x===b);});};});
+ $$('.gseg').forEach(function(sg){[].forEach.call(sg.children,function(b){b.onclick=function(){setOpt(sg.dataset.k==='t'?'es_game_t':'es_game_n',b.dataset.v);[].forEach.call(sg.children,function(x){x.classList.toggle('on',x===b);});};});});
+ var gu=$('#gunit');if(gu)gu.onclick=gUnitSheet;
  var go=$('#ggo');if(go)go.onclick=gStart;}
-function gStop(){if(GM&&GM.timer){clearInterval(GM.timer);GM.timer=null;}}
+function gStop(){gUnitClose();if(GM&&GM.timer){clearInterval(GM.timer);GM.timer=null;}}
 function gStart(){var o=gOpts();GM={o:o,q:gBuild(o.m,o.u,o.n),i:0,score:0,streak:0,maxs:0,right:0,sum:0,cnt:0,miss:[],timer:null,locked:false,ms:0,t0:0};gShow();}
 function gShow(){var q=GM.q[GM.i];if(!q)return gEnd();GM.locked=false;GM.ms=(GM.o.t+(q.t==='er'?3:0))*1000;
  var ops=q.o.map(function(t,i){return '<button class="gop" data-i="'+i+'" dir="'+q.od+'">'+esc(t)+'</button>';}).join('');
@@ -1748,5 +1760,58 @@ body.app.gfs #gameApp .qh .qpill:not(.stkb){grid-column:1;justify-self:start}
 body.app.gfs #gameApp .qh .qpill.stkb{grid-column:3;justify-self:end;padding:0 12px;letter-spacing:0;gap:4px}
 body.app.gfs #gameApp .qh .gtm,body.gq-host.app.gfs #gameApp .qh .gtm{grid-column:2;grid-row:1;justify-self:center;width:52px!important;height:52px!important;font-size:1.35rem!important;border-width:3px;box-shadow:0 0 0 4px rgba(43,199,154,.14),0 6px 16px rgba(0,0,0,.32)}
 body.app.gfs #gameApp .qh .gtm.low{box-shadow:0 0 0 4px rgba(255,77,109,.18),0 6px 16px rgba(0,0,0,.32)}
+</style>
+<style id="gset">
+.gm.gset .gt0{display:flex;align-items:center;gap:10px;margin:4px 0 2px}
+.gm.gset .gtb{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#8a5ae8,#6a3fd0);box-shadow:0 6px 14px -6px #6a3fd0}
+.gm.gset .gtb .gi{width:22px;height:22px;stroke:#fff}
+.gm.gset .gbest{display:flex;align-items:center;gap:10px;margin:14px 0 4px;padding:12px 14px;border-radius:16px;border:1.5px solid #4a3d1a;background:linear-gradient(135deg,#2a2210,#1d180c);color:#f7d98a}
+.gm.gset .gbest .gi{width:22px;height:22px;color:#f7b92e}
+.gm.gset .gbest span{flex:1;font-weight:700}
+.gm.gset .gbest b{font-size:1.4rem;color:#ffd96a;font-variant-numeric:tabular-nums}
+.gm.gset .gl{display:flex;align-items:center;gap:8px;margin:18px 0 8px;color:var(--sub);font-weight:700;font-size:.95rem}
+.gm.gset .gl .gi{width:18px;height:18px;color:var(--teal)}
+.gm.gset .gmodes{gap:10px}
+.gm.gset .gmode{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);color:var(--ink);transition:border-color .15s,background .15s,transform .1s}
+.gm.gset .gmode b{font-size:.98rem}
+.gm.gset .gmode .gmi{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--c);background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#000));box-shadow:0 6px 14px -7px var(--c)}
+.gm.gset .gmode .gmi .gi{width:24px;height:24px;stroke:#fff}
+.gm.gset .gmode .gck{position:absolute;top:8px;inset-inline-start:8px;width:20px;height:20px;border-radius:50%;background:var(--teal);display:none;place-items:center}
+.gm.gset .gmode .gck .gi{width:13px;height:13px;stroke:#04231c;stroke-width:3}
+.gm.gset .gmode.on{border-color:var(--teal);background:linear-gradient(135deg,#0f3b3d,#0c2d33);box-shadow:0 0 0 1px var(--teal) inset}
+.gm.gset .gmode.on .gck{display:grid}
+.gm.gset .gmode:active{transform:scale(.97)}
+.gm.gset .gsel{display:flex;align-items:center;gap:12px;width:100%;padding:10px 14px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);color:var(--ink);font:inherit;cursor:pointer;text-align:start}
+.gm.gset .gsel:active{border-color:var(--teal)}
+.gm.gset .gsel .gch{width:20px;height:20px;color:var(--sub);flex:none}
+.gst{flex:1;min-width:0;font-weight:700;line-height:1.4}
+.gm.gset .gsel .gst{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gsb{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(43,199,154,.14);color:var(--teal);font-weight:800;font-variant-numeric:tabular-nums;border:1px solid rgba(43,199,154,.35)}
+.gsb .gi{width:18px;height:18px}
+.gseg{display:flex;gap:10px}
+.gseg button{flex:1;padding:10px 6px;border-radius:14px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);color:var(--ink);font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.25;transition:border-color .15s,background .15s}
+.gseg b{font-size:1.25rem;font-variant-numeric:tabular-nums}
+.gseg small{color:var(--sub);font-size:.78rem}
+.gseg button.on{border-color:var(--teal);background:linear-gradient(135deg,#0f3b3d,#0c2d33);box-shadow:0 0 0 1px var(--teal) inset}
+.gseg button.on b{color:var(--teal)}
+#gsh{position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-end;justify-content:center;direction:rtl}
+#gsh .gshb{position:absolute;inset:0;background:rgba(3,7,20,.62);animation:gshf .2s both}
+#gsh .gshp{position:relative;width:100%;max-width:520px;max-height:82vh;display:flex;flex-direction:column;background:#0e1730;border:1px solid #26376a;border-bottom:0;border-radius:24px 24px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.5);animation:gshu .28s cubic-bezier(.2,.8,.2,1) both;padding-bottom:env(safe-area-inset-bottom,0px)}
+#gsh .gshg{width:42px;height:4px;border-radius:3px;background:#2f4079;margin:10px auto 2px}
+#gsh .gshh{display:flex;align-items:center;justify-content:space-between;padding:8px 18px 10px;color:#fff;font-size:1.1rem}
+#gsh .gshx{width:36px;height:36px;border-radius:12px;border:1.5px solid #26376a;background:#101a36;color:#9aa6e8;display:grid;place-items:center;cursor:pointer;padding:0}
+#gsh .gshx .gi{width:18px;height:18px}
+#gsh .gshl{overflow:auto;padding:4px 12px 16px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#gsh .gsr{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;margin:0 0 6px;border-radius:14px;border:1.5px solid transparent;background:transparent;color:#eef1ff;font:inherit;cursor:pointer;text-align:start}
+#gsh .gsr:active{background:#14234a}
+#gsh .gsr .gst{font-weight:600}
+#gsh .gsr .gsc{flex:none;width:22px;height:22px;display:grid;place-items:center;opacity:0;color:#2bc79a}
+#gsh .gsr .gsc .gi{width:20px;height:20px;stroke-width:2.6}
+#gsh .gsr.on{background:rgba(43,199,154,.1);border-color:rgba(43,199,154,.45)}
+#gsh .gsr.on .gsc{opacity:1}
+#gsh .gsr.on .gst{color:#fff;font-weight:800}
+@keyframes gshu{from{transform:translateY(100%)}to{transform:none}}
+@keyframes gshf{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){#gsh *{animation:none!important}}
 </style>
 </body></html>

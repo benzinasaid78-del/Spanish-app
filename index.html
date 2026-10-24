@@ -1441,5 +1441,6 @@ var _hs3=hostScreen,_ps3=playerScreen;
 hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){revHost();extraHost();return;}_hs3();};
 playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){revPlayer();extraPlayer();return;}_ps3();};
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
+if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>
 </body></html>

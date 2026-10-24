@@ -448,6 +448,12 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 #stg .dv button{display:block;width:100%;margin:6px 0;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:center}
 #stg .dv button.dgr{color:#e0475b;border-color:rgba(224,71,91,.45)}
 </style>
+<style>#stg .sh{box-sizing:border-box!important;width:100%!important;padding:14px 20px calc(24px + env(safe-area-inset-bottom,0px))!important}
+#stg .dv input{display:block;width:100%;margin:6px 0;padding:11px 14px;border-radius:12px;border:1px solid #233463;background:#0b1430;color:#fff;font:inherit;font-size:15px;box-sizing:border-box}
+#stg .dv .er{color:#ff8a98;font-size:13px;margin:6px 0 0;min-height:1em}
+#stg .dv button[data-d="login"]{background:linear-gradient(135deg,#1f9a7e,#2bc79a);border:0;color:#fff;font-weight:700}
+#stg .dv button:disabled{opacity:.6}
+</style>
 </head>
 <body class="app">
 <main class="page cover" id=top><div class=title><h1>الإسبانية من الصفر إلى الاحتراف</h1><span>(Español de España – de A0 a C2)</span></div>
@@ -1035,15 +1041,20 @@ ESL.onPages(function(ms){ms.forEach(function(root){
   if(e.target===sh||e.target.classList.contains('cl')){sh.classList.remove('on');return;}
   var t=e.target.closest('.fz button');if(t){set(+t.dataset.v);mark();}
  });
- function devRender(){var box=sh.querySelector('#stdev');box.className='';box.innerHTML='';var g=window.gDev;if(!g||!g.logged())return;
+ function msg(box,t){var p=box.querySelector('.er');if(p)p.textContent=t||'';}
+function devRender(){var box=sh.querySelector('#stdev');box.className='';box.innerHTML='';var g=window.gDev;if(!g)return;
+ if(!g.logged()){box.className='dv';box.innerHTML='<h4>دخول المطوّر</h4><input id="stem" type="email" dir="ltr" placeholder="البريد الإلكتروني" autocomplete="username" autocapitalize="off" spellcheck="false"><input id="stpw" type="password" dir="ltr" placeholder="كلمة السر" autocomplete="current-password"><button type="button" data-d="login">دخول</button><p class="er"></p>';return;}
  g.isAdmin().then(function(ok){if(!ok||!sh.classList.contains('on'))return;box.className='dv';
   box.innerHTML='<h4>المطوّر</h4><p class="dm" dir="ltr"></p><button type="button" data-d="qm">إدارة الأسئلة (Mis preguntas)</button><button type="button" data-d="bk">نسخة احتياطية للتقدم</button><button type="button" data-d="rs">استعادة نسخة</button><button type="button" data-d="id">عرض المعرّف</button><button type="button" data-d="out" class="dgr">تسجيل الخروج</button>';
   box.querySelector('.dm').textContent=g.email();}).catch(function(){});}
 document.addEventListener('click',function(e){if(e.target.closest('#hmenu')){mark();sh.classList.add('on');devRender();}});
+sh.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.closest('#stdev input')){var b=sh.querySelector('[data-d="login"]');if(b)b.click();}});
 sh.addEventListener('click',function(e){var d=e.target.closest('[data-d]');if(!d)return;var k=d.dataset.d,g=window.gDev;
+ if(k==='login'){var box=sh.querySelector('#stdev'),em=sh.querySelector('#stem').value.trim(),pw=sh.querySelector('#stpw').value;if(!g)return;
+  if(!em||!pw){msg(box,'اكتب البريد وكلمة السر');return;}d.disabled=true;msg(box,'جارٍ التحقق…');
+  g.login(em,pw).then(function(ok){devRender();if(!ok)setTimeout(function(){msg(sh.querySelector('#stdev'),'هذا الحساب ليس مشرفًا');},0);}).catch(function(c){d.disabled=false;msg(box,String(c));});return;}
  if(k==='bk'){window.esbBackup();return;}if(k==='rs'){window.esbRestore();return;}
  sh.classList.remove('on');if(!g)return;if(k==='qm')g.go('qm');else if(k==='id')g.id();else if(k==='out')g.logout();});
-var tc=0,tt=0;sh.querySelector('h3').addEventListener('click',function(){var n=Date.now(),g=window.gDev;if(n-tt>2500)tc=0;tt=n;if(++tc>=5){tc=0;if(g&&!g.logged()){sh.classList.remove('on');g.go('login');}}});
 
 })();
 </script>
@@ -1566,6 +1577,12 @@ window.gDev={logged:function(){return !!gmail();},email:function(){return gmail(
   go:function(w){var here=R&&R.isConnected&&location.hash==='#/room';
     if(here){if(view==='host'||view==='play'){gDlg('Termina o abandona la partida antes de abrir esto.',null,'\u26a0\ufe0f');return;}gPend=w;if(view!=='home')home();gDevRun();return;}
     gPend=w;location.hash='#/room';}};
+window.gDev.login=function(em,pw){if(view==='host'||view==='play')return Promise.reject('أنهِ اللعبة الحالية أولًا');
+  return fx('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})}).then(function(j){
+    leave();clearSess();auth={uid:j.localId,tok:j.idToken,ref:j.refreshToken,exp:Date.now()+(+j.expiresIn-120)*1000};uid=auth.uid;saveAuth();
+    try{localStorage.setItem('esb:gmail',j.email||em);}catch(x){}
+    isAdm=false;admDone=false;admP=null;siP=null;return admChk();
+  }).then(function(ok){if(!ok)devLogout();else if(R&&R.isConnected)home();return ok;},function(er){var c=String((er&&(er.code||er.message))||er);throw /INVALID|NOT_FOUND|MISSING/.test(c)?'البريد أو كلمة السر غير صحيحة':/TOO_MANY/.test(c)?'محاولات كثيرة، انتظر قليلًا':/OPERATION_NOT_ALLOWED/.test(c)?'فعّل Email/Password في Firebase':'تعذّر الاتصال، حاول مجددًا';});};
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else{home();gDevRun();}}gPend='';};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>

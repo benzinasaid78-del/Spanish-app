@@ -830,8 +830,8 @@ det.forEach(function(d){
 D.body.classList.add('app');
 var bar=D.createElement('div');bar.id='bar';bar.innerHTML='<a id=bk href=#/>→ رجوع</a><b id=bt></b><a href=#/>🏠</a>';
 var view=D.createElement('div');view.id='view';view.className='page';
-D.body.insertBefore(view,D.body.firstChild);D.body.insertBefore(bar,D.body.firstChild);var bn=D.createElement('nav');bn.id='bn';bn.innerHTML='<a href=#/ data-t=hm><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" fill="currentColor"/></svg></span>الرئيسية</a><a href=#/g/A data-t=ls><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13C17 4 14 4.5 12 6zM12 6v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>الدروس</a><a href=#/cards data-t=rv><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3M18 3v4h-4M6 21v-4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>المراجعة</a><a href=#/me data-t=me><span><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>حسابي</a>';D.body.appendChild(bn);
-function parent(lv){return G[lv.g].lv.length>1?'#/g/'+lv.g:'#/';}
+D.body.insertBefore(view,D.body.firstChild);D.body.insertBefore(bar,D.body.firstChild);var bn=D.createElement('nav');bn.id='bn';bn.innerHTML='<a href=#/ data-t=hm><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" fill="currentColor"/></svg></span>الرئيسية</a><a href=#/lessons data-t=ls><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13C17 4 14 4.5 12 6zM12 6v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>الدروس</a><a href=#/cards data-t=rv><span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3M18 3v4h-4M6 21v-4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>المراجعة</a><a href=#/me data-t=me><span><svg viewBox="0 0 24 24" width="26" height="26"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>حسابي</a>';D.body.appendChild(bn);
+function parent(lv){return G[lv.g].lv.length>1?'#/g/'+lv.g:'#/lessons';}
 function lesLink(x){var dn=doneSet().indexOf(x.id)>=0;return '<a class="les'+(dn?' dn':'')+'" href=#'+x.id+'><span class=n>'+esc(x.b)+'</span><span>'+esc(x.t)+'</span>'+(dn?'<i class=ck>✓</i>':'')+'</a>';}
 function doneSet(){try{return JSON.parse(localStorage.getItem('es_done')||'[]');}catch(e){return[];}}
 function home(){
@@ -940,6 +940,15 @@ function gBuild(mode,unit,n){var dk=buildDeck(),pool=unit==='all'?dk.slice():dk.
  return qs;}
 function gOpts(){return{m:opt('es_game_m','mix'),u:opt('es_game_u','all'),t:parseInt(opt('es_game_t','6'),10)||6,n:parseInt(opt('es_game_n','10'),10)||10};}
 function gBest(){return parseInt(opt('es_game_best','0'),10)||0;}
+function lessonsNew(){var d=doneSet(),tot=order.length||1,pc=Math.round(d.length/tot*100)||0;
+ var CH='<svg class="hch" viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg>';
+ function hct(k,href,name,sub,c,n){var p=n?Math.round(c/n*100):0;return '<a class="hct k'+k+(n&&c>=n?' done':'')+'" href="'+href+'"><span class="hi">'+G[k].i+'</span><span class="hx"><b>'+name+'</b><small>'+sub+'</small><span class="hpb"><span class="hpf" style="width:'+p+'%"></span></span></span><span class="hn"><b>'+c+'</b>/'+n+'</span>'+CH+'</a>';}
+ var grid='';
+ ['0','A','B','C','V'].forEach(function(k){var g=G[k],n=0,c=0;g.lv.forEach(function(l){n+=l.les.length;l.les.forEach(function(x){if(d.indexOf(x.id)>=0)c++;});});
+  grid+=hct(k,(g.lv.length>1?'#/g/'+k:'#/l/'+g.lv[0].key),g.n,g.t,c,n);});
+ var r=G.R,rn=0,rc=0;r.lv.forEach(function(l){rn+=l.les.length;l.les.forEach(function(x){if(d.indexOf(x.id)>=0)rc++;});});
+ grid+=hct('R','#/l/R','المراجع',r.t,rc,rn);
+ return '<div class="lsn"><h2>الدروس</h2><p class="sb">أنجزت '+pc+'% · اختر المستوى لتبدأ أو تتابع</p><div class="hgrid">'+grid+'</div></div>';}
 function homeNew(){
  var d=doneSet(),pc=Math.round(d.length/order.length*100)||0,lvKey='A1',idL='l0',ixL=1,nL=3,has=false;
  try{var id=localStorage.getItem('es_last');if(id&&by[id]){var lv=LV[by[id].lv];has=true;idL=id;lvKey=lv.key;ixL=lv.les.indexOf(by[id])+1;nL=lv.les.length;}}catch(e){}
@@ -948,12 +957,6 @@ function homeNew(){
  var ln=LN[lvKey]||LN.A1;
  var s=srsStats(),q=srsToday();
  var CH='<svg class="hch" viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg>';
- function hct(k,href,name,sub,c,n){var p=n?Math.round(c/n*100):0;return '<a class="hct k'+k+(n&&c>=n?' done':'')+'" href="'+href+'"><span class="hi">'+G[k].i+'</span><span class="hx"><b>'+name+'</b><small>'+sub+'</small><span class="hpb"><span class="hpf" style="width:'+p+'%"></span></span></span><span class="hn"><b>'+c+'</b>/'+n+'</span>'+CH+'</a>';}
- var grid='';
- ['0','A','B','C','V'].forEach(function(k){var g=G[k],n=0,c=0;g.lv.forEach(function(l){n+=l.les.length;l.les.forEach(function(x){if(d.indexOf(x.id)>=0)c++;});});
-  grid+=hct(k,(g.lv.length>1?'#/g/'+k:'#/l/'+g.lv[0].key),g.n,g.t,c,n);});
- var r=G.R,rn=0,rc=0;r.lv.forEach(function(l){rn+=l.les.length;l.les.forEach(function(x){if(d.indexOf(x.id)>=0)rc++;});});
- grid+=hct('R','#/l/R','المراجع',r.t,rc,rn);
 
  var tgt='<svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="19" cy="21" r="14"/><circle cx="19" cy="21" r="8"/><circle cx="19" cy="21" r="2.5" fill="#fff"/><path d="M19 21L33 7M27 5v8h8"/></svg>';
  var cal='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 11h18"/><rect x="7" y="14" width="3" height="3" fill="currentColor"/></svg>';
@@ -966,7 +969,7 @@ function homeNew(){
  +'<a class="hcard hbig hcards" href="#/cards"><div class="hico"><svg width="38" height="38" viewBox="0 0 40 40"><path d="M10 4h14l8 8v24H10z" fill="#fff"/><path d="M24 4v8h8" fill="#cfe0ff"/><path d="M15 17h12M15 22h12M15 27h7" stroke="#2a64e0" stroke-width="2.4" stroke-linecap="round"/><path d="M31 25l2.6 5.2 5.8.8-4.2 4 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4 5.8-.8z" fill="#f5b73a" stroke="#2257d0" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div class="htx"><h2>بطاقات المفردات</h2><p>تعلم كلمات جديدة بسهولة</p><span class="hchip">'+book+(q.length?q.length+' بطاقات اليوم':'لا بطاقات اليوم')+'</span></div>'+CH+'</a>'
  +'<a class="hcard hbig hspeed" href="#/game"><div class="hico"><svg width="38" height="38" viewBox="0 0 24 24"><path d="M13.5 1.5L4.5 13.5h6l-1.5 9 10-13h-6.2z" fill="#f7b92e" stroke="#ffd96a" stroke-width="1" stroke-linejoin="round"/></svg></div><div class="htx"><h2>تحدي السرعة</h2><p>اختبر معلوماتك وطور مهاراتك</p><span class="hchip">'+tim+'أفضل نتيجة: '+gBest()+'</span></div>'+CH+'</a>'
  +'<a class="hcard hbig hspeed" href="#/room" style="background-image:linear-gradient(135deg,#6a3df0,#c2185b)"><div class="hico"><span style="font-size:34px">🎮</span></div><div class="htx"><h2>العب مع الأصدقاء</h2><p>أنشئ غرفة وتنافس مع أصدقائك</p><span class="hchip">لعب جماعي</span></div>'+CH+'</a>'
- +'<h3 class="hsec">الدروس</h3><div class="hgrid">'+grid+'</div></div>';
+ +'</div>';
 }
 function gameCard(){return '<a class="go" href=#/game><span class="pl">⚡</span><div><b>تحدي السرعة</b><span>أجب قبل انتهاء الوقت</span><em>أفضل نتيجة: '+gBest()+'</em></div></a>';}
 
@@ -1055,14 +1058,15 @@ function route(){
  if(by[h]&&D.getElementById(h)){var pg=D.getElementById(h);pg.classList.add('active');b.classList.add('lesson','inner');
   var lv=LV[by[h].lv];$('#bk').href='#/l/'+lv.key;var tl=$('a.top-link',pg);if(tl){tl.textContent='↑ قائمة الدروس';tl.setAttribute('href','#/l/'+lv.key);}$('#bt').textContent=by[h].t;
   try{localStorage.setItem('es_last',h);var dn=doneSet();if(dn.indexOf(h)<0){dn.push(h);localStorage.setItem('es_done',JSON.stringify(dn));}}catch(e){}}
- else if(m=h.match(/^\/g\/(\w+)$/)){if(!G[m[1]]){location.hash='#/';return;}view.innerHTML=group(m[1]);b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent=G[m[1]].n;}
+ else if(m=h.match(/^\/g\/(\w+)$/)){if(!G[m[1]]){location.hash='#/';return;}view.innerHTML=group(m[1]);b.classList.add('inner');$('#bk').href='#/lessons';$('#bt').textContent=G[m[1]].n;}
  else if(m=h.match(/^\/l\/(\w+)$/)){if(!LV[m[1]]){location.hash='#/';return;}view.innerHTML=level(m[1]);b.classList.add('inner');$('#bk').href=parent(LV[m[1]]);$('#bt').textContent=LV[m[1]].code;}
  else if(h==='/game'){GM=null;view.innerHTML=gameHome();gWire();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='تحدي السرعة';}
- else if(h==='/room'){view.innerHTML='<div id="gameApp"></div>';b.classList.add('inner');$('#bk').href='#/';$('#bk').textContent='→ Volver';$('#bt').textContent='Benzañol';if(window.roomGameInit)window.roomGameInit();}
+ else if(h==='/lessons'){view.innerHTML=lessonsNew();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='الدروس';}
+  else if(h==='/room'){view.innerHTML='<div id="gameApp"></div>';b.classList.add('inner');$('#bk').href='#/';$('#bk').textContent='→ Volver';$('#bt').textContent='Benzañol';if(window.roomGameInit)window.roomGameInit();}
  else if(h==='/cards'){SR=null;view.innerHTML=cardsHome();wireCards();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='بطاقات المفردات';}
  else if(h==='/me'){view.innerHTML=me();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='حسابي';}
  else{view.innerHTML=homeNew();view.classList.add('hm');b.classList.add('hmb');}
- var tab=h==='/me'?'me':((h==='/cards'||h==='/game'||h==='/room')?'rv':(/^\/[gl]\//.test(h)?'ls':'hm'));$$('#bn a').forEach(function(a){a.classList.toggle('on',a.dataset.t===tab);});
+ var tab=h==='/me'?'me':((h==='/cards'||h==='/game'||h==='/room')?'rv':((by[h]||/^\/[gl]\//.test(h)||h==='/lessons')?'ls':'hm'));$$('#bn a').forEach(function(a){a.classList.toggle('on',a.dataset.t===tab);});
  b.classList.add('ready');window.scrollTo(0,0);setTimeout(function(){window.scrollTo(0,0);},60);}
 var oi={};order.forEach(function(x,i){oi[x.id]=i;});
 ESL.onPages(function(ms){ms.forEach(function(pg){var i=oi[pg.id];if(i===undefined||$('nav.pn',pg))return;var n=D.createElement('nav');n.className='pn';
@@ -1813,5 +1817,11 @@ body.app.gfs #gameApp .qh .gtm.low{box-shadow:0 0 0 4px rgba(255,77,109,.18),0 6
 @keyframes gshu{from{transform:translateY(100%)}to{transform:none}}
 @keyframes gshf{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){#gsh *{animation:none!important}}
+</style>
+<style id="glsn">
+.lsn h2{margin:4px 4px 2px;font-size:22px;color:#fff}
+.lsn .sb{margin:0 4px 16px}
+.hct,.hct:hover,.hct:active,.hct:visited{text-decoration:none}
+.hct *{text-decoration:none}
 </style>
 </body></html>

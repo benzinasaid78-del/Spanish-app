@@ -407,6 +407,23 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 .pkx{position:absolute;top:-7px;inset-inline-end:-7px;width:26px;height:26px;border-radius:50%;border:0;background:#e21b3c;color:#fff;font-size:.8rem;cursor:pointer}
 .pwait{grid-column:1/-1;text-align:center;color:var(--sub);padding:18px}
 .pe{font-size:1.7rem}
+#gameApp .lbc{background:linear-gradient(160deg,rgba(40,70,160,.35),rgba(15,25,70,.6));border:2px solid var(--line);border-radius:22px;padding:16px;text-align:center;animation:gup .35s both}
+#gameApp .lbt{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;color:var(--sub)}
+#gameApp .lbcode{margin:12px auto;max-width:300px;border:2px solid var(--line);border-radius:18px;padding:6px 0;font-size:3.4rem;font-weight:800;letter-spacing:.08em;color:var(--ink);background:rgba(20,40,110,.35);animation:gpop .5s both;direction:ltr}
+#gameApp .lbh{display:flex;align-items:center;justify-content:center;gap:8px;color:#5aa9ff;font-size:.9rem}
+#gameApp .lbs{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:68px;margin:16px 0 14px;border:0;border-radius:40px;background:linear-gradient(#2fe08f,#10a86a);color:#fff;font:inherit;font-size:1.7rem;font-weight:800;cursor:pointer;box-shadow:0 0 0 3px rgba(47,224,143,.35),0 8px 22px rgba(16,168,106,.45);transition:transform .1s}
+#gameApp .lbs:active{transform:scale(.97)}
+#gameApp .lbn{display:flex;align-items:center;justify-content:center;gap:12px;border:2px solid var(--line);border-radius:20px;padding:14px;margin-bottom:14px;font-weight:700;color:var(--sub)}
+#gameApp .lbn b{color:var(--ink);font-size:1.4rem;padding-right:12px;border-right:2px solid var(--line)}
+#gameApp .lbg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+#gameApp .lbp{position:relative;min-height:84px;border-radius:18px;padding:0 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;font-weight:800;text-align:center;overflow:hidden;animation:gpop .4s both}
+#gameApp .lbp span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+#gameApp .lbp.me{outline:3px solid #35f0a0;box-shadow:0 0 16px rgba(53,240,160,.55)}
+#gameApp .lbp.k0{background:linear-gradient(145deg,#7c4dff,#4527a0)}#gameApp .lbp.k1{background:linear-gradient(145deg,#00c98d,#00875a)}
+#gameApp .lbp.k2{background:linear-gradient(145deg,#2e7dff,#1745a3)}#gameApp .lbp.k3{background:linear-gradient(145deg,#ff9a3d,#d9531e)}
+#gameApp .lbp.k4{background:linear-gradient(145deg,#ff4f8b,#b3205a)}#gameApp .lbp.k5{background:linear-gradient(145deg,#19b5c9,#0b6f86)}
+#gameApp .lk{position:absolute;top:8px;left:8px;width:28px;height:28px;border:0;border-radius:50%;background:#ff4d5e;color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;display:grid;place-items:center}
+#gameApp .lbx{display:block;margin:0 auto;min-width:220px;padding:14px 26px;border:2px solid var(--line);border-radius:30px;background:rgba(20,40,110,.3);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body class="app">
@@ -1435,6 +1452,16 @@ function revPlayer(){var sc=room.sc||{},my=ansOf(room.i)[uid],a=my?my.a:-1,ok=my
 var _hs3=hostScreen,_ps3=playerScreen;
 hostScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'&&qs&&qs[room.i]){if(keepBoard())return;revHost();extraHost();return;}_hs3();};
 playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==='rev'){if(keepBoard())return;revPlayer();extraPlayer();return;}_ps3();};
+var IC={tr:'<svg viewBox="0 0 24 24" width="24" height="24" fill="#ffc83d"><path d="M7 3h10v4a5 5 0 0 1-10 0V3zM3 4h3v2a3 3 0 0 1-3-2zm18 0h-3v2a3 3 0 0 0 3-2zM11 13h2v3h3v3H8v-3h3z"/></svg>',pl:'<svg viewBox="0 0 24 24" width="30" height="30" fill="#fff"><path d="M8 5v14l11-7z"/></svg>',us:'<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#3b9cff" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14c3 0 6 2 6 5"/></svg>',ln:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#3b9cff" stroke-width="2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'};
+function lobbyView(host){var P=room.players||{},ks=Object.keys(P);
+  var cards=ks.map(function(k,i){return '<div class="lbp k'+(i%6)+(k===uid?' me':'')+'">'+(host&&k!==uid?'<button class="lk" data-a="kick" data-v="'+esc(k)+'" aria-label="طرد">×</button>':'')+'<span dir="auto">'+esc(P[k].n)+'</span></div>';}).join('');
+  app('<div class="lbc"><div class="lbt">'+IC.tr+'<span>رمز الغرفة</span></div><div class="lbcode">'+esc(code)+'</div><div class="lbh">'+IC.ln+'<span>افتح التطبيق ← العب مع الأصدقاء ← الدخول برمز</span></div></div>'
+   +(host?'<button class="lbs" data-a="next">'+IC.pl+'<span>ابدأ</span></button>':'<p class="gs" style="margin-top:14px">بانتظار المضيف ليبدأ اللعبة</p>')
+   +'<div class="lbn">'+IC.us+'<span>اللاعبون الآن</span><b>'+ks.length+'</b></div><div class="lbg">'+cards+'</div>'
+   +(host?'<button class="lbx" data-a="close">إغلاق الغرفة</button>':'<button class="lbx" data-a="home">خروج</button>'));}
+var _hs4=hostScreen,_ps4=playerScreen;
+hostScreen=function(){if(room&&room.ph==='lobby'){lobbyView(true);extraHost();return;}_hs4();};
+playerScreen=function(){if(room&&room.ph==='lobby'){lobbyView(false);return;}_ps4();};
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>

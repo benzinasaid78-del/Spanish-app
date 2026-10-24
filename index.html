@@ -458,6 +458,9 @@ table.abc:has(tr>:nth-child(4)):not(.hasv) .e,table.abc:has(tr>:nth-child(4)):no
 #stg .cl{position:sticky;bottom:0;box-shadow:0 -10px 14px #0f1a38}
 #stg .dv:last-of-type{margin-bottom:6px}
 </style>
+<style>#stg .sh.lg>p,#stg .sh.lg>.fz,#stg .sh.lg>.pv{display:none}
+#stg .sh.lg .dv{margin-top:6px;padding-top:0;border-top:0}
+</style>
 </head>
 <body class="app">
 <main class="page cover" id=top><div class=title><h1>الإسبانية من الصفر إلى الاحتراف</h1><span>(Español de España – de A0 a C2)</span></div>
@@ -1046,9 +1049,10 @@ ESL.onPages(function(ms){ms.forEach(function(root){
   var t=e.target.closest('.fz button');if(t){set(+t.dataset.v);mark();}
  });
  function msg(box,t){var p=box.querySelector('.er');if(p)p.textContent=t||'';}
-function devRender(){var box=sh.querySelector('#stdev');box.className='';box.innerHTML='';var g=window.gDev;if(!g)return;
- if(!g.logged()){box.className='dv';box.innerHTML='<h4>دخول المطوّر</h4><input id="stem" type="email" dir="ltr" placeholder="البريد الإلكتروني" autocomplete="username" autocapitalize="off" spellcheck="false"><input id="stpw" type="password" dir="ltr" placeholder="كلمة السر" autocomplete="current-password"><button type="button" data-d="login">دخول</button><p class="er"></p>';return;}
- g.isAdmin().then(function(ok){if(!ok||!sh.classList.contains('on'))return;box.className='dv';
+function lf(box){box.className='dv';box.innerHTML='<h4>دخول المطوّر</h4><input id="stem" type="email" dir="ltr" placeholder="البريد الإلكتروني" autocomplete="username" autocapitalize="off" spellcheck="false"><input id="stpw" type="password" dir="ltr" placeholder="كلمة السر" autocomplete="current-password"><button type="button" data-d="login">دخول</button><p class="er"></p>';}
+function devRender(){var box=sh.querySelector('#stdev');box.className='';box.innerHTML='';var g=window.gDev;if(!g)return;sh.querySelector('.sh').classList.toggle('lg',!g.logged());
+ if(!g.logged()){lf(box);return;}
+ g.isAdmin().then(function(ok){if(!sh.classList.contains('on'))return;if(!ok){lf(box);sh.querySelector('.sh').classList.add('lg');return;}box.className='dv';
   box.innerHTML='<h4>المطوّر</h4><p class="dm" dir="ltr"></p><button type="button" data-d="qm">إدارة الأسئلة (Mis preguntas)</button><button type="button" data-d="bk">نسخة احتياطية للتقدم</button><button type="button" data-d="rs">استعادة نسخة</button><button type="button" data-d="id">عرض المعرّف</button><button type="button" data-d="out" class="dgr">تسجيل الخروج</button>';
   box.querySelector('.dm').textContent=g.email();}).catch(function(){});}
 document.addEventListener('click',function(e){if(e.target.closest('#hmenu')){mark();sh.classList.add('on');devRender();}});

@@ -1305,7 +1305,7 @@ function onEv(ev){var d;try{d=JSON.parse(ev.data);}catch(e){return;}if(!d)return
   if(!room){if(view!=='home'&&gotFirst){clearSess();alert('أُغلقت الغرفة');home();}return;}
   gotFirst=true;
   if(!isHost&&room.ph==='q'&&room.i!==lastQ){lastQ=room.i;qStart=Date.now();}
-  if(isHost&&room.ph==='q'){var ps=Object.keys(room.players||{}).length,an=Object.keys(ansOf(room.i)).length;if(ps&&an>=ps&&!early&&!fin[room.i]){early=setTimeout(function(){finish(room.i);},700);}}
+  if(isHost&&room.ph==='q'){var ps=Object.keys(room.players||{}).length,an=Object.keys(ansOf(room.i)).length;if(ps&&an>=ps&&!early&&!fin[room.i]){early=setTimeout(function(){finish(room.i);},250);}}
   draw();}
 function watch(){st('جارٍ فتح الغرفة…');U('rooms/'+code).then(function(u){es=new EventSource(u);es.addEventListener('put',onEv);es.addEventListener('patch',onEv);es.addEventListener('auth_revoked',function(){var s=getSess();if(s){resume(s);}else fail({code:'auth_revoked'});});}).catch(fail);}
 var lastErr=null;
@@ -1332,10 +1332,19 @@ function finish(i){if(fin[i]||!isHost)return;fin[i]=1;clearTimeout(hostTimer);cl
       if(r.a===q.a){var f=Math.min(1,Math.max(0,el/ms));var cur=sc[u]||{n:(pl[u]||{}).n||'؟',s:0};cur.s+=Math.round(1000*(1-f/2));sc[u]=cur;}});
     return dbUpd('rooms/'+code,{ph:'rev',rev:{i:i,ans:q.a,c:cnt},sc:sc});}).catch(function(){
       fretry[i]=(fretry[i]||0)+1;if(fretry[i]>8||!isHost)return;fin[i]=0;hostTimer=setTimeout(function(){finish(i);},1500);});}
+var pollBusy=false;
+setInterval(function(){if(!isHost||!room||room.ph!=='q'||fin[room.i]||pollBusy||!code)return;var i=room.i,c=code;pollBusy=true;
+  dbGet('answers/'+c+'/'+i).then(function(a){pollBusy=false;if(!room||code!==c||room.i!==i||room.ph!=='q')return;a=a||{};
+    var pl=room.players||{},ks=Object.keys(a).filter(function(u){return pl[u];});
+    var d=room.done=room.done||{};d[i]=d[i]||{};var ch=false;ks.forEach(function(u){if(!d[i][u]){d[i][u]=true;ch=true;}});
+    if(ch)draw();var ps=Object.keys(pl).length;
+    if(ps&&ks.length>=ps&&!early&&!fin[i])early=setTimeout(function(){finish(i);},250);
+  }).catch(function(){pollBusy=false;});},1200);
 function close(){var c=code;clearSess();if(isHost){var nf=function(){};Promise.all([dbDel('secrets/'+c).catch(nf),dbDel('answers/'+c).catch(nf)]).then(function(){return dbDel('rooms/'+c);}).catch(nf);}home();}
 function ans(i){if(!room||room.ph!=='q'||!uid)return;if(myA(room.i)!==undefined)return;try{navigator.vibrate&&navigator.vibrate(25);}catch(e){}
-  var q=room.i,u={};setA(q,i);u['answers/'+code+'/'+q+'/'+uid]={a:i,ts:{'.sv':'timestamp'}};u['rooms/'+code+'/done/'+q+'/'+uid]=true;
-  draw();dbUpd('',u).catch(function(){setA(q,undefined);draw();});}
+  var q=room.i;setA(q,i);draw();
+  dbSet('answers/'+code+'/'+q+'/'+uid,{a:i,ts:{'.sv':'timestamp'}}).then(function(){return dbSet('rooms/'+code+'/done/'+q+'/'+uid,true);})
+   .catch(function(e){setA(q,undefined);draw();gDlg('تعذّر إرسال إجابتك: '+((e&&(e.code||e.message))||'unknown'),null,'⚠️');});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
   if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm')qm();else if(a==='qadd')qadd();else if(a==='qbulk')qbulk();else if(a==='qdbulk')qdbulk();else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='qdel')qdel(+b.dataset.v);}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);

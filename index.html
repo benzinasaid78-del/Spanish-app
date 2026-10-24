@@ -1205,10 +1205,10 @@ var PL=[[130.81,[523.25,659.25,783.99]],[98,[392,493.88,587.33]],[110,[440,523.2
 var ARL=[0,1,2,1,2,1,0,1];
 var TR={
  lobby:{len:64,dur:60/100/4,step:function(i,t){var bar=(i>>4)&3,s=i&15,ch=PL[bar];
-   if(s===0)ch[1].forEach(function(f){sOsc(t,f/2,2.2,'triangle',0.035);});
-   if(s%8===0)sOsc(t,ch[0],0.55,'triangle',0.2);
-   if(s%2===0)sOsc(t,ch[1][ARL[s>>1]],0.28,'sine',0.075);
-   if(s%4===2)sNoise(t,'highpass',8000,0.02,0.04);}}
+   if(s===0)ch[1].forEach(function(f){sOsc(t,f/2,2.2,'triangle',0.06);});
+   if(s%8===0)sOsc(t,ch[0],0.55,'triangle',0.3);
+   if(s%2===0)sOsc(t,ch[1][ARL[s>>1]],0.28,'sine',0.17);
+   if(s%4===2)sNoise(t,'highpass',8000,0.035,0.04);}}
 };
 function sTick(){var c=SND.ctx;if(!c||!SND.track)return;var T=TR[SND.track];
   while(SND.next<c.currentTime+0.25){T.step(SND.step,SND.next);SND.next+=T.dur;SND.step=(SND.step+1)%T.len;}}

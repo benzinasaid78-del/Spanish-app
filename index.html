@@ -1283,17 +1283,23 @@ function lvApply(l){if(!isAdm||dbSaving||LEVELS.indexOf(l)<0)return;var tp=qmTp,
     dbSaving=true;
     dbUpd('bank/'+tp,upd).then(function(){done.forEach(function(d){LVL[d[0]]=l;IDS[tp+'|'+d[0]]=d[1];delete uSel[d[0]];});dbSaving=false;qm();})
      .catch(function(e){dbSaving=false;alert('فشل التصنيف: '+((e&&(e.code||e.message))||'unknown'));});});}
+function tfLine(l){if(qmTp==='tf'&&l.indexOf('|')<0){var m=/^([\s\S]*?)\s+(verdadero|falso)\s*$/i.exec(l);if(m)return m[1]+' | '+m[2];}return l;}
+function tfNorm(x){x=String(x||'').trim().toLowerCase();if(/^(verdadero|v|صح|صحيح)$/.test(x))return 'Verdadero';if(/^(falso|f|خطأ|خطا|خاطئ)$/.test(x))return 'Falso';return '';}
+function tfFix(p){if(qmTp==='tf'){var c=tfNorm(p[1]);if(p[0]&&c)return [p[0],c,c==='Verdadero'?'Falso':'Verdadero'];}return p;}
+function tfNote(){return qmTp==='tf'?'<p class="gn">صح/خطأ: اكتب العبارة في «السؤال»، وفي «الإجابة الصحيحة» اكتب Verdadero إن كانت العبارة صحيحة أو Falso إن كانت خاطئة. لا تحتاج إجابة خاطئة.</p>':'';}
+function tfHelp(){return qmTp==='tf'?'<p class="gn">صح/خطأ: سطر لكل عبارة بهذا الشكل: العبارة | Verdadero (أو Falso). الجواب الآخر يُضاف تلقائياً.</p>':'<p class="gn">سطر لكل سؤال: السؤال | الصحيحة | خاطئة | خاطئة | خاطئة</p>';}
 function pool(tp){var seen={},out=[];[BANK[tp],(dbBank&&dbBank[tp])||[],isAdm?myQ()[tp]:[]].forEach(function(L){L.forEach(function(r){var k=String(r[0]).toLowerCase();if(!seen[k]){seen[k]=1;out.push(r);}});});return out;}
 function qm(){view='qm';var o=myQ(),L=o[qmTp];
   var t=Object.keys(TOPICS).map(function(k){return '<option value="'+k+'"'+(k===qmTp?' selected':'')+'>'+TOPICS[k]+' ('+o[k].length+')</option>';}).join('');
   app(head('أسئلتي الخاصة')+'<div class="gc"><label>الصنف</label><select id="qt">'+t+'</select><p class="gn">أسئلتك المضافة في هذا الصنف: '+L.length+'</p></div>'
-   +'<div class="gc"><label>مستوى الأسئلة التي ستضيفها</label><select id="ql"><option value="">—</option>'+LEVELS.map(function(l){return '<option value="'+l+'"'+(l===qmLv?' selected':'')+'>'+l+'</option>';}).join('')+'</select>'+(qmLv?'':'<p class="kx" id="kxl">اختر المستوى قبل إضافة أي سؤال</p>')+'</div>'+'<div class="gc"><b>إضافة سؤال</b><label>السؤال</label><input id="qq" maxlength="150" dir="auto"><label>الإجابة الصحيحة</label><input id="qa" maxlength="60" dir="auto"><label>إجابة خاطئة 1</label><input id="q1" maxlength="60" dir="auto"><label>إجابة خاطئة 2 (اختياري)</label><input id="q2" maxlength="60" dir="auto"><label>إجابة خاطئة 3 (اختياري)</label><input id="q3" maxlength="60" dir="auto"><button class="gb" style="margin-top:10px" data-a="qadd">➕ إضافة السؤال</button></div>'
-   +'<div class="gc"><b>إضافة دفعة أسئلة</b><p class="gn">سطر لكل سؤال: السؤال | الصحيحة | خاطئة | خاطئة | خاطئة</p><textarea id="qb" rows="5" dir="auto"></textarea><button class="gb" style="margin-top:10px" data-a="qdbulk">حفظ في قاعدة البيانات</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
+   +'<div class="gc"><label>مستوى الأسئلة التي ستضيفها</label><select id="ql"><option value="">—</option>'+LEVELS.map(function(l){return '<option value="'+l+'"'+(l===qmLv?' selected':'')+'>'+l+'</option>';}).join('')+'</select>'+(qmLv?'':'<p class="kx" id="kxl">اختر المستوى قبل إضافة أي سؤال</p>')+'</div>'+'<div class="gc"><b>إضافة سؤال</b>'+tfNote()+'<label>السؤال</label><input id="qq" maxlength="150" dir="auto"><label>الإجابة الصحيحة</label><input id="qa" maxlength="60" dir="auto"><label>إجابة خاطئة 1</label><input id="q1" maxlength="60" dir="auto"><label>إجابة خاطئة 2 (اختياري)</label><input id="q2" maxlength="60" dir="auto"><label>إجابة خاطئة 3 (اختياري)</label><input id="q3" maxlength="60" dir="auto"><button class="gb" style="margin-top:10px" data-a="qadd">➕ إضافة السؤال</button></div>'
+   +'<div class="gc"><b>إضافة دفعة أسئلة</b>'+tfHelp()+'<textarea id="qb" rows="5" dir="auto"></textarea><button class="gb" style="margin-top:10px" data-a="qdbulk">حفظ في قاعدة البيانات</button><button class="gb alt" data-a="qbulk">إضافة لجهازي فقط</button></div>'
    +unclHtml()+'<div class="gc"><b>أسئلتك في هذا الصنف</b>'+(L.length?L.map(function(q,i){return '<div class="gr"><span dir="auto">'+esc(q[0])+(lvOf(q)?' <small class="gn">· '+lvOf(q)+'</small>':'')+'</span><button class="gx" data-a="qdel" data-v="'+i+'">🗑</button></div>';}).join(''):'<p class="gn">لا أسئلة بعد</p>')+'</div><button class="gb alt" data-a="home">Volver</button>');}
-function qadd(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}var q=gv('qq').trim(),a=gv('qa').trim(),w=[gv('q1'),gv('q2'),gv('q3')].map(function(x){return x.trim();}).filter(Boolean);
+function qadd(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}
+  if(qmTp==='tf'){var q0=gv('qq').trim(),c0=tfNorm(gv('qa'));if(!q0||!c0){alert('اكتب العبارة، وفي «الإجابة الصحيحة» اكتب Verdadero أو Falso');return;}var o0=myQ();o0.tf.push([q0,c0,c0==='Verdadero'?'Falso':'Verdadero']);lvSave(q0,qmLv);saveQ(o0);qmLv='';qm();return;}var q=gv('qq').trim(),a=gv('qa').trim(),w=[gv('q1'),gv('q2'),gv('q3')].map(function(x){return x.trim();}).filter(Boolean);
   if(!q||!a||!w.length){alert('اكتب السؤال والإجابة الصحيحة وإجابة خاطئة واحدة على الأقل');return;}
   var o=myQ();o[qmTp].push([q,a].concat(w));lvSave(q,qmLv);saveQ(o);qmLv='';qm();}
-function qbulk(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}var o=myQ(),ok=0,bad=0;gv('qb').split('\n').forEach(function(l){l=l.trim();if(!l)return;var p=l.split('|').map(function(x){return x.trim();}).filter(function(x,i){return x||i<2;});
+function qbulk(){if(!qmLv){alert('اختر مستوى الأسئلة أولاً');return;}var o=myQ(),ok=0,bad=0;gv('qb').split('\n').forEach(function(l){l=l.trim();if(!l)return;l=tfLine(l);var p=l.split('|').map(function(x){return x.trim();}).filter(function(x,i){return x||i<2;});p=tfFix(p);
   if(p.length<3||!p[0]||!p[1]||!p[2]){bad++;return;}o[qmTp].push(p.slice(0,5));lvSave(p[0],qmLv);ok++;});
   saveQ(o);alert('أُضيف '+ok+' سؤالاً'+(bad?' وتجاهلت '+bad+' سطراً غير مكتمل':''));qmLv='';qm();}
 var dbSaving=false;
@@ -1302,8 +1308,8 @@ function qdbulk(){if(dbSaving)return;if(!qmLv){alert('اختر مستوى الأ
   dbSaving=true;
   loadBank().then(function(){
     var ex={};((dbBank&&dbBank[tp])||[]).forEach(function(r){ex[String(r[0]).toLowerCase()]=1;});
-    lines.forEach(function(l){l=l.trim();if(!l)return;
-      var p=l.split('|').map(function(x){return x.trim();}).filter(function(x,i){return x||i<2;});
+    lines.forEach(function(l){l=l.trim();if(!l)return;l=tfLine(l);
+      var p=l.split('|').map(function(x){return x.trim();}).filter(function(x,i){return x||i<2;});p=tfFix(p);
       if(p.length<3||!p[0]||!p[1]||!p[2]){bad++;return;}
       var k=p[0].toLowerCase();if(ex[k]||seen[k]){dup++;return;}seen[k]=1;
       var id=qmLv.toLowerCase()+'-q'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)+ok;

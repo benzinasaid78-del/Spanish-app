@@ -1231,27 +1231,28 @@ function saveQ(o){try{localStorage.setItem(MYK,JSON.stringify(o));}catch(e){aler
 var dbBank=null,bankP=null;
 var isAdm=false,admP=null,admDone=false;
 function admChk(){if(admDone)return Promise.resolve(isAdm);if(admP)return admP;admP=signIn().then(function(){return dbGet('admins/'+uid);}).then(function(v){isAdm=(v===true);admDone=true;},function(){isAdm=false;}).then(function(){admP=null;return isAdm;});return admP;}
-var GV='10.14.1',gP=null,gReady=false;
 function gmail(){try{return localStorage.getItem('esb:gmail')||'';}catch(e){return '';}}
-function gPre(){if(gP)return gP;gP=load('https://www.gstatic.com/firebasejs/'+GV+'/firebase-app-compat.js').then(function(){return load('https://www.gstatic.com/firebasejs/'+GV+'/firebase-auth-compat.js');}).then(function(){if(!window.firebase)throw new Error('load');if(!firebase.apps.length)firebase.initializeApp({apiKey:CFG.apiKey,authDomain:CFG.authDomain,projectId:CFG.projectId,appId:CFG.appId});gReady=true;}).catch(function(e){gP=null;throw e;});return gP;}
 function gSec(){var m=gmail(),h='<div id="gsec" style="margin-top:18px;text-align:center">';
   if(m){h+='<p class="gn" dir="ltr" style="margin:0 0 4px">👤 '+esc(m)+'</p><p class="gn" id="gadm" style="margin:0 0 6px"></p><button class="gb alt sm" data-a="gcopy">🆔 عرض معرّف المشرف</button><button class="gb alt sm" data-a="glogout">تسجيل الخروج</button>';}
-  else{h+='<button class="gb alt sm" data-a="glogin">🔐 دخول المشرف بحساب Google</button>';gPre().catch(function(){});}
+  else{h+='<button class="gb alt sm" data-a="alogin">🔐 دخول المشرف</button>';}
   return h+'</div>';}
-function gErr(e){var c=(e&&e.code)||'';if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return;
-  var m={'auth/unauthorized-domain':'نطاق الموقع غير مصرّح به. أضفه في Firebase ← Authentication ← Settings ← Authorized domains.','auth/operation-not-allowed':'فعّل مزوّد Google في Firebase ← Authentication ← Sign-in method.','auth/popup-blocked':'حجب المتصفح النافذة المنبثقة. اسمح بها ثم أعد المحاولة.','auth/network-request-failed':'تعذّر الاتصال. تحقق من الإنترنت.'};
-  gDlg(m[c]||('تعذّر تسجيل الدخول'+(c?' ('+c+')':'')),null,'⚠️');}
-function gLogin(){
-  if(!gReady){gPre().then(function(){gDlg('اكتمل التحميل. اضغط زر الدخول مرة أخرى.',null,'🔐');},function(){gDlg('تعذّر تحميل خدمة Google. تحقق من الاتصال.',null,'⚠️');});return;}
-  var pr=new firebase.auth.GoogleAuthProvider();pr.setCustomParameters({prompt:'select_account'});
-  firebase.auth().signInWithPopup(pr).then(function(res){var u=res.user;
-    leave();clearSess();auth={uid:u.uid,tok:'',ref:u.refreshToken,exp:0};uid=u.uid;saveAuth();
-    try{localStorage.setItem('esb:gmail',u.email||u.displayName||'Google');}catch(e){}
-    isAdm=false;admDone=false;admP=null;siP=null;
-    return signIn().then(function(){return admChk();});
-  }).then(function(){home();}).catch(gErr);}
-function gLogout(){try{if(window.firebase&&firebase.apps.length)firebase.auth().signOut();}catch(e){}
-  leave();clearSess();forgetAuth();uid=null;try{localStorage.removeItem('esb:gmail');}catch(e){}
+function aForm(){view='alog';app(head('دخول المشرف')+'<div class="gc"><label>البريد الإلكتروني</label><input id="ae" type="email" dir="ltr" autocomplete="username" autocapitalize="off" spellcheck="false"><label>كلمة السر</label><input id="ap" type="password" dir="ltr" autocomplete="current-password"></div><p class="gn" id="gst" dir="rtl"></p><button class="gb" data-a="dologin">دخول</button><button class="gb alt" data-a="home">رجوع</button>');}
+function aErr(c){c=String(c||'');
+  if(/EMAIL_NOT_FOUND|INVALID_PASSWORD|INVALID_LOGIN_CREDENTIALS|INVALID_EMAIL|MISSING_PASSWORD/.test(c))return 'البريد الإلكتروني أو كلمة السر غير صحيحة.';
+  if(/OPERATION_NOT_ALLOWED|PASSWORD_LOGIN_DISABLED/.test(c))return 'فعّل Email/Password في Firebase ← Authentication ← Sign-in method.';
+  if(/TOO_MANY_ATTEMPTS/.test(c))return 'محاولات كثيرة. انتظر قليلاً ثم أعد المحاولة.';
+  if(/USER_DISABLED/.test(c))return 'هذا الحساب معطّل.';
+  if(/timeout|Failed to fetch/.test(c))return 'تعذّر الاتصال. تحقق من الإنترنت.';
+  return 'تعذّر تسجيل الدخول ('+c+')';}
+function aLogin(){var em=gv('ae').trim(),pw=gv('ap');
+  if(!em||!pw){gDlg('اكتب البريد الإلكتروني وكلمة السر.',null,'⚠️');return;}
+  st('جارٍ التحقق…');
+  fx('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw,returnSecureToken:true})}).then(function(j){
+    leave();clearSess();auth={uid:j.localId,tok:j.idToken,ref:j.refreshToken,exp:Date.now()+(+j.expiresIn-120)*1000};uid=auth.uid;saveAuth();
+    try{localStorage.setItem('esb:gmail',j.email||em);}catch(x){}
+    isAdm=false;admDone=false;admP=null;siP=null;return admChk();
+  }).then(function(){home();},function(er){st('');gDlg(aErr(er&&(er.code||er.message)),null,'⚠️');});}
+function gLogout(){leave();clearSess();forgetAuth();uid=null;try{localStorage.removeItem('esb:gmail');}catch(e){}
   isAdm=false;admDone=false;admP=null;siP=null;home();}
 function gCopy(){var u=uid||'';try{if(navigator.clipboard)navigator.clipboard.writeText(u);}catch(e){}
   gDlg('معرّفك (UID):\n'+u+'\n\nأضفه في Firebase تحت admins بقيمة true لتصبح مشرفاً.',null,'🆔');}
@@ -1368,7 +1369,7 @@ function ans(i){if(!room||room.ph!=='q'||!uid)return;if(myA(room.i)!==undefined)
   dbSet('answers/'+code+'/'+q+'/'+uid,{a:i,ts:{'.sv':'timestamp'}}).then(function(){return dbSet('rooms/'+code+'/done/'+q+'/'+uid,true);})
    .catch(function(e){setA(q,undefined);draw();gDlg('تعذّر إرسال إجابتك: '+((e&&(e.code||e.message))||'unknown'),null,'⚠️');});}
 function onclick(e){var b=e.target.closest('[data-a]');if(!b||b.disabled)return;var a=b.dataset.a;
-  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='glogin')gLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();}
+  if(a==='home'){if(view==='play'&&code&&!isHost)leaveRoom();else home();}else if(a==='setup')setup();else if(a==='joinv')joinv();else if(a==='create')create();else if(a==='join')join();else if(a==='next')next();else if(a==='close')close();else if(a==='ans')ans(+b.dataset.v);else if(a==='qm'){if(isAdm)qm();}else if(a==='qadd'){if(isAdm)qadd();}else if(a==='qbulk'){if(isAdm)qbulk();}else if(a==='qdbulk'){if(isAdm)qdbulk();}else if(a==='pk')pick(b);else if(a==='kick')kick(b.dataset.v);else if(a==='leave')leaveRoom();else if(a==='endg'){gConfirm('إنهاء اللعبة للجميع؟',close,1);}else if(a==='skipq'){if(isHost&&room&&room.ph==='q')finish(room.i);}else if(a==='qdel'){if(isAdm)qdel(+b.dataset.v);}else if(a==='alogin')aForm();else if(a==='dologin')aLogin();else if(a==='glogout')gLogout();else if(a==='gcopy')gCopy();}
 setInterval(function(){var el=R&&R.querySelector('#gtm');if(!el||!room||!qStart||room.ph!=='q')return;el.textContent=Math.max(0,Math.ceil((qStart+room.dur*1000-Date.now())/1000));},250);
 var SH2=['▲','◆','●','■'],prevMe=0;
 function pctLeft(){if(!room||!qStart)return 100;return Math.max(0,Math.min(1,(qStart+room.dur*1000-Date.now())/(room.dur*1000)))*100;}

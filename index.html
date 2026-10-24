@@ -1059,14 +1059,14 @@ function gEnd(){gStop();var n=GM.q.length,best=gBest(),nb=GM.score>best;if(nb)se
 function route(){
  var h=decodeURIComponent(location.hash.slice(1)),b=D.body,m;gStop();
  $$('main.page.active').forEach(function(x){x.classList.remove('active');});view.classList.remove('hm');
- b.classList.remove('lesson','inner','hmb');
+ b.classList.remove('lesson','inner','hmb','gfs');
  if(by[h]&&D.getElementById(h)){var pg=D.getElementById(h);pg.classList.add('active');b.classList.add('lesson','inner');
   var lv=LV[by[h].lv];$('#bk').href='#/l/'+lv.key;var tl=$('a.top-link',pg);if(tl){tl.textContent='↑ قائمة الدروس';tl.setAttribute('href','#/l/'+lv.key);}$('#bt').textContent=by[h].t;
   try{localStorage.setItem('es_last',h);var dn=doneSet();if(dn.indexOf(h)<0){dn.push(h);localStorage.setItem('es_done',JSON.stringify(dn));}}catch(e){}}
  else if(m=h.match(/^\/g\/(\w+)$/)){if(!G[m[1]]){location.hash='#/';return;}view.innerHTML=group(m[1]);b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent=G[m[1]].n;}
  else if(m=h.match(/^\/l\/(\w+)$/)){if(!LV[m[1]]){location.hash='#/';return;}view.innerHTML=level(m[1]);b.classList.add('inner');$('#bk').href=parent(LV[m[1]]);$('#bt').textContent=LV[m[1]].code;}
  else if(h==='/game'){GM=null;view.innerHTML=gameHome();gWire();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='تحدي السرعة';}
- else if(h==='/room'){view.innerHTML='<div id="gameApp"></div>';b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='العب مع الأصدقاء';if(window.roomGameInit)window.roomGameInit();}
+ else if(h==='/room'){view.innerHTML='<div id="gameApp"></div>';b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='Benzina';if(window.roomGameInit)window.roomGameInit();}
  else if(h==='/cards'){SR=null;view.innerHTML=cardsHome();wireCards();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='بطاقات المفردات';}
  else if(h==='/me'){view.innerHTML=me();b.classList.add('inner');$('#bk').href='#/';$('#bt').textContent='حسابي';}
  else{view.innerHTML=homeNew();view.classList.add('hm');b.classList.add('hmb');}
@@ -1157,7 +1157,8 @@ var BANK={gram:[],verb:[],voc:[],exp:[]};
 var uid=null,auth=null,off=0,view='home',code='',myName='',isHost=false,room=null,es=null,qs=null,hostTimer=null,early=null,fin={},qStart=0,lastQ=-1,gotFirst=false,hostName='';
 function lastName(){try{return localStorage.getItem('esb:gname')||'';}catch(e){return '';}}
 function now(){return Date.now()+off;}
-function app(h){R.innerHTML=h;}
+function app(h){R.innerHTML=h;fsSync();}
+function fsSync(){var on=!!(room&&code&&(view==='host'||view==='play'));document.body.classList.toggle('gfs',on);if(on&&document.fullscreenEnabled){var bar=document.getElementById('bar');if(bar&&!document.getElementById('gfsb')){var fb=document.createElement('button');fb.id='gfsb';fb.type='button';fb.setAttribute('aria-label','ملء الشاشة');fb.textContent='⛶';fb.onclick=function(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){}};bar.appendChild(fb);}}}
 function gv(id){var e=R.querySelector('#'+id);return e?e.value:'';}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function head(t){return '<p class="gs">'+(t||'')+'</p>';}
@@ -1438,4 +1439,48 @@ playerScreen=function(){if(!room)return;if(room.ph==='q')snapTake();if(room.ph==
 window.roomGameInit=function(){R=document.getElementById('gameApp');if(!R)return;R.addEventListener('click',onclick);R.addEventListener('change',onchange);if(room&&code&&(view==='host'||view==='play'))draw();else{var s0=getSess();if(s0)resume(s0);else home();}};
 if(document.getElementById('gameApp'))window.roomGameInit();
 })();</script>
+<style id="gfs">
+/* ===== Benzina — immersive in-room game screen ===== */
+body.app.gfs{background:#070d1f radial-gradient(130% 62% at 50% -6%,#1f3380 0%,rgba(10,17,38,0) 62%) no-repeat;display:flex;flex-direction:column;min-height:100vh;min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));padding-bottom:0}
+body.app.gfs #bn{display:none}
+body.app.gfs #bar{background:transparent;border:0;padding:10px 14px 2px;max-width:600px;width:100%;margin:0 auto;box-sizing:border-box;gap:0;position:relative}
+body.app.gfs #bar #bk{visibility:hidden;pointer-events:none;flex:0 0 40px;padding:0;border:0}
+body.app.gfs #bar a:not(#bk){display:none}
+body.app.gfs #bar b{font-size:1.4rem;font-weight:800;letter-spacing:.24em;text-indent:.24em;text-transform:uppercase;background:linear-gradient(90deg,#2bc79a,#7f98ff 55%,#ff7aa8);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+#gfsb{display:none}
+body.app.gfs #gfsb{display:grid;place-items:center;flex:0 0 40px;height:34px;padding:0;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#cfd6ff;font-size:1.1rem;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body.app.gfs #view.page{flex:1;display:flex;flex-direction:column;width:100%;max-width:600px;margin:0 auto;padding:0;border:0;border-radius:0;background:transparent;background-image:none;box-shadow:none}
+body.app.gfs #view.page::before{display:none}
+body.app.gfs #gameApp{flex:1;display:flex;flex-direction:column;width:100%;max-width:none;margin:0;padding:6px 16px 14px}
+body.app.gfs #gameApp .gs{font-size:1.15rem;color:#dfe4ff;margin:10px 0 14px}
+body.app.gfs #gameApp .gc{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+/* top row: counter + timer */
+body.app.gfs #gameApp .qh{margin:2px 0 12px;align-items:center}
+body.app.gfs #gameApp .qpill{direction:ltr;unicode-bidi:isolate;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#dfe4ff;font-weight:800;letter-spacing:.08em;padding:6px 18px;border-radius:999px;font-variant-numeric:tabular-nums}
+body.app.gfs #gameApp .gtm{width:64px;height:64px;font-size:1.75rem;font-weight:800;font-variant-numeric:tabular-nums;background:radial-gradient(circle at 50% 30%,#1f2f6a,#0f1836);border:3px solid #2bc79a;color:#eafff8;box-shadow:0 0 0 6px rgba(43,199,154,.13),0 8px 22px rgba(0,0,0,.35)}
+body.app.gfs #gameApp .gtm.low{border-color:#ff4d6d;color:#ffa3b3;box-shadow:0 0 0 6px rgba(255,77,109,.17),0 8px 22px rgba(0,0,0,.35)}
+body.app.gfs #gameApp .gtb{height:8px;background:rgba(255,255,255,.1);margin:0 0 14px}
+body.app.gfs #gameApp .gtb i{background:linear-gradient(90deg,#2bc79a,#7f98ff)}
+body.app.gfs #gameApp .gtb.low i{background:linear-gradient(90deg,#ff4d6d,#ff8a5c)}
+/* question card */
+body.app.gfs #gameApp .gqc{flex:0 0 auto;min-height:clamp(120px,24dvh,230px);padding:20px 16px;position:relative;overflow:hidden}
+body.app.gfs #gameApp .gqc::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#e21b3c 0 25%,#1368ce 25% 50%,#d79a00 50% 75%,#26890c 75%)}
+body.app.gfs #gameApp .gq{font-size:clamp(1.35rem,6.2vw,2rem);line-height:1.55;font-weight:600;color:#fff;background:none;border:0;box-shadow:none;min-height:0;margin:0;padding:0}
+/* answer buttons fill the rest of the screen */
+body.app.gfs #gameApp .gopts{flex:1 1 auto;min-height:260px;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px;margin-top:14px}
+body.app.gfs #gameApp .go{min-height:0;border:0;border-radius:22px;color:#fff;padding:12px 10px;font:inherit;gap:10px;background-image:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0) 55%);box-shadow:0 7px 0 rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+body.app.gfs #gameApp .go:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+body.app.gfs #gameApp .go .sh{font-size:clamp(1.6rem,8vw,2.4rem);line-height:1;opacity:.92;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+body.app.gfs #gameApp .go .ot{font-size:clamp(1.15rem,5.4vw,1.7rem);font-weight:700;line-height:1.25;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+body.app.gfs #gameApp .ansn,body.app.gfs #gameApp .gopts+p.gn{width:max-content;max-width:100%;margin:14px auto 0;padding:6px 18px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#cfd6ff;font-weight:700;text-align:center}
+/* buttons */
+body.app.gfs #gameApp .gb{border-radius:16px;min-height:54px;background:linear-gradient(180deg,#34d6aa,#1f9e80);box-shadow:0 5px 0 #136f59;font-weight:800;color:#fff}
+body.app.gfs #gameApp .gb.alt{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.18);color:#dbe1ff;box-shadow:none}
+body.app.gfs #gameApp .gb.sm{min-height:42px;margin-top:10px;opacity:1;font-size:.92rem}
+body.app.gfs #gameApp>.gc+.gb{margin-top:auto!important}
+/* lobby */
+body.app.gfs #gameApp .gcodebox{padding:22px 14px}
+body.app.gfs #gameApp .gcode{font-size:clamp(3.2rem,17vw,5.4rem);line-height:1.1;font-weight:800;letter-spacing:.16em;text-indent:.16em;direction:ltr;font-variant-numeric:tabular-nums;background:linear-gradient(90deg,#2bc79a,#7f98ff,#ff7aa8);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+body.app.gfs #gameApp .gchips span{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;font-weight:700;padding:6px 14px}
+</style>
 </body></html>

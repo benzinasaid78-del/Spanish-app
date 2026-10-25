@@ -1535,7 +1535,7 @@ function puScan(a,i){var pl=room.players||{},ms=room.dur*1000,end=0,upd={},q=qs&
 function finish(i,force){if(fin[i]||!isHost)return;fin[i]=1;clearTimeout(hostTimer);clearTimeout(early);early=null;
   dbGet('answers/'+code+'/'+i).then(function(a){a=a||{};
     if(!force){var pend=puScan(a,i);if(pend>Date.now()){fin[i]=0;hostDl=pend;hostTimer=setTimeout(function(){finish(i);},pend-Date.now());return;}}
-    var q=qs[i],kind=qKind(q),mcq=(kind==='m'||kind==='a'),sc=JSON.parse(JSON.stringify(room.sc||{})),cnt=mcq?[0,0,0,0]:[0,0,0],gn={},pl=room.players||{},ms=room.dur*1000,t0=+room.qts||0,bn={},kn={},xn={},al={},ns=JSON.parse(JSON.stringify(stk)),pwc=JSON.parse(JSON.stringify(room.pw||{}));
+    var q=qs[i],kind=qKind(q),mcq=(kind==='m'||kind==='a'),sc=JSON.parse(JSON.stringify(room.sc||{})),cnt=[0,0,0,0],gn={},pl=room.players||{},ms=room.dur*1000,t0=+room.qts||0,bn={},kn={},xn={},al={},ns=JSON.parse(JSON.stringify(stk)),pwc=JSON.parse(JSON.stringify(room.pw||{}));
     function pv(u){return sc[u]&&sc[u].k!=null?sc[u].k:(stk[u]||0);}
     function pg(u){return pwc[u]||(pwc[u]={});}
     Object.keys(a).forEach(function(u){var r=a[u];if(!r||!ansOk(q,r)||!pl[u]||!t0||!r.ts)return;
@@ -1548,11 +1548,11 @@ function finish(i,force){if(fin[i]||!isHost)return;fin[i]=1;clearTimeout(hostTim
         cur.s+=tot;cur.k=nk;cur.m=Math.max(cur.m||0,nk);cur.c=(cur.c||0)+1;cur.f=cur.f==null?Math.round(el):Math.min(cur.f,Math.round(el));ns[u]=nk;gn[u]=tot;kn[u]=nk;if(bo)bn[u]=bo;if(dbl)xn[u]=1;sc[u]=cur;}
       else if(dbl)xn[u]=1;});
     Object.keys(pl).forEach(function(u){if(gn[u]===undefined){ns[u]=0;if(sc[u])sc[u].k=0;}});
-    var rvb={i:i,ans:mcq?q.a:-1,c:cnt,g:gn,b:bn,k:kn,x:xn,al:al};if(!mcq){rvb.ty=kind;rvb.sa=(q.ans||[''])[0];}
+    var rvb={i:i,ans:mcq?q.a:0,c:cnt,g:gn,b:bn,k:kn,x:xn,al:al};if(!mcq){rvb.ty=kind;rvb.sa=(q.ans||[''])[0];}
     var full={ph:'rev',rev:rvb,sc:sc,pw:pwc};
-    function slim(){var s2=JSON.parse(JSON.stringify(sc));Object.keys(s2).forEach(function(u){delete s2[u].k;delete s2[u].m;delete s2[u].f;delete s2[u].c;});return {ph:'rev',rev:{i:i,ans:mcq?q.a:-1,c:cnt,g:gn},sc:s2};}
-    return dbUpd('rooms/'+code,noK?slim():full).catch(function(e){if(!noK&&e&&e.code==='PERMISSION_DENIED'){noK=1;return dbUpd('rooms/'+code,slim());}throw e;}).then(function(){stk=ns;room.pw=pwc;});}).catch(function(){
-      fretry[i]=(fretry[i]||0)+1;if(fretry[i]>8||!isHost)return;fin[i]=0;hostTimer=setTimeout(function(){finish(i);},1500);});}
+    function slim(){var s2=JSON.parse(JSON.stringify(sc));Object.keys(s2).forEach(function(u){delete s2[u].k;delete s2[u].m;delete s2[u].f;delete s2[u].c;});return {ph:'rev',rev:{i:i,ans:mcq?q.a:0,c:cnt,g:gn},sc:s2};}
+    return dbUpd('rooms/'+code,noK?slim():full).catch(function(e){if(!noK&&e&&e.code==='PERMISSION_DENIED'){noK=1;return dbUpd('rooms/'+code,slim());}throw e;}).then(function(){stk=ns;room.pw=pwc;});}).catch(function(e){
+      fretry[i]=(fretry[i]||0)+1;if(fretry[i]>8||!isHost){if(isHost&&fretry[i]===9)gDlg('No se pudo cerrar la pregunta: '+((e&&(e.code||e.message))||'error')+'. Revisa las reglas de Firebase.',null,'⚠️');return;}fin[i]=0;hostTimer=setTimeout(function(){finish(i);},1500);});}
 var pollBusy=false;
 setInterval(function(){if(!isHost||!room||room.ph!=='q'||fin[room.i]||pollBusy||!code)return;var i=room.i,c=code;pollBusy=true;
   dbGet('answers/'+c+'/'+i).then(function(a){pollBusy=false;if(!room||code!==c||room.i!==i||room.ph!=='q')return;a=a||{};
@@ -1573,8 +1573,8 @@ function sendAns(extra,loc,txt){if(!room||room.ph!=='q'||!uid)return;var q=room.
    .catch(function(e){setA(q,undefined);delete TX[q];draw();gDlg('No se pudo enviar tu respuesta: '+((e&&(e.code||e.message))||'unknown'),null,'⚠️');});}
 function ans(i){sendAns({a:i},i);}
 function curQ(){return isHost?(qs&&qs[room.i]):(room&&room.q);}
-function wSend(){var inp=R.querySelector('#wtx');if(!inp||!room||room.ph!=='q')return;if(qStart&&Date.now()>=qStart+room.dur*1000+frzX())return;var t=inp.value.trim();if(!t){inp.classList.add('shake');setTimeout(function(){inp.classList.remove('shake');},400);return;}sendAns({s:t},0,t);}
-function oSend(){var q=curQ();if(!q||!room||room.ph!=='q')return;var W=q.w||[];if(ordSel.length!==W.length)return;if(qStart&&Date.now()>=qStart+room.dur*1000+frzX())return;var t=ordSel.map(function(ix){return W[ix];}).join(' ');sendAns({s:t},0,t);}
+function wSend(){var inp=R.querySelector('#wtx');if(!inp||!room||room.ph!=='q')return;if(qStart&&Date.now()>=qStart+room.dur*1000+frzX())return;var t=inp.value.trim();if(!t){inp.classList.add('shake');setTimeout(function(){inp.classList.remove('shake');},400);return;}sendAns({s:t},1,t);}
+function oSend(){var q=curQ();if(!q||!room||room.ph!=='q')return;var W=q.w||[];if(ordSel.length!==W.length)return;if(qStart&&Date.now()>=qStart+room.dur*1000+frzX())return;var t=ordSel.map(function(ix){return W[ix];}).join(' ');sendAns({s:t},1,t);}
 function wChar(c){var inp=R.querySelector('#wtx');if(!inp||inp.disabled)return;var a=inp.selectionStart,b=inp.selectionEnd,v=inp.value;if(a==null){a=b=v.length;}inp.value=v.slice(0,a)+c+v.slice(b);wDraft=inp.value;inp.focus();try{inp.setSelectionRange(a+1,a+1);}catch(x){}}
 function ordAdd(ix){var q=curQ();if(!q||myA(room.i)!==undefined)return;if(ordSel.indexOf(ix)<0)ordSel.push(ix);ordPaint(q,false);}
 function ordDel(p){var q=curQ();if(!q||myA(room.i)!==undefined)return;ordSel.splice(p,1);ordPaint(q,false);}
@@ -2014,8 +2014,8 @@ body.app.gfs #gameApp .qh .gtm.low{box-shadow:0 0 0 4px rgba(255,77,109,.18),0 6
 #gameApp .ow.sel{background:rgba(43,199,154,.25);border-color:#2bc79a}
 #gameApp .ow.ghost{opacity:.15}
 #gameApp .ow.ro{display:inline-block;cursor:default}
-#gameApp .orow{display:flex;gap:10px;margin-top:14px}
-#gameApp .orow .gb{flex:1;margin:0}
+body #gameApp .orow{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:14px}
+body #gameApp .orow .gb{width:100%;min-width:0;margin:0;flex:none}
 #gameApp .aud{display:flex;flex-direction:column;align-items:center;gap:10px}
 #gameApp .spk{width:84px;height:84px;border-radius:50%;border:0;background:linear-gradient(135deg,#7f98ff,#5a3fd0);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px -8px #5a3fd0;padding:0}
 #gameApp .spk .gi{width:40px;height:40px}

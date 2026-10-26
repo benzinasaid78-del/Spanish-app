@@ -877,21 +877,35 @@ function srsStats(){var dk=buildDeck(),st=srsGet(),t=today(),due=0,learned=0,see
  return{total:dk.length,seen:seen,due:due,learned:learned,fresh:dk.length-seen};}
 function srsLimit(){return parseInt(opt('es_srs_n','10'),10)||10;}
 function srsToday(){return srsQueue(buildDeck(),srsGet(),today(),opt('es_srs_u','all'),srsLimit()-dayNew());}
-function cardsHome(){var s=srsStats(),u=opt('es_srs_u','all'),n=srsLimit(),dir=opt('es_srs_dir','es'),q=srsToday(),nw=q.length-s.due;
- var o='<option value="all"'+(u==='all'?' selected':'')+'>كل الوحدات</option>';
- $$('main.vocab').forEach(function(pg){var x=by[pg.id]||{};o+='<option value="'+pg.id+'"'+(u===pg.id?' selected':'')+'>وحدة '+esc(x.b||'')+' · '+esc(x.t||pg.id)+'</option>';});
- o+='<option value="refs"'+(u==='refs'?' selected':'')+'>العبارات والمراجع (جديد)</option>';
- return '<div class="sr"><h2>🃏 بطاقات المفردات</h2><p class="sb">تُراجَع الكلمات في أوقات متباعدة: كلما عرفتها أكثر تأجّل ظهورها (غداً، بعد 3 أيام، أسبوع، شهر…).</p>'
- +'<div class="st"><div><b>'+s.due+'</b>للمراجعة اليوم</div><div><b>'+nw+'</b>جديدة اليوم</div><div><b>'+s.learned+'</b>أتقنتها</div><div><b>'+s.total+'</b>كل البطاقات</div></div>'
- +(q.length?'<button class="bt" id="srgo">ابدأ ('+q.length+' بطاقة)</button>':'<div class="cd">🎉 لا بطاقات اليوم. عُد غداً أو زد عدد البطاقات الجديدة.</div>')
- +'<label>الوحدة للبطاقات الجديدة</label><select id="sru">'+o+'</select>'
- +'<label>عدد البطاقات الجديدة يومياً</label><select id="srn">'+[5,10,20,30].map(function(v){return '<option'+(v===n?' selected':'')+'>'+v+'</option>';}).join('')+'</select>'
- +'<label>الاتجاه</label><select id="srd"><option value="es"'+(dir==='es'?' selected':'')+'>إسباني ← عربي</option><option value="ar"'+(dir==='ar'?' selected':'')+'>عربي ← إسباني</option></select>'
- +'<a class="bt alt" href="#/game" style="text-align:center;text-decoration:none">⚡ تحدي السرعة</a><button class="bt alt" id="srreset">🗑️ إعادة ضبط البطاقات</button></div>';}
+function cardsHome(){var s=srsStats(),u=opt('es_srs_u','all'),n=srsLimit(),dir=opt('es_srs_dir','es'),q=srsToday(),nw=Math.max(0,q.length-s.due),ui=gUnitInfo(u);
+ var tot=s.total||1,lp=Math.round(s.learned/tot*100),sp=Math.round(s.seen/tot*100);
+ var stat=function(ic,c1,c2,num,lab){return '<div class="cst" style="--c1:'+c1+';--c2:'+c2+'"><i class="csi">'+sgI(ic)+'</i><b>'+num+'</b><span>'+lab+'</span></div>';};
+ var cta=q.length?'<button type="button" class="cgo" id="srgo"><i class="cgp">'+sgI('play')+'</i><span class="cgt">ابدأ الجلسة<small>'+s.due+' للمراجعة · '+nw+' جديدة</small></span><em class="cgn">'+q.length+' بطاقة</em></button>'
+  :'<div class="cemp"><i>'+sgI('medal')+'</i><div><b>أنهيت بطاقات اليوم</b><span>عُد غداً، أو زِد عدد البطاقات الجديدة من الإعدادات أدناه.</span></div></div>';
+ var stp='<div class="gstp" data-k="n"><button type="button" class="gsm" data-d="5" aria-label="زيادة">'+sgI('plus')+'</button><label class="gsi"><input type="number" inputmode="numeric" min="1" max="200" value="'+n+'" dir="ltr" aria-label="عدد البطاقات الجديدة يومياً"><small>بطاقة</small></label><button type="button" class="gsm" data-d="-5" aria-label="إنقاص">'+sgI('minus')+'</button></div>'
+  +'<div class="gpre" data-k="n">'+[5,10,20,30].map(function(v){return '<button type="button" class="'+(v===n?'on':'')+'" data-v="'+v+'">'+v+'</button>';}).join('')+'</div>';
+ var seg=function(v,t,d){return '<button type="button" class="'+(dir===v?'on':'')+'" data-v="'+v+'"><b>'+t+'</b><small>'+d+'</small></button>';};
+ return '<div class="sr gm gset cdx"><h2 class="gt0"><i class="gtb">'+sgI('cards')+'</i>بطاقات المفردات</h2>'
+  +'<p class="sb">تُراجَع الكلمات على فترات متباعدة: كلما عرفتها أكثر تأجّل ظهورها (غداً، بعد 3 أيام، أسبوع، شهر…).</p>'
+  +'<div class="cstats">'+stat('repeat','#ffb547','#f0801f',s.due,'للمراجعة اليوم')+stat('spark','#35b9d9','#2478c8',nw,'جديدة اليوم')+stat('medal','#5bd16f','#2e9e57',s.learned,'أتقنتها')+'</div>'
+  +'<div class="cprog"><div class="cph"><span>'+sgI('cards')+'تقدّمك في المفردات</span><b>'+lp+'%</b></div><div class="cbar"><i class="cb2" style="width:'+sp+'%"></i><i class="cb1" style="width:'+lp+'%"></i></div>'
+  +'<div class="cleg"><span><i class="d1"></i>أتقنتها '+s.learned+'</span><span><i class="d2"></i>رأيتها '+s.seen+'</span><span><i class="d3"></i>الكل '+s.total+'</span></div></div>'
+  +cta
+  +'<div class="gl">'+sgI('grid')+'الوحدة للبطاقات الجديدة</div><button type="button" class="gsel" id="sru"><span class="gsb">'+(ui.n!==''?esc(String(ui.n)):sgI('grid'))+'</span><span class="gst">'+esc(ui.t)+'</span>'+sgI('chev','gch')+'</button>'
+  +'<div class="gcfg"><div class="gtile"><div class="gth">'+sgI('hash')+'عدد البطاقات الجديدة يومياً</div>'+stp+'</div></div>'
+  +'<div class="gl">'+sgI('swap')+'اتجاه البطاقة</div><div class="gseg">'+seg('es','إسباني ← عربي','ترى الكلمة وتتذكر معناها')+seg('ar','عربي ← إسباني','ترى المعنى وتتذكر الكلمة')+'</div>'
+  +'<a class="hct kC cact" href="#/game" style="--c1:#a98bff;--c2:#6a3df0"><span class="hi">'+sgI('bolt')+'</span><span class="hx"><b>تحدي السرعة</b><small>اختبر مفرداتك قبل انتهاء الوقت</small></span><svg class="hch" viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></a>'
+  +'<button type="button" class="cres" id="srreset">'+sgI('trash')+'إعادة ضبط البطاقات</button></div>';}
 function wireCards(){var go=$('#srgo');if(go)go.onclick=startSession;
- var m={sru:'es_srs_u',srn:'es_srs_n',srd:'es_srs_dir'};
- Object.keys(m).forEach(function(id){var e=$('#'+id);if(e)e.onchange=function(){setOpt(m[id],e.value);view.innerHTML=cardsHome();wireCards();};});
- var rs=$('#srreset');if(rs)rs.onclick=function(){if(confirm('حذف تقدم البطاقات؟')){try{localStorage.removeItem('es_srs');localStorage.removeItem('es_srs_day');}catch(e){}view.innerHTML=cardsHome();wireCards();}};}
+ var re=function(){view.innerHTML=cardsHome();wireCards();};
+ var su=$('#sru');if(su)su.onclick=function(){unitSheet('es_srs_u',re,true);};
+ $$('.cdx .gseg button').forEach(function(b){b.onclick=function(){setOpt('es_srs_dir',b.dataset.v);re();};});
+ var inp=$('.cdx .gstp input');
+ var setN=function(v){v=parseInt(v,10);if(!(v>=1))v=1;if(v>200)v=200;setOpt('es_srs_n',String(v));re();};
+ if(inp){inp.onfocus=function(){try{inp.select();}catch(e){}};inp.onchange=function(){setN(inp.value);};}
+ $$('.cdx .gsm').forEach(function(b){b.onclick=function(){setN((parseInt(inp&&inp.value,10)||srsLimit())+(+b.dataset.d));};});
+ $$('.cdx .gpre button').forEach(function(b){b.onclick=function(){setN(b.dataset.v);};});
+ var rs=$('#srreset');if(rs)rs.onclick=function(){if(confirm('حذف تقدم البطاقات؟')){try{localStorage.removeItem('es_srs');localStorage.removeItem('es_srs_day');}catch(e){}re();}};}
 function startSession(){var q=srsToday();if(!q.length){view.innerHTML=cardsHome();wireCards();return;}
  SR={q:q,i:0,n0:q.length,ok:0,no:0};showCard();}
 function showCard(){var c=SR.q[SR.i];if(!c)return endSession();
@@ -976,7 +990,14 @@ function gameCard(){return '<a class="go" href=#/game><span class="pl">⚡</span
 
 var SGI={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',mix:'<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',words:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',tf:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',err:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',hash:'<path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',chev:'<path d="m6 9 6 6 6-6"/>',plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>'};
 function sgI(n,c){return '<svg class="gi'+(c?' '+c:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+SGI[n]+'</svg>';}
-function gUnitInfo(u){if(u==='all')return {n:'',t:'كل الوحدات'};var x=by[u]||{};return {n:x.b||'',t:x.t||u};}
+SGI.cards='<rect x="8" y="8" width="13" height="13" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-8A2.5 2.5 0 0 0 3 6.5v8A2.5 2.5 0 0 0 5.5 17H8"/>';
+SGI.repeat='<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/>';
+SGI.spark='<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4"/>';
+SGI.medal='<circle cx="12" cy="9" r="6"/><path d="m8.2 14.3-1.2 7 5-2.8 5 2.8-1.2-7"/>';
+SGI.trash='<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/>';
+SGI.play='<path d="M7 4v16l13-8z"/>';
+SGI.swap='<path d="M7 7h13M16 3l4 4-4 4"/><path d="M17 17H4M8 13l-4 4 4 4"/>';
+function gUnitInfo(u){if(u==='all')return {n:'',t:'كل الوحدات'};if(u==='refs')return {n:'',t:'العبارات والمراجع'};var x=by[u]||{};return {n:x.b||'',t:x.t||u};}
 function gameHome(){var o=gOpts(),modes=[['mix','مزيج','#a98bff'],['words','كلمات','#35b9d9'],['tf','صح أم خطأ','#5bd16f'],['err','الأخطاء الشائعة','#ffb547']];
  var mt=modes.map(function(m){return '<button type="button" class="gmode'+(o.m===m[0]?' on':'')+'" data-m="'+m[0]+'" style="--c:'+m[2]+'"><i class="gmi">'+sgI(m[0])+'</i><b>'+m[1]+'</b><em class="gck">'+sgI('check')+'</em></button>';}).join('');
  var ui=gUnitInfo(o.u);
@@ -989,14 +1010,16 @@ function gameHome(){var o=gOpts(),modes=[['mix','مزيج','#a98bff'],['words','
   +'<div class="gtile"><div class="gth">'+sgI('hash')+'عدد الأسئلة</div>'+stp('n',o.n,'سؤالاً',[10,20,30,50],'عدد الأسئلة')+'</div></div>'
   +'<button class="bt" id="ggo">ابدأ التحدي</button></div>';}
 function gUnitClose(){var d=D.getElementById('gsh');if(d)d.remove();D.body.style.overflow='';}
-function gUnitSheet(){gUnitClose();var cur=gOpts().u,rows=[['all','','كل الوحدات']];
+function unitSheet(key,done,refs){gUnitClose();var cur=key==='es_game_u'?gOpts().u:opt(key,'all'),rows=[['all','','كل الوحدات']];
  $$('main.vocab').forEach(function(pg){var x=by[pg.id]||{};rows.push([pg.id,x.b||'',x.t||pg.id]);});
+ if(refs)rows.push(['refs','','العبارات والمراجع']);
  var h='<div class="gshb"></div><div class="gshp" role="dialog" aria-modal="true"><div class="gshg"></div><div class="gshh"><b>اختر الوحدة</b><button type="button" class="gshx" aria-label="إغلاق">'+sgI('x')+'</button></div><div class="gshl">'
   +rows.map(function(r){return '<button type="button" class="gsr'+(r[0]===cur?' on':'')+'" data-u="'+r[0]+'"><span class="gsb">'+(r[1]!==''?esc(String(r[1])):sgI('grid'))+'</span><span class="gst">'+esc(r[2])+'</span><i class="gsc">'+sgI('check')+'</i></button>';}).join('')+'</div></div>';
  var d=D.createElement('div');d.id='gsh';d.innerHTML=h;D.body.appendChild(d);D.body.style.overflow='hidden';
  d.querySelector('.gshb').onclick=gUnitClose;d.querySelector('.gshx').onclick=gUnitClose;
- [].forEach.call(d.querySelectorAll('.gsr'),function(b){b.onclick=function(){setOpt('es_game_u',b.dataset.u);gUnitClose();view.innerHTML=gameHome();gWire();};});
+ [].forEach.call(d.querySelectorAll('.gsr'),function(b){b.onclick=function(){setOpt(key,b.dataset.u);gUnitClose();done();};});
  var on=d.querySelector('.gsr.on');if(on)setTimeout(function(){try{on.scrollIntoView({block:'center'});}catch(e){}},30);}
+function gUnitSheet(){unitSheet('es_game_u',function(){view.innerHTML=gameHome();gWire();},false);}
 D.addEventListener('keydown',function(e){if(e.key==='Escape')gUnitClose();});
 function gKey(k){return k==='t'?'es_game_t':'es_game_n';}
 function gSync(k,v){$$('.gpre[data-k="'+k+'"] button').forEach(function(b){b.classList.toggle('on',+b.dataset.v===v);});}
@@ -2184,5 +2207,47 @@ body[data-fs="3"] #stg .pv{zoom:1.36}
 #stg .dv .er{margin:10px 2px 0;padding:0;background:none;border:0;color:#ff8a98;font-size:.85rem;line-height:1.6}
 #stg .er:empty{display:none}
 #stg .ver{text-align:center;color:#5d6ba3;font-size:.78rem;margin:18px 0 4px;direction:ltr;letter-spacing:.04em}
+</style>
+<style id="cdx">
+.cdx .gt0{margin:2px 0 4px}
+.cdx .gtb{background:linear-gradient(135deg,#2bc79a,#1b8f78)!important;box-shadow:0 6px 14px -6px #1b8f78!important}
+.cdx .sb{margin:4px 2px 14px;font-size:.93rem;line-height:1.7;color:var(--sub)}
+.cdx .cstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}
+.cdx .cst{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;padding:12px 6px 10px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);text-align:center}
+.cdx .cst .csi{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 6px 12px -6px var(--c2)}
+.cdx .cst .csi .gi{width:20px;height:20px;stroke:#fff}
+.cdx .cst b{font-size:1.6rem;line-height:1.1;color:#fff;font-variant-numeric:tabular-nums}
+.cdx .cst span{font-size:.74rem;line-height:1.3;color:var(--sub)}
+.cdx .cprog{margin:0 0 4px;padding:12px 14px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731)}
+.cdx .cph{display:flex;align-items:center;justify-content:space-between;color:var(--sub);font-weight:700;font-size:.9rem}
+.cdx .cph span{display:flex;align-items:center;gap:6px}
+.cdx .cph .gi{width:18px;height:18px;color:var(--teal)}
+.cdx .cph b{font-size:1.2rem;color:var(--teal);direction:ltr;font-variant-numeric:tabular-nums}
+.cdx .cbar{position:relative;height:10px;margin:10px 0 9px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+.cdx .cbar i{position:absolute;top:0;bottom:0;right:0;border-radius:6px}
+.cdx .cb2{background:#35b9d9;opacity:.5}
+.cdx .cb1{background:linear-gradient(90deg,#1f9a7e,#2bc79a)}
+.cdx .cleg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--sub)}
+.cdx .cleg span{display:flex;align-items:center;gap:5px}
+.cdx .cleg i{width:8px;height:8px;border-radius:50%}
+.cdx .cleg .d1{background:#2bc79a}.cdx .cleg .d2{background:#35b9d9}.cdx .cleg .d3{background:#566099}
+.cdx .cgo{display:flex;align-items:center;gap:12px;width:100%;margin:14px 0 2px;padding:11px 14px;border:0;border-radius:18px;background:linear-gradient(135deg,#1f9a7e,#2bc79a);color:#fff;font:inherit;cursor:pointer;box-shadow:0 12px 24px -12px #2bc79a;transition:transform .1s}
+.cdx .cgo:active{transform:scale(.985)}
+.cdx .cgp{flex:none;width:44px;height:44px;border-radius:14px;background:rgba(0,0,0,.18);display:grid;place-items:center}
+.cdx .cgp .gi{width:22px;height:22px;fill:#fff;stroke:#fff}
+.cdx .cgt{flex:1;min-width:0;text-align:right;font-size:1.15rem;font-weight:800;line-height:1.3}
+.cdx .cgt small{display:block;font-size:.76rem;font-weight:600;opacity:.88}
+.cdx .cgn{flex:none;font-style:normal;padding:5px 13px;border-radius:999px;background:rgba(0,0,0,.2);font-weight:800;font-size:.9rem}
+.cdx .cemp{display:flex;align-items:center;gap:12px;margin:14px 0 2px;padding:13px 14px;border-radius:18px;border:1.5px dashed #3b4f8f;background:rgba(43,199,154,.06)}
+.cdx .cemp i{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#ffb547,#f0801f)}
+.cdx .cemp i .gi{width:24px;height:24px;stroke:#fff}
+.cdx .cemp b{display:block;color:#fff}
+.cdx .cemp span{color:var(--sub);font-size:.85rem;line-height:1.5}
+.cdx .gseg b{font-size:.98rem}
+.cdx .gseg small{font-size:.72rem;line-height:1.35;text-align:center}
+.cdx .cact{margin-top:18px}
+.cdx .cres{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:14px 0 4px;padding:11px;border-radius:14px;border:1.5px solid #4a2a3a;background:transparent;color:#ff8da1;font:inherit;font-weight:700;cursor:pointer}
+.cdx .cres .gi{width:18px;height:18px}
+.cdx .cres:active{background:rgba(255,77,109,.1)}
 </style>
 </body></html>

@@ -980,13 +980,13 @@ function gUnitInfo(u){if(u==='all')return {n:'',t:'كل الوحدات'};var x=b
 function gameHome(){var o=gOpts(),modes=[['mix','مزيج','#a98bff'],['words','كلمات','#35b9d9'],['tf','صح أم خطأ','#5bd16f'],['err','الأخطاء الشائعة','#ffb547']];
  var mt=modes.map(function(m){return '<button type="button" class="gmode'+(o.m===m[0]?' on':'')+'" data-m="'+m[0]+'" style="--c:'+m[2]+'"><i class="gmi">'+sgI(m[0])+'</i><b>'+m[1]+'</b><em class="gck">'+sgI('check')+'</em></button>';}).join('');
  var ui=gUnitInfo(o.u);
- var stp=function(k,val,suf,pre){return '<div class="gstp" data-k="'+k+'"><button type="button" class="gsm" data-d="1" aria-label="زيادة">'+sgI('plus')+'</button><label class="gsi"><input type="number" inputmode="numeric" min="1" max="999" value="'+val+'" dir="ltr" aria-label="'+suf+'"><small>'+suf+'</small></label><button type="button" class="gsm" data-d="-1" aria-label="إنقاص">'+sgI('minus')+'</button></div><div class="gpre" data-k="'+k+'">'+pre.map(function(v){return '<button type="button" class="'+(v===val?'on':'')+'" data-v="'+v+'">'+v+'</button>';}).join('')+'</div>';};
+ var stp=function(k,val,suf,pre,lab){return '<div class="gstp" data-k="'+k+'"><button type="button" class="gsm" data-d="1" aria-label="زيادة">'+sgI('plus')+'</button><label class="gsi"><input type="number" inputmode="numeric" min="1" max="999" value="'+val+'" dir="ltr" aria-label="'+(lab||suf)+'"><small>'+suf+'</small></label><button type="button" class="gsm" data-d="-1" aria-label="إنقاص">'+sgI('minus')+'</button></div><div class="gpre" data-k="'+k+'">'+pre.map(function(v){return '<button type="button" class="'+(v===val?'on':'')+'" data-v="'+v+'">'+v+'</button>';}).join('')+'</div>';};
  return '<div class="sr gm gset"><h2 class="gt0"><i class="gtb">'+sgI('bolt')+'</i>تحدي السرعة</h2><p class="sb">أجب قبل انتهاء الوقت! أسئلة سريعة من مفرداتك ومن أخطائك الشائعة.</p>'
   +'<div class="gbest">'+sgI('trophy')+'<span>أفضل نتيجة</span><b>'+gBest()+'</b></div>'
   +'<div class="gl">'+sgI('list')+'نوع الأسئلة</div><div class="gmodes">'+mt+'</div>'
   +'<div class="gl">'+sgI('grid')+'الوحدة (للكلمات)</div><button type="button" class="gsel" id="gunit"><span class="gsb">'+(ui.n!==''?esc(String(ui.n)):sgI('grid'))+'</span><span class="gst">'+esc(ui.t)+'</span>'+sgI('chev','gch')+'</button>'
-  +'<div class="gl">'+sgI('clock')+'الوقت لكل سؤال</div>'+stp('t',o.t,'ثانية لكل سؤال',[5,8,10,15,30])
-  +'<div class="gl">'+sgI('hash')+'عدد الأسئلة</div>'+stp('n',o.n,'سؤالاً',[10,20,30,50])
+  +'<div class="gcfg"><div class="gtile"><div class="gth">'+sgI('clock')+'الوقت لكل سؤال</div>'+stp('t',o.t,'ثانية',[5,8,10,15,30],'الوقت لكل سؤال بالثواني')+'</div>'
+  +'<div class="gtile"><div class="gth">'+sgI('hash')+'عدد الأسئلة</div>'+stp('n',o.n,'سؤالاً',[10,20,30,50],'عدد الأسئلة')+'</div></div>'
   +'<button class="bt" id="ggo">ابدأ التحدي</button></div>';}
 function gUnitClose(){var d=D.getElementById('gsh');if(d)d.remove();D.body.style.overflow='';}
 function gUnitSheet(){gUnitClose();var cur=gOpts().u,rows=[['all','','كل الوحدات']];
@@ -2070,17 +2070,22 @@ body.app.gfs #gtools{margin-inline-start:auto}
 .hct *{text-decoration:none}
 </style>
 <style id="gfree">
-.gm.gset .gstp{display:flex;align-items:stretch;gap:10px}
-.gm.gset .gsm{flex:none;width:58px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731);color:var(--teal);display:grid;place-items:center;cursor:pointer;padding:0;transition:border-color .15s,transform .1s}
-.gm.gset .gsm:active{border-color:var(--teal);transform:scale(.95)}
-.gm.gset .gsm .gi{width:22px;height:22px;stroke-width:2.4}
-.gm.gset .gsi{flex:1;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;border-radius:16px;border:1.5px solid var(--teal);background:linear-gradient(135deg,#0f3b3d,#0c2d33);box-shadow:0 0 0 1px var(--teal) inset;color:var(--sub);font-weight:400}
-.gm.gset .gsi input{width:100%;background:transparent;border:0;outline:0;box-shadow:none;text-align:center;color:var(--teal);font:inherit;font-size:1.8rem;font-weight:800;line-height:1.15;padding:0;margin:0;-moz-appearance:textfield;appearance:textfield}
+.gm.gset .gcfg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 4px}
+.gm.gset .gtile{min-width:0;padding:10px;border-radius:16px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731)}
+.gm.gset .gth{display:flex;align-items:center;gap:6px;margin:0 0 8px;color:var(--sub);font-weight:700;font-size:.85rem;line-height:1.2}
+.gm.gset .gth .gi{flex:none;width:16px;height:16px;color:var(--teal)}
+.gm.gset .gstp{display:flex;align-items:stretch;gap:4px}
+.gm.gset .gsm{flex:none;width:36px;border-radius:11px;border:1px solid #2a3b6b;background:rgba(255,255,255,.04);color:var(--teal);display:grid;place-items:center;cursor:pointer;padding:0;transition:border-color .15s,transform .1s}
+.gm.gset .gsm:active{border-color:var(--teal);transform:scale(.94)}
+.gm.gset .gsm .gi{width:18px;height:18px;stroke-width:2.4}
+.gm.gset .gsi{flex:1;min-width:0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 0;border:0;background:transparent;box-shadow:none;color:var(--sub);font-weight:400}
+.gm.gset .gsi input{width:100%;background:transparent;border:0;outline:0;box-shadow:none;text-align:center;color:var(--teal);font:inherit;font-size:1.45rem;font-weight:800;line-height:1.1;padding:0;margin:0;-moz-appearance:textfield;appearance:textfield}
 .gm.gset .gsi input::-webkit-outer-spin-button,.gm.gset .gsi input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.gm.gset .gsi small{font-size:.78rem;color:var(--sub)}
-.gm.gset .gpre{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.gm.gset .gpre button{flex:1;min-width:46px;padding:7px 8px;border-radius:12px;border:1.5px solid #233463;background:transparent;color:var(--sub);font:inherit;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+.gm.gset .gsi small{font-size:.72rem;line-height:1.1;color:var(--sub)}
+.gm.gset .gpre{display:flex;gap:4px;margin-top:8px}
+.gm.gset .gpre button{flex:1;min-width:0;padding:5px 0;border-radius:9px;border:1px solid #233463;background:transparent;color:var(--sub);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
 .gm.gset .gpre button.on{border-color:var(--teal);color:var(--teal);background:rgba(43,199,154,.1)}
+@media (max-width:340px){.gm.gset .gcfg{grid-template-columns:1fr}}
 </style>
 <style id="gpw">
 #gameApp .pbar{display:flex;gap:8px;margin:12px 0 0}

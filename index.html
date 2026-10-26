@@ -882,8 +882,12 @@ function cardsHome(){var s=srsStats(),u=opt('es_srs_u','all'),n=srsLimit(),dir=o
  var stat=function(ic,c1,c2,num,lab){return '<div class="cst" style="--c1:'+c1+';--c2:'+c2+'"><i class="csi">'+sgI(ic)+'</i><b>'+num+'</b><span>'+lab+'</span></div>';};
  var cta=q.length?'<button type="button" class="cgo" id="srgo"><i class="cgp">'+sgI('play')+'</i><span class="cgt">ابدأ الجلسة<small>'+s.due+' للمراجعة · '+nw+' جديدة</small></span><em class="cgn">'+q.length+' بطاقة</em></button>'
   :'<div class="cemp"><i>'+sgI('medal')+'</i><div><b>أنهيت بطاقات اليوم</b><span>عُد غداً، أو زِد عدد البطاقات الجديدة من الإعدادات أدناه.</span></div></div>';
- var stp='<div class="gstp" data-k="n"><button type="button" class="gsm" data-d="5" aria-label="زيادة">'+sgI('plus')+'</button><label class="gsi"><input type="number" inputmode="numeric" min="1" max="200" value="'+n+'" dir="ltr" aria-label="عدد البطاقات الجديدة يومياً"><small>بطاقة</small></label><button type="button" class="gsm" data-d="-5" aria-label="إنقاص">'+sgI('minus')+'</button></div>'
-  +'<div class="gpre" data-k="n">'+[5,10,20,30].map(function(v){return '<button type="button" class="'+(v===n?'on':'')+'" data-v="'+v+'">'+v+'</button>';}).join('')+'</div>';
+ var mx=Math.max(50,Math.ceil(n/5)*5),stepv=(n%5===0)?5:1,pct=Math.round((n-5)/(mx-5)*100);
+ var cnew='<div class="cnew"><div class="cnh"><i class="cni">'+sgI('spark')+'</i><div class="cnt"><b>البطاقات الجديدة يومياً</b><small>كم كلمة جديدة تريد إضافتها كل يوم؟</small></div></div>'
+  +'<div class="cnn"><button type="button" class="cnb" data-d="-5" aria-label="إنقاص">'+sgI('minus')+'</button><div class="cnv"><b id="cnval">'+n+'</b><small>بطاقة في اليوم</small></div><button type="button" class="cnb" data-d="5" aria-label="زيادة">'+sgI('plus')+'</button></div>'
+  +'<input type="range" id="cnr" class="cnr" min="5" max="'+mx+'" step="'+stepv+'" value="'+n+'" dir="ltr" data-f="'+s.fresh+'" style="--p:'+pct+'%" aria-label="عدد البطاقات الجديدة يومياً">'
+  +'<div class="cnm" dir="ltr"><span>5</span><span>'+mx+'</span></div>'
+  +'<div class="cnf"><span>'+sgI('clock')+'≈ <b id="cnwk">'+(n*7)+'</b> كلمة أسبوعياً</span>'+(u==='all'&&s.fresh?'<span>'+sgI('medal')+'≈ <b id="cnds">'+Math.ceil(s.fresh/n)+'</b> يوماً لإنهاء كل البطاقات</span>':'')+'</div></div>';
  var seg=function(v,t,d){return '<button type="button" class="'+(dir===v?'on':'')+'" data-v="'+v+'"><b>'+t+'</b><small>'+d+'</small></button>';};
  return '<div class="sr gm gset cdx"><h2 class="gt0"><i class="gtb">'+sgI('cards')+'</i>بطاقات المفردات</h2>'
   +'<p class="sb">تُراجَع الكلمات على فترات متباعدة: كلما عرفتها أكثر تأجّل ظهورها (غداً، بعد 3 أيام، أسبوع، شهر…).</p>'
@@ -892,7 +896,7 @@ function cardsHome(){var s=srsStats(),u=opt('es_srs_u','all'),n=srsLimit(),dir=o
   +'<div class="cleg"><span><i class="d1"></i>أتقنتها '+s.learned+'</span><span><i class="d2"></i>رأيتها '+s.seen+'</span><span><i class="d3"></i>الكل '+s.total+'</span></div></div>'
   +cta
   +'<div class="gl">'+sgI('grid')+'الوحدة للبطاقات الجديدة</div><button type="button" class="gsel" id="sru"><span class="gsb">'+(ui.n!==''?esc(String(ui.n)):sgI('grid'))+'</span><span class="gst">'+esc(ui.t)+'</span>'+sgI('chev','gch')+'</button>'
-  +'<div class="gcfg"><div class="gtile"><div class="gth">'+sgI('hash')+'عدد البطاقات الجديدة يومياً</div>'+stp+'</div></div>'
+  +cnew
   +'<div class="gl">'+sgI('swap')+'اتجاه البطاقة</div><div class="gseg">'+seg('es','إسباني ← عربي','ترى الكلمة وتتذكر معناها')+seg('ar','عربي ← إسباني','ترى المعنى وتتذكر الكلمة')+'</div>'
   +'<a class="hct kC cact" href="#/game" style="--c1:#a98bff;--c2:#6a3df0"><span class="hi">'+sgI('bolt')+'</span><span class="hx"><b>تحدي السرعة</b><small>اختبر مفرداتك قبل انتهاء الوقت</small></span><svg class="hch" viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></a>'
   +'<button type="button" class="cres" id="srreset">'+sgI('trash')+'إعادة ضبط البطاقات</button></div>';}
@@ -900,11 +904,11 @@ function wireCards(){var go=$('#srgo');if(go)go.onclick=startSession;
  var re=function(){view.innerHTML=cardsHome();wireCards();};
  var su=$('#sru');if(su)su.onclick=function(){unitSheet('es_srs_u',re,true);};
  $$('.cdx .gseg button').forEach(function(b){b.onclick=function(){setOpt('es_srs_dir',b.dataset.v);re();};});
- var inp=$('.cdx .gstp input');
- var setN=function(v){v=parseInt(v,10);if(!(v>=1))v=1;if(v>200)v=200;setOpt('es_srs_n',String(v));re();};
- if(inp){inp.onfocus=function(){try{inp.select();}catch(e){}};inp.onchange=function(){setN(inp.value);};}
- $$('.cdx .gsm').forEach(function(b){b.onclick=function(){setN((parseInt(inp&&inp.value,10)||srsLimit())+(+b.dataset.d));};});
- $$('.cdx .gpre button').forEach(function(b){b.onclick=function(){setN(b.dataset.v);};});
+ var r=$('#cnr'),setN=function(v){v=parseInt(v,10);if(!(v>=5))v=5;if(v>200)v=200;setOpt('es_srs_n',String(v));re();};
+ if(r){var mn=+r.min,mxv=+r.max,fr=+r.dataset.f||0;
+  r.oninput=function(){var v=+r.value;r.style.setProperty('--p',Math.round((v-mn)/(mxv-mn)*100)+'%');$('#cnval').textContent=v;$('#cnwk').textContent=v*7;var d=$('#cnds');if(d)d.textContent=Math.ceil(fr/v);};
+  r.onchange=function(){setN(r.value);};}
+ $$('.cdx .cnb').forEach(function(b){b.onclick=function(){setN((parseInt(r&&r.value,10)||srsLimit())+(+b.dataset.d));};});
  var rs=$('#srreset');if(rs)rs.onclick=function(){if(confirm('حذف تقدم البطاقات؟')){try{localStorage.removeItem('es_srs');localStorage.removeItem('es_srs_day');}catch(e){}re();}};}
 function startSession(){var q=srsToday();if(!q.length){view.innerHTML=cardsHome();wireCards();return;}
  SR={q:q,i:0,n0:q.length,ok:0,no:0};showCard();}
@@ -2249,5 +2253,33 @@ body[data-fs="3"] #stg .pv{zoom:1.36}
 .cdx .cres{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:14px 0 4px;padding:11px;border-radius:14px;border:1.5px solid #4a2a3a;background:transparent;color:#ff8da1;font:inherit;font-weight:700;cursor:pointer}
 .cdx .cres .gi{width:18px;height:18px}
 .cdx .cres:active{background:rgba(255,77,109,.1)}
+</style>
+<style id="cdx2">
+.cdx .cnew{margin:18px 0 4px;padding:14px 14px 12px;border-radius:18px;border:1.5px solid #233463;background:linear-gradient(135deg,#101c3d,#0d1731)}
+.cdx .cnh{display:flex;align-items:center;gap:12px}
+.cdx .cni{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#35b9d9,#2478c8);box-shadow:0 6px 14px -6px #2478c8}
+.cdx .cni .gi{width:22px;height:22px;stroke:#fff}
+.cdx .cnt{min-width:0}
+.cdx .cnt b{display:block;color:#fff;font-size:1rem;line-height:1.35}
+.cdx .cnt small{display:block;color:var(--sub);font-size:.78rem;line-height:1.4}
+.cdx .cnn{direction:ltr;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 8px}
+.cdx .cnb{flex:none;width:48px;height:48px;border-radius:15px;border:1.5px solid #2a3b6b;background:rgba(255,255,255,.04);color:var(--teal);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .1s,border-color .15s}
+.cdx .cnb:active{transform:scale(.93);border-color:var(--teal)}
+.cdx .cnb .gi{width:22px;height:22px;stroke-width:2.4}
+.cdx .cnv{flex:1;text-align:center}
+.cdx .cnv b{display:block;font-size:2.7rem;line-height:1;font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums}
+.cdx .cnv small{display:block;margin-top:5px;color:var(--sub);font-size:.8rem}
+.cdx .cnr{-webkit-appearance:none;appearance:none;display:block;width:100%;height:30px;margin:6px 0 0;padding:0;background:transparent;cursor:pointer;--p:30%;touch-action:pan-y}
+.cdx .cnr:focus{outline:none}
+.cdx .cnr::-webkit-slider-runnable-track{height:10px;border-radius:6px;background:linear-gradient(90deg,#1f9a7e,#2bc79a var(--p),#1c2a52 var(--p))}
+.cdx .cnr::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-9px;border-radius:50%;background:#fff;border:4px solid #2bc79a;box-shadow:0 4px 12px rgba(43,199,154,.55)}
+.cdx .cnr::-moz-range-track{height:10px;border-radius:6px;background:#1c2a52}
+.cdx .cnr::-moz-range-progress{height:10px;border-radius:6px;background:linear-gradient(90deg,#1f9a7e,#2bc79a)}
+.cdx .cnr::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:4px solid #2bc79a;box-shadow:0 4px 12px rgba(43,199,154,.55)}
+.cdx .cnm{display:flex;justify-content:space-between;padding:0 6px;color:var(--sub);font-size:.75rem;font-variant-numeric:tabular-nums}
+.cdx .cnf{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.cdx .cnf span{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(43,199,154,.08);border:1px solid rgba(43,199,154,.25);color:#d8f3ee;font-size:.8rem;line-height:1.3}
+.cdx .cnf .gi{flex:none;width:15px;height:15px;color:var(--teal)}
+.cdx .cnf b{color:#fff;font-variant-numeric:tabular-nums}
 </style>
 </body></html>

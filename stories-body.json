@@ -1,0 +1,784 @@
+{
+ "a1-laura": {
+  "p": [
+   "Me llamo Laura. Tengo veinte años y vivo en Madrid. Soy estudiante de medicina. Mi casa es pequeña, pero me gusta mucho.",
+   "Por la mañana tomo un café con leche y una tostada. Después voy a la universidad en metro. Mis amigos son simpáticos.",
+   "Los sábados como con mi familia. Mi madre cocina una paella muy rica. Por la noche vemos una película en casa."
+  ],
+  "pt": [
+   "اسمي لورا. عمري عشرون سنة وأعيش في مدريد. أنا طالبة طب. بيتي صغير، لكنه يعجبني كثيراً.",
+   "في الصباح أشرب قهوة بالحليب وآكل شريحة خبز محمّص. بعد ذلك أذهب إلى الجامعة بالمترو. أصدقائي ظرفاء.",
+   "أتغدّى أيام السبت مع عائلتي. أمي تطبخ باييا لذيذة جداً. وفي الليل نشاهد فيلماً في البيت."
+  ],
+  "d": {
+   "a": {
+    "t": "إلى",
+    "n": "«voy a» = أذهب إلى"
+   },
+   "amigos": {
+    "t": "أصدقاء",
+    "l": "amigo"
+   },
+   "años": {
+    "t": "سنوات",
+    "l": "año"
+   },
+   "café": {
+    "t": "قهوة"
+   },
+   "casa": {
+    "t": "بيت / منزل"
+   },
+   "cocina": {
+    "t": "تطبخ",
+    "l": "cocinar",
+    "n": "«la cocina» (اسم) تعني المطبخ"
+   },
+   "como": {
+    "t": "آكل",
+    "l": "comer",
+    "n": "«como» تعني أيضاً: مثل / كيف"
+   },
+   "con": {
+    "t": "مع / بـ"
+   },
+   "de": {
+    "t": "من / (حرف إضافة)",
+    "n": "«estudiante de medicina» = طالبة طب"
+   },
+   "después": {
+    "t": "بعد ذلك"
+   },
+   "en": {
+    "t": "في"
+   },
+   "es": {
+    "t": "هو / هي",
+    "l": "ser"
+   },
+   "estudiante": {
+    "t": "طالب / طالبة"
+   },
+   "familia": {
+    "t": "عائلة"
+   },
+   "gusta": {
+    "t": "يعجب",
+    "l": "gustar",
+    "n": "«me gusta» = يعجبني"
+   },
+   "la": {
+    "t": "(أداة تعريف للمؤنث)"
+   },
+   "laura": {
+    "t": "لورا (اسم علم)"
+   },
+   "leche": {
+    "t": "حليب"
+   },
+   "llamo": {
+    "t": "اسمي / أُسمّى",
+    "l": "llamarse",
+    "n": "«me llamo» = اسمي"
+   },
+   "los": {
+    "t": "(أداة تعريف للجمع المذكر)",
+    "n": "«los sábados» = أيام السبت"
+   },
+   "madre": {
+    "t": "أم"
+   },
+   "madrid": {
+    "t": "مدريد (عاصمة إسبانيا)"
+   },
+   "mañana": {
+    "t": "الصباح",
+    "n": "وتعني أيضاً: غداً"
+   },
+   "me": {
+    "t": "(ضمير: لي / نفسي)"
+   },
+   "medicina": {
+    "t": "الطب / الدواء"
+   },
+   "metro": {
+    "t": "المترو"
+   },
+   "mi": {
+    "t": "ـي (ملكية): بيتي، أمي"
+   },
+   "mis": {
+    "t": "ـيّ (ملكية للجمع): أصدقائي"
+   },
+   "mucho": {
+    "t": "كثيراً"
+   },
+   "muy": {
+    "t": "جداً"
+   },
+   "noche": {
+    "t": "الليل"
+   },
+   "paella": {
+    "t": "باييا (طبق أرز إسباني)"
+   },
+   "película": {
+    "t": "فيلم"
+   },
+   "pequeña": {
+    "t": "صغيرة",
+    "l": "pequeño"
+   },
+   "pero": {
+    "t": "لكن"
+   },
+   "por": {
+    "t": "في / خلال",
+    "n": "«por la mañana» = في الصباح"
+   },
+   "rica": {
+    "t": "لذيذة",
+    "l": "rico",
+    "n": "وتعني أيضاً: غنية"
+   },
+   "simpáticos": {
+    "t": "ظرفاء / لطفاء",
+    "l": "simpático"
+   },
+   "son": {
+    "t": "هم / هنّ",
+    "l": "ser"
+   },
+   "soy": {
+    "t": "أنا",
+    "l": "ser"
+   },
+   "sábados": {
+    "t": "أيام السبت",
+    "l": "sábado"
+   },
+   "tengo": {
+    "t": "عندي / أملك",
+    "l": "tener",
+    "n": "«tengo veinte años» = عمري عشرون سنة"
+   },
+   "tomo": {
+    "t": "أتناول / أشرب",
+    "l": "tomar"
+   },
+   "tostada": {
+    "t": "شريحة خبز محمّص"
+   },
+   "un": {
+    "t": "(أداة نكرة مذكرة): واحد"
+   },
+   "una": {
+    "t": "(أداة نكرة مؤنثة): واحدة"
+   },
+   "universidad": {
+    "t": "الجامعة"
+   },
+   "veinte": {
+    "t": "عشرون"
+   },
+   "vemos": {
+    "t": "نشاهد / نرى",
+    "l": "ver"
+   },
+   "vivo": {
+    "t": "أعيش / أسكن",
+    "l": "vivir"
+   },
+   "voy": {
+    "t": "أذهب",
+    "l": "ir"
+   },
+   "y": {
+    "t": "و"
+   }
+  }
+ },
+ "a2-mercado": {
+  "p": [
+   "El domingo por la mañana, Pablo y su abuela van al mercado del barrio. Hace sol y hay mucha gente. La abuela quiere comprar frutas y verduras para la comida.",
+   "En el primer puesto, Pablo ve unas naranjas enormes. —¿Cuánto cuestan? —pregunta. —Dos euros el kilo —responde el vendedor. La abuela compra tres kilos y un poco de pan.",
+   "Después se encuentran con una vecina. Hablan del tiempo, de la familia y de la fiesta del pueblo. Pablo está cansado, pero está contento. Antes de volver a casa, toman un chocolate caliente en una cafetería."
+  ],
+  "pt": [
+   "صباح الأحد، يذهب بابلو وجدّته إلى سوق الحي. الجوّ مشمس وهناك ناس كثيرون. تريد الجدّة أن تشتري فواكه وخضاراً لوجبة الغداء.",
+   "عند أول كشك يرى بابلو برتقالاً ضخماً. «بكم هو؟» يسأل. «يوروان للكيلو» يجيب البائع. تشتري الجدّة ثلاثة كيلوغرامات وقليلاً من الخبز.",
+   "بعد ذلك يلتقيان بجارة. يتحدثون عن الطقس والعائلة وعيد القرية. بابلو متعب لكنه سعيد. وقبل العودة إلى البيت يشربان شوكولاتة ساخنة في مقهى."
+  ],
+  "d": {
+   "a": {
+    "t": "إلى"
+   },
+   "abuela": {
+    "t": "جدّة"
+   },
+   "al": {
+    "t": "إلى الـ (a + el)",
+    "n": "«al mercado» = إلى السوق"
+   },
+   "antes": {
+    "t": "قبل",
+    "n": "«antes de volver» = قبل أن يعودا"
+   },
+   "barrio": {
+    "t": "حي"
+   },
+   "cafetería": {
+    "t": "مقهى"
+   },
+   "caliente": {
+    "t": "ساخن"
+   },
+   "cansado": {
+    "t": "متعب"
+   },
+   "casa": {
+    "t": "بيت"
+   },
+   "chocolate": {
+    "t": "شوكولاتة"
+   },
+   "comida": {
+    "t": "وجبة / طعام",
+    "n": "في إسبانيا «la comida» غالباً هي وجبة الغداء"
+   },
+   "compra": {
+    "t": "يشتري / تشتري",
+    "l": "comprar"
+   },
+   "comprar": {
+    "t": "يشتري"
+   },
+   "con": {
+    "t": "مع"
+   },
+   "contento": {
+    "t": "سعيد / مسرور"
+   },
+   "cuestan": {
+    "t": "سعرها / يكلّفون",
+    "l": "costar"
+   },
+   "cuánto": {
+    "t": "كم / بكم"
+   },
+   "de": {
+    "t": "من / (حرف إضافة)"
+   },
+   "del": {
+    "t": "من الـ (de + el)",
+    "n": "«del barrio» = من الحي"
+   },
+   "después": {
+    "t": "بعد ذلك"
+   },
+   "domingo": {
+    "t": "يوم الأحد"
+   },
+   "dos": {
+    "t": "اثنان"
+   },
+   "el": {
+    "t": "(أداة تعريف للمذكر)"
+   },
+   "en": {
+    "t": "في"
+   },
+   "encuentran": {
+    "t": "يلتقون",
+    "l": "encontrarse",
+    "n": "«se encuentran con» = يلتقون بـ"
+   },
+   "enormes": {
+    "t": "ضخمة",
+    "l": "enorme"
+   },
+   "está": {
+    "t": "هو (موجود / في حالة)",
+    "l": "estar"
+   },
+   "euros": {
+    "t": "يوروهات",
+    "l": "euro"
+   },
+   "familia": {
+    "t": "عائلة"
+   },
+   "fiesta": {
+    "t": "عيد / احتفال"
+   },
+   "frutas": {
+    "t": "فواكه",
+    "l": "fruta"
+   },
+   "gente": {
+    "t": "ناس"
+   },
+   "hablan": {
+    "t": "يتحدثون",
+    "l": "hablar"
+   },
+   "hace": {
+    "t": "يكون / يفعل",
+    "l": "hacer",
+    "n": "«hace sol» = الجوّ مشمس"
+   },
+   "hay": {
+    "t": "يوجد / هناك",
+    "l": "haber"
+   },
+   "kilo": {
+    "t": "كيلوغرام"
+   },
+   "kilos": {
+    "t": "كيلوغرامات",
+    "l": "kilo"
+   },
+   "la": {
+    "t": "(أداة تعريف للمؤنث)"
+   },
+   "mañana": {
+    "t": "الصباح"
+   },
+   "mercado": {
+    "t": "سوق"
+   },
+   "mucha": {
+    "t": "كثيرة",
+    "l": "mucho"
+   },
+   "naranjas": {
+    "t": "برتقال",
+    "l": "naranja"
+   },
+   "pablo": {
+    "t": "بابلو (اسم علم)"
+   },
+   "pan": {
+    "t": "خبز"
+   },
+   "para": {
+    "t": "لـ / من أجل"
+   },
+   "pero": {
+    "t": "لكن"
+   },
+   "poco": {
+    "t": "قليل",
+    "n": "«un poco de pan» = قليل من الخبز"
+   },
+   "por": {
+    "t": "في / خلال"
+   },
+   "pregunta": {
+    "t": "يسأل",
+    "l": "preguntar"
+   },
+   "primer": {
+    "t": "أول",
+    "l": "primero"
+   },
+   "pueblo": {
+    "t": "قرية / بلدة"
+   },
+   "puesto": {
+    "t": "كشك / بسطة"
+   },
+   "quiere": {
+    "t": "يريد / تريد",
+    "l": "querer"
+   },
+   "responde": {
+    "t": "يجيب",
+    "l": "responder"
+   },
+   "se": {
+    "t": "(ضمير انعكاسي / تبادلي)"
+   },
+   "sol": {
+    "t": "شمس"
+   },
+   "su": {
+    "t": "ـه / ـها (ملكية): جدّته"
+   },
+   "tiempo": {
+    "t": "الطقس / الوقت"
+   },
+   "toman": {
+    "t": "يتناولان / يشربان",
+    "l": "tomar"
+   },
+   "tres": {
+    "t": "ثلاثة"
+   },
+   "un": {
+    "t": "(أداة نكرة مذكرة)"
+   },
+   "una": {
+    "t": "(أداة نكرة مؤنثة)"
+   },
+   "unas": {
+    "t": "بعض (للمؤنث الجمع)",
+    "l": "uno",
+    "n": "«unas naranjas» = بعض البرتقالات"
+   },
+   "van": {
+    "t": "يذهبون / يذهبان",
+    "l": "ir"
+   },
+   "ve": {
+    "t": "يرى",
+    "l": "ver"
+   },
+   "vecina": {
+    "t": "جارة"
+   },
+   "vendedor": {
+    "t": "بائع"
+   },
+   "verduras": {
+    "t": "خضار",
+    "l": "verdura"
+   },
+   "volver": {
+    "t": "يعود"
+   },
+   "y": {
+    "t": "و"
+   }
+  }
+ },
+ "b1-marta": {
+  "p": [
+   "Cuando Marta llegó a Sevilla, no conocía a nadie. Había dejado su ciudad, su trabajo y a sus amigos para empezar una vida nueva. Durante las primeras semanas se sentía sola y echaba de menos su casa.",
+   "Un día, mientras paseaba por el barrio de Triana, escuchó música de guitarra en una plaza pequeña. Se acercó y vio a un grupo de vecinos que cantaban y bailaban. Una señora mayor le sonrió y le dijo: «Ven, aquí nadie se queda solo».",
+   "Desde aquel día, Marta iba a la plaza todos los jueves. Aprendió a bailar sevillanas, conoció a gente muy amable y, poco a poco, la ciudad dejó de parecerle extraña. Hoy dice que Sevilla no es solo el lugar donde vive: es el lugar donde por fin se siente en casa."
+  ],
+  "pt": [
+   "عندما وصلت مارتا إلى إشبيلية لم تكن تعرف أحداً. كانت قد تركت مدينتها وعملها وأصدقاءها لتبدأ حياة جديدة. وخلال الأسابيع الأولى كانت تشعر بالوحدة وتشتاق إلى بيتها.",
+   "في أحد الأيام، وبينما كانت تتمشّى في حي تريانا، سمعت موسيقى غيتار في ساحة صغيرة. اقتربت فرأت مجموعة من الجيران يغنّون ويرقصون. ابتسمت لها سيدة مسنّة وقالت: «تعالي، هنا لا أحد يبقى وحيداً».",
+   "منذ ذلك اليوم صارت مارتا تذهب إلى الساحة كل خميس. تعلّمت رقص السيفياناس وتعرّفت على ناس لطفاء جداً، وشيئاً فشيئاً لم تعد المدينة تبدو لها غريبة. واليوم تقول إن إشبيلية ليست مجرد المكان الذي تعيش فيه، بل المكان الذي تشعر فيه أخيراً أنها في بيتها."
+  ],
+  "d": {
+   "a": {
+    "t": "إلى",
+    "n": "قبل أسماء الأشخاص تأتي «a» أيضاً: «a sus amigos» = أصدقاءها"
+   },
+   "acercó": {
+    "t": "اقتربت",
+    "l": "acercarse"
+   },
+   "amable": {
+    "t": "لطيف / ودود"
+   },
+   "amigos": {
+    "t": "أصدقاء",
+    "l": "amigo"
+   },
+   "aprendió": {
+    "t": "تعلّمت",
+    "l": "aprender"
+   },
+   "aquel": {
+    "t": "ذلك",
+    "n": "«aquel día» = ذلك اليوم (بعيد في الزمن)"
+   },
+   "aquí": {
+    "t": "هنا"
+   },
+   "bailaban": {
+    "t": "كانوا يرقصون",
+    "l": "bailar"
+   },
+   "bailar": {
+    "t": "يرقص"
+   },
+   "barrio": {
+    "t": "حي"
+   },
+   "cantaban": {
+    "t": "كانوا يغنّون",
+    "l": "cantar"
+   },
+   "casa": {
+    "t": "بيت"
+   },
+   "ciudad": {
+    "t": "مدينة"
+   },
+   "conoció": {
+    "t": "تعرّفت على",
+    "l": "conocer"
+   },
+   "conocía": {
+    "t": "كانت تعرف",
+    "l": "conocer"
+   },
+   "cuando": {
+    "t": "عندما"
+   },
+   "de": {
+    "t": "من / (حرف إضافة)"
+   },
+   "dejado": {
+    "t": "تركت (اسم المفعول)",
+    "l": "dejar",
+    "n": "«había dejado» = كانت قد تركت"
+   },
+   "dejó": {
+    "t": "تركت / كفّت",
+    "l": "dejar",
+    "n": "«dejar de + مصدر» = كفّ عن، مثل «dejó de parecerle»"
+   },
+   "desde": {
+    "t": "منذ"
+   },
+   "dice": {
+    "t": "تقول",
+    "l": "decir"
+   },
+   "dijo": {
+    "t": "قالت",
+    "l": "decir"
+   },
+   "donde": {
+    "t": "حيث / الذي فيه"
+   },
+   "durante": {
+    "t": "خلال"
+   },
+   "día": {
+    "t": "يوم"
+   },
+   "echaba": {
+    "t": "كانت تُلقي",
+    "l": "echar",
+    "n": "«echar de menos» = يشتاق إلى"
+   },
+   "el": {
+    "t": "(أداة تعريف للمذكر)"
+   },
+   "empezar": {
+    "t": "يبدأ"
+   },
+   "en": {
+    "t": "في"
+   },
+   "es": {
+    "t": "هو / هي",
+    "l": "ser"
+   },
+   "escuchó": {
+    "t": "سمعت / أصغت",
+    "l": "escuchar"
+   },
+   "extraña": {
+    "t": "غريبة",
+    "l": "extraño"
+   },
+   "fin": {
+    "t": "نهاية",
+    "n": "«por fin» = أخيراً"
+   },
+   "gente": {
+    "t": "ناس"
+   },
+   "grupo": {
+    "t": "مجموعة"
+   },
+   "guitarra": {
+    "t": "غيتار"
+   },
+   "había": {
+    "t": "كانت قد",
+    "l": "haber",
+    "n": "«había dejado» = كانت قد تركت"
+   },
+   "hoy": {
+    "t": "اليوم"
+   },
+   "iba": {
+    "t": "كانت تذهب",
+    "l": "ir"
+   },
+   "jueves": {
+    "t": "يوم الخميس",
+    "n": "«todos los jueves» = كل خميس"
+   },
+   "la": {
+    "t": "(أداة تعريف للمؤنث)"
+   },
+   "las": {
+    "t": "(أداة تعريف للجمع المؤنث)"
+   },
+   "le": {
+    "t": "(ضمير: لها / له)",
+    "n": "«le sonrió» = ابتسمت لها"
+   },
+   "llegó": {
+    "t": "وصلت",
+    "l": "llegar"
+   },
+   "los": {
+    "t": "(أداة تعريف للجمع المذكر)"
+   },
+   "lugar": {
+    "t": "مكان"
+   },
+   "marta": {
+    "t": "مارتا (اسم علم)"
+   },
+   "mayor": {
+    "t": "مسنّة / أكبر سناً",
+    "n": "«una señora mayor» = سيدة مسنّة"
+   },
+   "menos": {
+    "t": "أقل",
+    "n": "«echar de menos» = يشتاق إلى"
+   },
+   "mientras": {
+    "t": "بينما"
+   },
+   "muy": {
+    "t": "جداً"
+   },
+   "música": {
+    "t": "موسيقى"
+   },
+   "nadie": {
+    "t": "لا أحد"
+   },
+   "no": {
+    "t": "لا / لم"
+   },
+   "nueva": {
+    "t": "جديدة",
+    "l": "nuevo"
+   },
+   "para": {
+    "t": "لكي / من أجل"
+   },
+   "parecerle": {
+    "t": "أن تبدو لها",
+    "l": "parecer",
+    "n": "«dejó de parecerle extraña» = لم تعد تبدو لها غريبة"
+   },
+   "paseaba": {
+    "t": "كانت تتمشّى",
+    "l": "pasear"
+   },
+   "pequeña": {
+    "t": "صغيرة",
+    "l": "pequeño"
+   },
+   "plaza": {
+    "t": "ساحة"
+   },
+   "poco": {
+    "t": "قليل",
+    "n": "«poco a poco» = شيئاً فشيئاً"
+   },
+   "por": {
+    "t": "في / عبر",
+    "n": "«por el barrio» = في الحي · «por fin» = أخيراً"
+   },
+   "primeras": {
+    "t": "الأُوَل",
+    "l": "primero"
+   },
+   "que": {
+    "t": "الذي / أنّ",
+    "n": "«un grupo de vecinos que cantaban» = مجموعة جيران كانوا يغنّون"
+   },
+   "queda": {
+    "t": "يبقى",
+    "l": "quedarse",
+    "n": "«aquí nadie se queda solo» = هنا لا أحد يبقى وحيداً"
+   },
+   "se": {
+    "t": "(ضمير انعكاسي)"
+   },
+   "semanas": {
+    "t": "أسابيع",
+    "l": "semana"
+   },
+   "sentía": {
+    "t": "كانت تشعر",
+    "l": "sentirse"
+   },
+   "sevilla": {
+    "t": "إشبيلية (مدينة في الأندلس)"
+   },
+   "sevillanas": {
+    "t": "السيفياناس (رقصة شعبية من إشبيلية)"
+   },
+   "señora": {
+    "t": "سيدة"
+   },
+   "siente": {
+    "t": "تشعر",
+    "l": "sentirse"
+   },
+   "sola": {
+    "t": "وحيدة",
+    "l": "solo"
+   },
+   "solo": {
+    "t": "وحيد / فقط",
+    "n": "«no es solo» = ليس فقط"
+   },
+   "sonrió": {
+    "t": "ابتسمت",
+    "l": "sonreír"
+   },
+   "su": {
+    "t": "ـها (ملكية)"
+   },
+   "sus": {
+    "t": "ـها (ملكية للجمع)"
+   },
+   "todos": {
+    "t": "كل / جميع"
+   },
+   "trabajo": {
+    "t": "عمل / وظيفة"
+   },
+   "triana": {
+    "t": "تريانا (حي شهير في إشبيلية)"
+   },
+   "un": {
+    "t": "(أداة نكرة مذكرة)"
+   },
+   "una": {
+    "t": "(أداة نكرة مؤنثة)"
+   },
+   "vecinos": {
+    "t": "جيران",
+    "l": "vecino"
+   },
+   "ven": {
+    "t": "تعالي",
+    "l": "venir",
+    "n": "أمر من «venir»"
+   },
+   "vida": {
+    "t": "حياة"
+   },
+   "vio": {
+    "t": "رأت",
+    "l": "ver"
+   },
+   "vive": {
+    "t": "تعيش",
+    "l": "vivir"
+   },
+   "y": {
+    "t": "و"
+   }
+  }
+ }
+}
